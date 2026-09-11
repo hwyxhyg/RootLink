@@ -153,7 +153,7 @@
 </head>
 <body>
 <header>
-  <a href="/index.html" style="
+  <a href="/index.html" id="backLink" style="
     display:flex;align-items:center;gap:4px;
     text-decoration:none;
     color:rgba(26,18,8,.45);
@@ -168,8 +168,9 @@
     ← 返回
 </a>
   <img src="images/image_000.png" alt="RootLink" style="height:38px;object-fit:contain;">
-  <div class="logo-sub">RootLink · 打通全球华人的寻根连接网络</div>
+  <div class="logo-sub" id="logoSub">RootLink · 打通全球华人的寻根连接网络</div>
   <div class="header-right">
+    <button class="panel-toggle" onclick="toggleLanguage()" id="langBtn">中文</button>
     <button class="panel-toggle" onclick="togglePanel()" id="panelBtn">
       📋 寻根档案 <span class="badge" id="todoBadge"></span>
     </button>
@@ -177,7 +178,7 @@
       <button class="icon-ghost" onclick="resetConversation()" id="resetBtn" aria-label="重新开始" title="重新开始">↻</button>
       <input type="file" id="importFile" accept="application/json" style="display:none" />
     </div>
-    <div class="status-dot"><span class="dot"></span>向导在线</div>
+    <div class="status-dot" id="statusText"><span class="dot"></span>向导在线</div>
   </div>
 </header>
 
@@ -186,7 +187,7 @@
     <div class="welcome" id="welcome">
       <div class="welcome-character" id="welcomeChar"></div>
       <h1 id="welcomePoem"></h1>
-      <p>告诉我你正在寻找的故乡——哪怕只是一个模糊的地名，或是老人留下的只言片语。</p>
+      <p id="welcomeDesc">告诉我你正在寻找的故乡——哪怕只是一个模糊的地名，或是老人留下的只言片语。</p>
       <div class="welcome-prompts">
         <div class="prompt-chip" onclick="usePrompt(this)">我是马来西亚华人，只知道祖籍是福建，想找到更具体的地方</div>
         <div class="prompt-chip" onclick="usePrompt(this)">爷爷说我们是广东人，家里说客家话，想帮他完成回乡的心愿</div>
@@ -205,7 +206,7 @@
           onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
         <button class="send-btn" id="sendBtn" onclick="sendMessage()">↑</button>
       </div>
-      <div class="hint">Enter 发送 · Shift+Enter 换行</div>
+      <div class="hint" id="inputHint">Enter 发送 · Shift+Enter 换行</div>
     </div>
   </div>
 
@@ -270,7 +271,7 @@ async function loadFromServer(email) {
       data.conversation.forEach(item => {
         const div = document.createElement('div');
         div.className = `message ${item.role}`;
-        div.innerHTML = `<div class="avatar ${item.role}">${item.role === 'user' ? '我' : '向'}</div><div class="bubble">${item.html}</div>`;
+        div.innerHTML = `<div class="avatar ${item.role}">${item.role === 'user' ? (currentLang==='zh'?'我':'ME') : (currentLang==='zh'?'向':'AI')}</div><div class="bubble">${item.html}</div>`;
         messages.appendChild(div);
       });
       messages.scrollTop = messages.scrollHeight;
@@ -296,20 +297,86 @@ async function saveToServer() {
     });
   } catch(e) { console.log('存档失败', e); }
 }
-  const poems = [
-    { char: '故乡', text: '少小离家老大回，乡音无改鬓毛催' },
-    { char: '根', text: '树高千尺，叶落归根' },
-    { char: '乡', text: '举头望明月，低头思故乡' },
-    { char: '归', text: '露从今夜白，月是故乡明' },
-    { char: '寻', text: '问君何处是家乡，万里烟波一雁行' },
-    { char: '家', text: '近乡情更怯，不敢问来人'},
-    { char: '情', text: '此夜曲中闻折柳，何人不起故园情'}
-  ];
-  const p = poems[Math.floor(Math.random() * poems.length)];
-  document.getElementById('welcomeChar').textContent = p.char;
-  document.getElementById('welcomePoem').textContent = p.text;
-  
   const API_URL = '/api/chat';
+  let currentLang = localStorage.getItem('rootlink_lang') || 'en';
+
+  const LANG = {
+    en: {
+      back: '← Back', tagline: 'RootLink · Connecting Overseas Chinese with Their Ancestral Roots',
+      archive: '📋 Root Archive', closeArchive: '✕ Close Archive', online: 'Guide Online',
+      welcomeDesc: 'Tell me anything you know about your ancestral home — even a vague place name, a family story, or a fragment passed down by an elder.',
+      prompt1: 'I am Malaysian Chinese. I only know that my ancestral roots are in Fujian, and I want to find the exact place.',
+      prompt2: 'My grandfather said our family came from Guangdong and speaks Hakka. I want to help him find our ancestral hometown.',
+      prompt3: 'I have an old photograph and the name of an ancestor, but I do not know where to begin.',
+      placeholder: 'Tell me anything you know about your ancestral home…', hint: 'Enter to send · Shift+Enter for a new line',
+      export: '📤 Export', import: '📥 Import', familyInfoTitle: '📋 Collected Family Information', familyInfoEmpty: 'Your family information<br>will appear here as we talk.',
+      nextStepsTitle: '✅ Next Steps', nextStepsEmpty: 'Your personalized action list<br>will appear here.',
+      surname: 'Surname', location: 'Ancestral origin', dialect: 'Dialect', migration: 'Migration',
+      collected: '📋 Collected Information', analysis: '🎯 Ancestral Origin Analysis', guides: '👥 Recommended Guides', nextActions: '💡 Next Steps',
+      regenerate: '↻ Regenerate', requestFailed: 'Request failed', connectionError: 'Connection error: ', processing: 'I received your information and am organizing it…',
+      noExport: 'There is nothing to export yet. Please start a conversation first.', importSuccess: 'Import successful. Your archive has been restored.',
+      importFailed: 'Import failed: ', invalidJSON: 'The file is not a valid JSON object.', invalidArchive: 'This is not a valid RootLink archive file.',
+      resetConfirm: 'Start over? This will clear the current conversation, archive, and action list. Export a backup first if needed.', resetTitle: 'Start over'
+    },
+    zh: {
+      back: '← 返回', tagline: 'RootLink · 打通全球华人的寻根连接网络', archive: '📋 寻根档案', closeArchive: '✕ 关闭档案', online: '向导在线',
+      welcomeDesc: '告诉我你正在寻找的故乡——哪怕只是一个模糊的地名，或是老人留下的只言片语。',
+      prompt1: '我是马来西亚华人，只知道祖籍是福建，想找到更具体的地方', prompt2: '爷爷说我们是广东人，家里说客家话，想帮他完成回乡的心愿', prompt3: '我有一张老照片和一个祖先的名字，不知道从哪里开始寻根',
+      placeholder: '告诉我你知道的关于故乡的任何信息……', hint: 'Enter 发送 · Shift+Enter 换行', export: '📤 导出', import: '📥 导入',
+      familyInfoTitle: '📋 已收集的家族信息', familyInfoEmpty: '开始对话后，<br>信息会自动整理在这里', nextStepsTitle: '✅ 下一步行动', nextStepsEmpty: 'Agent会为你<br>生成可勾选的行动清单',
+      surname: '姓氏', location: '祖籍', dialect: '方言', migration: '迁移', collected: '📋 已收集信息', analysis: '🎯 亲缘地分析', guides: '👥 推荐向导', nextActions: '💡 下一步行动',
+      regenerate: '↻ 重新生成', requestFailed: '请求失败', connectionError: '连接出现问题：', processing: '我收到了你的信息，正在整理中……',
+      noExport: '当前没有可导出的内容（请先开始对话）', importSuccess: '导入成功：档案已恢复', importFailed: '导入失败：', invalidJSON: '文件内容不是合法 JSON 对象', invalidArchive: '不是 RootLink 档案文件（缺少必要字段）',
+      resetConfirm: '确定要重新开始吗？这会清空当前对话、档案和行动清单（建议先导出备份）。', resetTitle: '重新开始'
+    }
+  };
+
+  const poemsZh = [
+    { char: '故乡', text: '少小离家老大回，乡音无改鬓毛催' }, { char: '根', text: '树高千尺，叶落归根' },
+    { char: '乡', text: '举头望明月，低头思故乡' }, { char: '归', text: '露从今夜白，月是故乡明' },
+    { char: '寻', text: '问君何处是家乡，万里烟波一雁行' }
+  ];
+  const poemsEn = [
+    { char: 'ROOTS', text: 'Every family story begins somewhere.' }, { char: 'HOME', text: 'Across generations, the way home remains.' },
+    { char: 'ROOTS', text: 'Follow the clues. Find where your story began.' }, { char: 'HOME', text: 'A name, a dialect, a village — every clue matters.' }
+  ];
+
+  function t(key) { return LANG[currentLang][key] || key; }
+  function updateWelcomePoem() {
+    const list = currentLang === 'zh' ? poemsZh : poemsEn;
+    const p = list[Math.floor(Math.random() * list.length)];
+    document.getElementById('welcomeChar').textContent = p.char;
+    document.getElementById('welcomePoem').textContent = p.text;
+  }
+  function toggleLanguage() {
+    currentLang = currentLang === 'en' ? 'zh' : 'en';
+    localStorage.setItem('rootlink_lang', currentLang);
+    applyLanguage();
+  }
+  function updatePanelButton() {
+    const btn = document.getElementById('panelBtn');
+    if (!btn) return;
+    btn.innerHTML = panelOpen ? t('closeArchive') : `${t('archive')} <span class="badge" id="todoBadge"></span>`;
+    updateBadge();
+  }
+  function applyLanguage() {
+    document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+    document.title = currentLang === 'zh' ? 'RootLink-打通全球华人的寻根连接网络' : 'RootLink · Find Your Ancestral Roots';
+    const langBtn = document.getElementById('langBtn'); if (langBtn) langBtn.textContent = currentLang === 'en' ? '中文' : 'EN';
+    const back = document.getElementById('backLink'); if (back) back.textContent = t('back');
+    const logoSub = document.getElementById('logoSub'); if (logoSub) logoSub.textContent = t('tagline');
+    const status = document.getElementById('statusText'); if (status) status.innerHTML = `<span class="dot"></span>${t('online')}`;
+    const wd = document.getElementById('welcomeDesc'); if (wd) wd.textContent = t('welcomeDesc');
+    const prompts = document.querySelectorAll('.prompt-chip'); if (prompts[0]) prompts[0].textContent=t('prompt1'); if (prompts[1]) prompts[1].textContent=t('prompt2'); if (prompts[2]) prompts[2].textContent=t('prompt3');
+    const input = document.getElementById('input'); if (input) input.placeholder=t('placeholder');
+    const hint = document.getElementById('inputHint'); if (hint) hint.textContent=t('hint');
+    const acts = document.querySelectorAll('.panel-text-btn'); if (acts[0]) {acts[0].innerHTML=t('export'); acts[0].title=currentLang==='en'?'Export':'导出';} if (acts[1]) {acts[1].innerHTML=t('import'); acts[1].title=currentLang==='en'?'Import':'导入';}
+    const hs = document.querySelectorAll('.panel-section-header'); if (hs[0]) hs[0].innerHTML=t('familyInfoTitle'); if (hs[1]) hs[1].innerHTML=t('nextStepsTitle');
+    const reset = document.getElementById('resetBtn'); if(reset){reset.title=t('resetTitle');reset.setAttribute('aria-label',t('resetTitle'));}
+    updateWelcomePoem(); updateInfoPanel(); updateTodoPanel(); updatePanelButton();
+  }
+
+
   let sessionId = 'sess_' + Math.random().toString(36).substr(2,16);
   let isLoading = false, conversationStarted = false, panelOpen = false;
   let todos = [], familyInfo = {};
@@ -317,10 +384,7 @@ async function saveToServer() {
   function togglePanel() {
     panelOpen = !panelOpen;
     document.getElementById('sidePanel').classList.toggle('open', panelOpen);
-    document.getElementById('panelBtn').innerHTML = panelOpen
-      ? '✕ 关闭档案'
-      : '📋 寻根档案 <span class="badge" id="todoBadge"></span>';
-    updateBadge();
+    updatePanelButton();
   }
 
   function updateBadge() {
@@ -370,12 +434,12 @@ async function saveToServer() {
     if (data.user_info) {
       const info = data.user_info;
       const rows = [
-        ['姓氏', info.surname],['祖籍', info.location],['方言', info.dialect],['迁移', info.migration_info],
-      ].filter(([,v]) => v && v !== '未提供' && v !== '未知');
+        [t('surname'), info.surname],[t('location'), info.location],[t('dialect'), info.dialect],[t('migration'), info.migration_info],
+      ].filter(([,v]) => v && !['未提供','未知','Not provided','Unknown'].includes(v));
       if (rows.length) {
         parts.push(`<div class="collapse-block">
           <div class="collapse-header" onclick="toggleCollapse(this)">
-            <span class="collapse-title">📋 已收集信息</span><span class="collapse-arrow">▼</span>
+            <span class="collapse-title">${t('collected')}</span><span class="collapse-arrow">▼</span>
           </div>
           <div class="collapse-body"><div class="info-grid">
             ${rows.map(([l,v])=>`<div class="info-grid-row"><span class="info-grid-label">${escapeHTML(l)}</span><span class="info-grid-value">${escapeHTML(v)}</span></div>`).join('')}
@@ -392,7 +456,7 @@ async function saveToServer() {
     if (data.analysis) {
       parts.push(`<div class="collapse-block">
         <div class="collapse-header open" onclick="toggleCollapse(this)">
-          <span class="collapse-title">🎯 亲缘地分析</span><span class="collapse-arrow">▼</span>
+          <span class="collapse-title">${t('analysis')}</span><span class="collapse-arrow">▼</span>
         </div>
         <div class="collapse-body open"><div class="analysis-text">${escapeHTML(data.analysis).replace(/\n/g,'<br>')}</div></div>
       </div>`);
@@ -400,15 +464,15 @@ async function saveToServer() {
     if (data.intermediaries && data.intermediaries.length > 0) {
       const guideCards = data.intermediaries.map(g => `
         <div class="guide-card">
-          <div class="guide-header"><span class="guide-name">${escapeHTML(g.name)}</span><span class="guide-score">${escapeHTML(String(g.match_score))}分</span></div>
+          <div class="guide-header"><span class="guide-name">${escapeHTML(g.name)}</span><span class="guide-score">${escapeHTML(String(g.match_score))}${currentLang === 'zh' ? '分' : ''}</span></div>
           <div class="guide-location">📍 ${escapeHTML(g.location)}</div>
           ${g.notes ? `<div class="guide-reason">${escapeHTML(g.notes)}</div>` : ''}
           ${g.contact_info ? `<div class="guide-contact">✉️ ${escapeHTML(g.contact_info)}</div>` : ''}
-          ${g.success_cases && g.success_cases.length ? `<div class="guide-cases">${g.success_cases.map(c=>`✓ ${escapeHTML(c.description)}（${escapeHTML(String(c.year))}）`).join('<br>')}</div>` : ''}
+          ${g.success_cases && g.success_cases.length ? `<div class="guide-cases">${g.success_cases.map(c=>`✓ ${escapeHTML(c.description)}${currentLang === 'zh' ? '（' : ' ('}${escapeHTML(String(c.year))}${currentLang === 'zh' ? '）' : ')'}`).join('<br>')}</div>` : ''}
         </div>`).join('');
       parts.push(`<div class="collapse-block">
         <div class="collapse-header open" onclick="toggleCollapse(this)">
-          <span class="collapse-title">👥 推荐向导（${data.intermediaries.length}位）</span><span class="collapse-arrow">▼</span>
+          <span class="collapse-title">${t('guides')} (${data.intermediaries.length})</span><span class="collapse-arrow">▼</span>
         </div>
         <div class="collapse-body open">${guideCards}</div></div>`);
     }
@@ -443,7 +507,7 @@ async function saveToServer() {
         }).join('');
         parts.push(`<div class="collapse-block">
           <div class="collapse-header open" onclick="toggleCollapse(this)">
-            <span class="collapse-title">💡 下一步行动</span><span class="collapse-arrow">▼</span>
+            <span class="collapse-title">${t('nextActions')}</span><span class="collapse-arrow">▼</span>
           </div>
           <div class="collapse-body open" style="font-size:.8rem;line-height:1.8;">${todoLines}</div>
         </div>`);
@@ -513,9 +577,9 @@ async function saveToServer() {
 
     // 优先用结构化 user_info 字段渲染
     const structuredRows = [
-      ['姓氏', familyInfo['姓氏']], ['祖籍', familyInfo['祖籍']],
-      ['方言', familyInfo['方言']], ['迁移', familyInfo['迁移']]
-    ].filter(([, v]) => v && v !== '未提供' && v !== '未知');
+      [t('surname'), familyInfo['姓氏']], [t('location'), familyInfo['祖籍']],
+      [t('dialect'), familyInfo['方言']], [t('migration'), familyInfo['迁移']]
+    ].filter(([, v]) => v && !['未提供','未知','Not provided','Unknown'].includes(v));
 
     if (structuredRows.length > 0) {
       const html = structuredRows.map(([l, v]) =>
@@ -537,7 +601,7 @@ async function saveToServer() {
       }).join('');
       infoPanel.innerHTML = `<div style="font-size:.78rem;line-height:1.9;">${html}</div>`;
     } else {
-      infoPanel.innerHTML = `<div class="empty-panel">开始对话后，<br>信息会自动整理在这里</div>`;
+      infoPanel.innerHTML = `<div class="empty-panel">${t('familyInfoEmpty')}</div>`;
     }
   }
 
@@ -553,7 +617,7 @@ async function saveToServer() {
           <button onclick="deleteTodo(${i})" style="background:none;border:none;cursor:pointer;color:rgba(26,18,8,.2);font-size:.8rem;padding:1px 2px;flex-shrink:0;line-height:1;transition:color .15s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(26,18,8,.2)'">🗑</button>
         </div>`).join('')}</div>`;
     } else {
-      todoPanel.innerHTML = `<div class="empty-panel">Agent会为你<br>生成可勾选的行动清单</div>`;
+      todoPanel.innerHTML = `<div class="empty-panel">${t('nextStepsEmpty')}</div>`;
     }
   }
 
@@ -575,14 +639,14 @@ async function saveToServer() {
     const div = document.createElement('div');
     div.className = `message ${role}`;
     const bubbleContent = isHTML ? content : renderPlainText(content);
-    div.innerHTML = `<div class="avatar ${role}">${role==='agent'?'向':'我'}</div><div class="bubble">${bubbleContent}</div>`;
+    div.innerHTML = `<div class="avatar ${role}">${role==='agent'?(currentLang==='zh'?'向':'AI'):(currentLang==='zh'?'我':'ME')}</div><div class="bubble">${bubbleContent}</div>`;
     wrap.appendChild(div);
 
     // agent 消息加重试按钮
     if (role === 'agent') {
       const actions = document.createElement('div');
       actions.className = 'message-actions';
-      actions.innerHTML = `<button class="retry-btn" onclick="retryMessage(this)" title="重新生成">↻ 重新生成</button>`;
+      actions.innerHTML = `<button class="retry-btn" onclick="retryMessage(this)" title="${currentLang === 'en' ? 'Regenerate' : '重新生成'}">${t('regenerate')}</button>`;
       wrap.appendChild(actions);
     }
 
@@ -630,9 +694,9 @@ async function saveToServer() {
       const response = await fetch(API_URL, {
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({text, session_id:sessionId})
+        body:JSON.stringify({text, session_id:sessionId, lang:currentLang})
       });
-      if (!response.ok) throw new Error(`请求失败 (${response.status})`);
+      if (!response.ok) throw new Error(`${t('requestFailed')} (${response.status})`);
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
@@ -706,7 +770,7 @@ async function saveToServer() {
       hideTyping();
 
       if (!fullText) {
-        addMessage('agent','我收到了你的信息，正在整理中……');
+        addMessage('agent', t('processing'));
       } else {
         let cleanText = fullText.trim();
         if (cleanText.startsWith('```json')) cleanText = cleanText.slice(7);
@@ -727,7 +791,7 @@ async function saveToServer() {
 
     } catch(err) {
       hideTyping();
-      showError('连接出现问题：'+err.message);
+      showError(t('connectionError') + err.message);
     } finally {
       isLoading=false;
       document.getElementById('sendBtn').disabled=false;
@@ -777,7 +841,7 @@ async function saveToServer() {
     const hasTodos = (todos && todos.length > 0);
     const hasConversation = document.querySelectorAll('#messages .message').length > 0;
     if (!hasInfo && !hasTodos && !hasConversation) {
-      showError('当前没有可导出的内容（请先开始对话）');
+      showError(t('noExport'));
       return;
     }
     const payload = getArchivePayload();
@@ -785,7 +849,7 @@ async function saveToServer() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     const ts = new Date();
-    const filename = `RootLink_寻根档案_${ts.getFullYear()}-${String(ts.getMonth()+1).padStart(2,'0')}-${String(ts.getDate()).padStart(2,'0')}.json`;
+    const filename = `RootLink_${currentLang === 'en' ? 'Archive' : '寻根档案'}_${ts.getFullYear()}-${String(ts.getMonth()+1).padStart(2,'0')}-${String(ts.getDate()).padStart(2,'0')}.json`;
     a.href = url; a.download = filename;
     document.body.appendChild(a); a.click(); a.remove();
     URL.revokeObjectURL(url);
@@ -805,9 +869,9 @@ async function saveToServer() {
     reader.onload = () => {
       try {
         const data = JSON.parse(reader.result);
-        if (!data || typeof data !== 'object') throw new Error('文件内容不是合法 JSON 对象');
+        if (!data || typeof data !== 'object') throw new Error(t('invalidJSON'));
         if (!('familyInfo' in data) && !('todos' in data) && !('conversation' in data)) {
-          throw new Error('不是 RootLink 档案文件（缺少必要字段）');
+          throw new Error(t('invalidArchive'));
         }
         familyInfo = data.familyInfo || {};
         todos = Array.isArray(data.todos) ? data.todos.map(t => ({ text: t.text, done: !!t.done })) : [];
@@ -821,21 +885,21 @@ async function saveToServer() {
           data.conversation.forEach(item => {
             const div = document.createElement('div');
             div.className = `message ${item.role === 'user' ? 'user' : 'agent'}`;
-            div.innerHTML = `<div class="avatar ${item.role === 'user' ? 'user' : 'agent'}">${item.role === 'user' ? '我' : '向'}</div><div class="bubble">${item.html || ''}</div>`;
+            div.innerHTML = `<div class="avatar ${item.role === 'user' ? 'user' : 'agent'}">${item.role === 'user' ? (currentLang==='zh'?'我':'ME') : (currentLang==='zh'?'向':'AI')}</div><div class="bubble">${item.html || ''}</div>`;
             messages.appendChild(div);
           });
           messages.scrollTop = messages.scrollHeight;
         }
-        showError('导入成功：档案已恢复');
+        showError(t('importSuccess'));
       } catch (err) {
-        showError('导入失败：' + err.message);
+        showError(t('importFailed') + err.message);
       }
     };
     reader.readAsText(file, 'utf-8');
   });
 
   function resetConversation() {
-    const ok = confirm('确定要重新开始吗？这会清空当前对话、档案和行动清单（建议先导出备份）。');
+    const ok = confirm(t('resetConfirm'));
     if (!ok) return;
     const messages = document.getElementById('messages');
     messages.innerHTML = ''; messages.classList.remove('visible');
@@ -845,12 +909,14 @@ async function saveToServer() {
     updateInfoPanel(); updateTodoPanel(); updateBadge();
     panelOpen = false;
     document.getElementById('sidePanel').classList.remove('open');
-    document.getElementById('panelBtn').innerHTML = '📋 寻根档案 <span class="badge" id="todoBadge"></span>';
+    updatePanelButton();
     sessionId = 'sess_' + Math.random().toString(36).substr(2,16);
     Object.keys(sessionStorage).forEach(k => {
       if (k.startsWith('rootlink_prefill_sent_')) sessionStorage.removeItem(k);
     });
   }
+
+  applyLanguage();
 </script>
 </body>
 </html>

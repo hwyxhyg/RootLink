@@ -272,6 +272,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--paper);color:var(--i
 <nav class="topnav"><div class="nav-inner">
 <a href="#" class="nav-logo" onclick="showSection('home')"><img src="images/image_001.png" alt="RootLink"></a>
 <div class="nav-links">
+<button id="langBtn" onclick="toggleLanguage()" style="background:transparent;border:1px solid rgba(0,0,0,.12);border-radius:8px;padding:6px 10px;cursor:pointer;font-family:inherit;color:#7a7168;white-space:nowrap;">中文</button>
 <a href="#" class="active" data-section="home" onclick="showSection('home')"><span class="n1">首页</span></a>
 <a href="#" data-section="explore" onclick="showSection('explore')"><span class="n1">寻根</span><span class="n2">探索</span></a>
 <a href="#" data-section="agent" onclick="showSection('agent')"><span class="n1">寻根</span><span class="n2">助手</span></a>
@@ -659,6 +660,290 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--paper);color:var(--i
 <p style="margin-top:6px;"><a href="https://getrootlink.com/agent.html" target="_blank">Demo</a> · AI-powered Ancestral Pathway Platform for Overseas Chinese</p>
 </div></div>
 <script>
+let currentLang = localStorage.getItem('rootlink_lang') || 'en';
+function toggleLanguage(){
+  currentLang = currentLang === 'en' ? 'zh' : 'en';
+  localStorage.setItem('rootlink_lang', currentLang);
+  location.reload();
+}
+function applyHomeLanguage(){
+  document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+  const langBtn=document.getElementById('langBtn'); if(langBtn) langBtn.textContent=currentLang==='en'?'中文':'EN';
+  if(currentLang==='zh') return;
+  document.title='RootLink · Find Your Ancestral Roots';
+  const nav=document.querySelectorAll('.nav-links a');
+  const navLabels=['Home','Explore','Assistant','Community','Contact','Profile'];
+  for(let i=0;i<6;i++){ if(nav[i]) nav[i].innerHTML=`<span class="n1">${navLabels[i]}</span>`; }
+  if(nav[6]) nav[6].innerHTML='<span class="n1">Start</span><span class="n2">Root Search</span>';
+  const badge=document.querySelector('.hero-badge'); if(badge) badge.innerHTML='<span class="dot"></span> AI Ancestry Assistant · Now Live';
+  const title=document.querySelector('.hero-title'); if(title) title.innerHTML='Find Your<br><span class="hl">Ancestral Connection</span>';
+  const desc=document.querySelector('.hero-desc'); if(desc) desc.textContent='Helping 60M+ overseas Chinese turn fragmented family clues into a path back to their ancestral roots — powered by AI guidance and trusted human connections.';
+  const heroLinks=document.querySelectorAll('.hero-text a'); if(heroLinks[0]) heroLinks[0].childNodes[0].textContent='AI Root Assistant '; if(heroLinks[1]) heroLinks[1].textContent='Explore Root Stories';
+  const qc=document.querySelector('.qc-title'); if(qc) qc.textContent='🌱 Start with What You Know';
+  const rows=document.querySelectorAll('.fill-row');
+  if(rows[0]) rows[0].innerHTML='My surname is <span class="fill-blank" contenteditable="true" data-placeholder="surname"></span>, and my ancestral roots may be in <span class="fill-blank" contenteditable="true" data-placeholder="province / region"></span>';
+  if(rows[1]) rows[1].innerHTML='My family speaks <span class="fill-blank" contenteditable="true" data-placeholder="dialect"></span>, and I am approximately a <span class="fill-blank" contenteditable="true" data-placeholder="generation"></span> generation overseas Chinese';
+  if(rows[2]) rows[2].innerHTML='I also know <span class="fill-blank" contenteditable="true" data-placeholder="village / ancestor / other clue" style="min-width:200px"></span>';
+  const start=document.querySelector('.hero-btn'); if(start) start.childNodes[0].textContent='Start Your Root Search ';
+  const tag=document.querySelector('#sec-home .section-tag'); if(tag) tag.textContent='CORE FEATURES';
+  const head=document.querySelector('#sec-home .section-heading'); if(head) head.textContent='Three Ways to Explore Your Roots';
+  const cards=document.querySelectorAll('#sec-home .features-grid > div');
+  if(cards[0]){cards[0].querySelector('h3').textContent='AI Root Assistant';cards[0].querySelector('p').textContent='Guided conversations that turn fragmented clues into a practical research path.';}
+  if(cards[1]){cards[1].querySelector('h3').textContent='Root Explorer';cards[1].querySelector('p').textContent='Explore successful cases, surname distributions, and common ancestry research paths.';}
+  if(cards[2]){cards[2].querySelector('h3').textContent='Root Community';cards[2].querySelector('p').textContent='Connect with hometown communities, verified intermediaries, and overseas Chinese associations.';}
+  const explore=document.querySelector('#sec-explore');
+  if(explore){const tg=explore.querySelector('.section-tag'),hd=explore.querySelector('.section-heading'),sub=explore.querySelector('.section-sub');if(tg)tg.textContent='ROOT STORIES';if(hd)hd.textContent='Stories of Finding the Way Home';if(sub)sub.textContent='Every successful search offers clues for the next person looking for their roots.';}
+  const search=document.getElementById('storySearch'); if(search) search.placeholder='Search stories, people, or places…';
+  const em=document.getElementById('storiesEmpty'); if(em) em.textContent='No matching stories found.';
+
+  // Country filters: English first, Chinese in parentheses for orientation.
+  const countryLabels={
+    '全部':'All',
+    '马来西亚':'Malaysia (马来西亚)',
+    '台湾':'Taiwan (台湾)',
+    '印尼':'Indonesia (印尼)',
+    '泰国':'Thailand (泰国)',
+    '美国':'United States (美国)',
+    '澳大利亚':'Australia (澳大利亚)',
+    '新加坡':'Singapore (新加坡)',
+    '菲律宾':'Philippines (菲律宾)',
+    '加拿大':'Canada (加拿大)'
+  };
+  document.querySelectorAll('.filter-tab').forEach(btn=>{
+    const c=btn.getAttribute('data-country');
+    if(countryLabels[c]) btn.textContent=countryLabels[c];
+  });
+
+  // English story copy. Proper nouns keep the original Chinese in parentheses.
+  const storyTranslations=[
+    {
+      title:'Lin Yanchen (林彦辰): Three Siblings Make It to Peking University (北京大学), Fulfilling Their Grandfather’s Wish',
+      tag:'🏛 Taiwan Federation Assistance (台联协助)',
+      excerpt:'While interning in Pingtan, Fujian (福建平潭), Taiwan (台湾) youth Lin Yanchen (林彦辰) used his family genealogy to trace his roots through the All-China Federation of Taiwan Compatriots (全国台联), the Fujian Provincial Federation (福建省台联), and the Putian City Federation (莆田市台联), eventually reconnecting with family in Putian (莆田).',
+      route:'Taiwan (台湾) → Federation assistance (台联协助) → Putian, Fujian (福建莆田) → Success',
+      link:'Read more →'
+    },
+    {
+      title:'Huang Jimi (黄吉米): A Month in Siyang (泗阳) to Fulfill His Grandfather’s Dream',
+      tag:'🎬 Video Diary (视频记录)',
+      excerpt:'Huang Jimi (黄吉米) traveled alone to Siyang, Jiangsu (江苏泗阳), where he lived for a month and documented his root-seeking journey in eight Douyin (抖音) videos for his grandfather in his nineties.',
+      route:'Taiwan (台湾) → Douyin diary (抖音记录) → Siyang, Jiangsu (江苏泗阳) → Success',
+      link:'Watch video →'
+    },
+    {
+      title:'The Hong Sisters (洪氏姐妹): Letters Were the Crucial Starting Point',
+      tag:'💌 Letters & Family Clues (书信寻根)',
+      excerpt:'Two Malaysian Chinese sisters used old letters, photographs, visits by fellow villagers, and local acquaintance networks to return to their ancestral home in Nan’an, Fujian (福建南安).',
+      route:'Malaysia (马来西亚) → Letter clues (书信线索) → Nan’an, Fujian (福建南安) → Success'
+    },
+    {
+      title:'Bangkok (曼谷) Deputy Mayor Fulfills a Root-Seeking Dream in Chenghai (澄海)',
+      tag:'🏛 Official Assistance (官方协助)',
+      excerpt:'The deputy mayor of Bangkok (曼谷), Thailand (泰国), traveled to Chenghai, Guangdong (广东澄海) to trace family roots, with official channels helping accelerate the search.',
+      route:'Thailand (泰国) → Official assistance (官方协助) → Chenghai, Guangdong (广东澄海) → Success',
+      link:'Read more →'
+    },
+    {
+      title:'94-Year-Old Thai Chinese Chen Huidiao (陈惠刁): Returning Home After 86 Years',
+      tag:'👴 86 Years Away (阔别86载)',
+      excerpt:'After 86 years away, Chen Huidiao (陈惠刁), a 94-year-old Thai Chinese elder, finally returned to Jieyang, Guangdong (广东揭阳), fulfilling a lifelong wish.',
+      route:'Thailand (泰国) → 86 years of longing → Jieyang, Guangdong (广东揭阳) → Homecoming',
+      link:'Read more →'
+    },
+    {
+      title:'Thai Chinese Youth Trace Cultural Roots Along the Silk Road (丝绸之路)',
+      tag:'🧵 Cultural Roots (文化寻根)',
+      excerpt:'Thai Chinese youth followed the Silk Road (丝绸之路) to explore the origins of Chinese civilization and rebuild cultural connections with their ancestral homeland.',
+      route:'Thailand (泰国) → Root-seeking camp (文化寻根营) → Chinese civilization (中华文明) → Cultural identity',
+      link:'Read more →'
+    },
+    {
+      title:'Indonesian Chinese Gen-Z Girl Finds Her Roots After Searching More Than 40 Genealogies',
+      tag:'📚 40+ Genealogies (查40余本族谱)',
+      excerpt:'A young Indonesian Chinese woman searched through more than 40 family genealogies before finally identifying her ancestral hometown and completing a multigenerational family wish.',
+      route:'Indonesia (印尼) → 40+ genealogies (族谱) → Ancestral hometown (祖籍地) → Success',
+      link:'Read more →'
+    },
+    {
+      title:'Across a Century: Indonesian Chinese Family Reconnects with Jiaomei, Zhangzhou (漳州角美)',
+      tag:'🌺 Century-Long Homecoming (百年圆梦)',
+      excerpt:'After more than a century, an Indonesian Chinese family finally traced its ancestral roots to Jiaomei, Zhangzhou, Fujian (福建漳州角美).',
+      route:'Indonesia (印尼) → A century of inheritance → Jiaomei, Zhangzhou, Fujian (福建漳州角美) → Success',
+      link:'Read more →'
+    },
+    {
+      title:'After Returning to Quanzhou (泉州), an Indonesian Chinese Family Meeting Reconnects Three Generations',
+      tag:'👨‍👩‍👧 Three Generations (三代亲情)',
+      excerpt:'An Indonesian Chinese family returned to Quanzhou, Fujian (福建泉州), where a family gathering helped reconnect three generations.',
+      route:'Indonesia (印尼) → Quanzhou root search (返泉寻根) → Family meeting (家族会议) → Three generations reunited',
+      link:'Read more →'
+    },
+    {
+      title:'A Long Journey Home: Indonesian Chinese Family Finally Reunites',
+      tag:'🛤 Long-Distance Search (千里寻亲)',
+      excerpt:'An Indonesian Chinese family traveled a long distance back to China, overcoming difficulties before finally reuniting with long-separated relatives.',
+      route:'Indonesia (印尼) → Long-distance search (千里寻访) → Ancestral hometown (祖籍地) → Reunion',
+      link:'Read more →'
+    },
+    {
+      title:'Where Did We Come From? 13 Chinese Americans Return to Guangdong (广东) Together',
+      tag:'🤝 Group Root Search (集体寻根)',
+      excerpt:'Thirteen Chinese Americans from across the United States (美国), including participants up to age 80, traveled together to Guangdong (广东) to reconnect with family roots stretching back more than a century.',
+      route:'United States (美国) → Group journey (集体组团) → Guangdong (广东) → Success',
+      link:'Read more →'
+    },
+    {
+      title:'Chinese American Root-Seeking Advocate Zheng Guohe (郑国和)',
+      tag:'🌟 Root-Seeking Advocate (寻根推动者)',
+      excerpt:'Zheng Guohe (郑国和), a Chinese American, spent decades promoting root-seeking programs for younger generations and helping overseas Chinese reconnect with their ancestral homeland.',
+      route:'United States (美国) → Root-seeking advocacy (寻根倡导) → Kaiping, Guangdong (广东开平) → Continuing the mission',
+      link:'Read more →'
+    },
+    {
+      title:'Chinese American Youth Trace Their Roots in Kaiping (开平)',
+      tag:'🏯 Diaolou Root Search (碉楼寻根)',
+      excerpt:'Chinese American youth visited Kaiping, Guangdong (广东开平), exploring ancestral traces among historic diaolou villages and strengthening their connection to family heritage.',
+      route:'United States (美国) → Youth visit → Kaiping, Guangdong (广东开平) → Cultural identity',
+      link:'Read more →'
+    },
+    {
+      title:'Young Malaysian Chinese Travels to China to Fulfill an Ancestral Wish',
+      tag:'💛 Fulfilling a Family Wish (了却心愿)',
+      excerpt:'A young Malaysian Chinese traveler journeyed to China to fulfill a long-held root-seeking wish passed down through generations.',
+      route:'Malaysia (马来西亚) → Journey to China (千里赴华) → Ancestral hometown (祖籍地) → Success',
+      link:'Read more →'
+    },
+    {
+      title:'Nine Siblings Trace Their Roots Together and Create a Malaysian Family Genealogy',
+      tag:'👨‍👩‍👧 Nine Siblings (九姐弟同行)',
+      excerpt:'Nine Malaysian Chinese siblings returned to their ancestral hometown to fulfill their father’s wish and compiled a Malaysian edition of their family genealogy.',
+      route:'Malaysia (马来西亚) → Fulfilling father’s wish (代父圆愿) → Ancestral hometown (祖籍地) → Family genealogy (族谱)',
+      link:'Read more →'
+    },
+    {
+      title:'Australian Chinese Youth Return Home: “No Matter How Far We Go, Our Roots Are Here”',
+      tag:'🦘 Australian Chinese Youth (澳洲青年)',
+      excerpt:'Young Australian Chinese participants returned to their ancestral hometown and reflected on the enduring connection between migration, family, and home.',
+      route:'Australia (澳大利亚) → Root-seeking journey (返乡寻根) → Ancestral hometown (祖籍地) → Success',
+      link:'Read more →'
+    },
+    {
+      title:'Australia’s First Female Chinese State MP Returns to Pingshan, Shenzhen (深圳坪山)',
+      tag:'🏛 MP Root Search (议员寻根)',
+      excerpt:'Australia’s first female state parliamentarian of Chinese heritage made a special trip to Pingshan, Shenzhen (深圳坪山) to visit her ancestral hometown and trace her family history.',
+      route:'Australia (澳大利亚) → Pingshan, Shenzhen (深圳坪山) → Ancestral hometown (祖籍地) → Success',
+      link:'Read more →'
+    },
+    {
+      title:'Singaporean Chinese Return to Enping (恩平): The Call of the Homeland',
+      tag:'🌿 Return to the Homeland (故土归情)',
+      excerpt:'Chinese Singaporeans traveled to Enping, Guangdong (广东恩平) to trace the footsteps of their ancestors and reconnect with their family homeland.',
+      route:'Singapore (新加坡) → Enping root search (恩平寻根) → Enping, Guangdong (广东恩平) → Success',
+      link:'Read more →'
+    },
+    {
+      title:'Four Generations of a Filipino Chinese Family Help Reunite 60+ China–Philippines Families',
+      tag:'🤝 China–Philippines Reunions (中菲团聚)',
+      excerpt:'Across four generations, a Filipino Chinese family spent more than 20 years helping over 60 families across China and the Philippines (菲律宾) reconnect.',
+      route:'Philippines (菲律宾) → Four generations (四代传承) → 60+ families → Reunion',
+      link:'Read more →'
+    },
+    {
+      title:'Roots in Fushi Village (浮石村): A Canadian Chinese Family Finds Its Way Home',
+      tag:'🍁 Canadian Homecoming (加拿大归根)',
+      excerpt:'A Chinese Canadian family eventually returned to Fushi Village (浮石村), their ancestral hometown, after a difficult search spanning generations.',
+      route:'Canada (加拿大) → Fushi Village (浮石村) → Ancestral hometown (祖籍地) → Homecoming',
+      link:'Read more →'
+    },
+    {
+      title:'Across a Century, Finally Home',
+      tag:'🕰 A Century of Waiting (百年等待)',
+      excerpt:'A Malaysian Chinese elder’s root-seeking story spans a century before the family finally reconnects with relatives in their ancestral homeland in China (中国).',
+      route:'Malaysia (马来西亚) → China (中国) → Successful homecoming',
+      link:'Read more →'
+    },
+    {
+      title:'“Bringing My Grandparents Home Is My Wish”: A Malaysian Family Reunites in Nan’an (南安)',
+      tag:'🌏 Multi-Country Reunion (多国团聚)',
+      excerpt:'Family members living across Malaysia (马来西亚), Singapore (新加坡), and other countries reunited and returned together to Nan’an, Fujian (福建南安) to reconnect with relatives.',
+      route:'Malaysia (马来西亚) + multiple countries → Nan’an, Fujian (福建南安) → Success',
+      link:'Read more →'
+    },
+    {
+      title:'Zheng Liuyue (郑六月): Following Her Ancestors’ Route Back Home',
+      tag:'🛥 Reverse Migration Route (逆行航线)',
+      excerpt:'Malaysian Chinese host and entertainer Zheng Liuyue (郑六月) retraced the maritime route once taken by her ancestors to Southeast Asia, traveling it in reverse to seek her roots.',
+      route:'Malaysia (马来西亚) → Ancestral migration route (祖先航线) → Root search (寻根)',
+      link:'Read more →'
+    },
+    {
+      title:'Taiwanese Actor Dylan Kuo (郭品超) Traces His Roots in Shandong (山东)',
+      tag:'🎭 Celebrity Root Search (艺人寻根)',
+      excerpt:'Taiwanese actor Dylan Kuo (郭品超) traveled to Shandong (山东) to trace his roots, becoming emotional as he reflected on blood ties and family heritage.',
+      route:'Taiwan (台湾) → Shandong (山东) → Successful root search',
+      link:'Read more →'
+    }
+  ];
+  document.querySelectorAll('.story-card').forEach((card,i)=>{
+    const tr=storyTranslations[i];
+    if(!tr) return;
+    const titleEl=card.querySelector('.story-title');
+    if(titleEl){ card.dataset.originalTitle=titleEl.textContent.trim(); titleEl.textContent=tr.title; }
+    const tagEl=card.querySelector('.story-tag'); if(tagEl) tagEl.textContent=tr.tag;
+    const excerptEl=card.querySelector('.story-excerpt'); if(excerptEl) excerptEl.textContent=tr.excerpt;
+    const routeEl=card.querySelector('.story-route'); if(routeEl) routeEl.textContent=tr.route;
+    const linkEl=card.querySelector('.story-link'); if(linkEl && tr.link) linkEl.textContent=tr.link;
+  });
+
+  // Surname visualization labels: Romanization first, Chinese surname in parentheses.
+  const surnameRomanization={
+    '陈':'Chen','林':'Lin','黄':'Huang','李':'Li','张':'Zhang','王':'Wang','洪':'Hong','郑':'Zheng','刘':'Liu','杨':'Yang','赵':'Zhao','吴':'Wu','周':'Zhou','徐':'Xu','孙':'Sun','马':'Ma','朱':'Zhu','胡':'Hu','郭':'Guo','何':'He','高':'Gao','罗':'Luo','梁':'Liang','谢':'Xie','宋':'Song','唐':'Tang','许':'Xu','韩':'Han','邓':'Deng','冯':'Feng'
+  };
+  const placePairs=[
+    ['福建','Fujian (福建)'],['广东','Guangdong (广东)'],['浙江','Zhejiang (浙江)'],['广西','Guangxi (广西)'],['河南','Henan (河南)'],['山东','Shandong (山东)'],['四川','Sichuan (四川)'],['贵州','Guizhou (贵州)'],['云南','Yunnan (云南)'],['河北','Hebei (河北)'],['湖南','Hunan (湖南)'],['江苏','Jiangsu (江苏)'],['东北','Northeast China (东北)'],['甘肃','Gansu (甘肃)'],['宁夏','Ningxia (宁夏)'],['青海','Qinghai (青海)'],['安徽','Anhui (安徽)'],['江西','Jiangxi (江西)'],['台湾','Taiwan (台湾)'],['华东','East China (华东)'],['华南','South China (华南)'],['西南','Southwest China (西南)'],['西北','Northwest China (西北)'],['长江流域','Yangtze River region (长江流域)'],['江浙闽粤','Jiangsu–Zhejiang–Fujian–Guangdong (江浙闽粤)'],['闽南','Southern Fujian / Minnan (闽南)'],['岭南','Lingnan (岭南)']
+  ];
+  Object.keys(surnameDB).forEach(ch=>{
+    const d=surnameDB[ch];
+    if(!d) return;
+    d.title=`${surnameRomanization[ch]||ch} (${ch}) Surname Distribution`;
+    let detail=d.detail;
+    placePairs.forEach(([cn,en])=>{ detail=detail.split(cn).join(en); });
+    detail=detail
+      .replace(/主要集中于/g,'Mainly concentrated in ')
+      .replace(/集中于/g,'Concentrated in ')
+      .replace(/高度集中于/g,'Highly concentrated in ')
+      .replace(/全国第一大姓/g,'China’s most common surname')
+      .replace(/全国第二大姓/g,'China’s second most common surname')
+      .replace(/全国第四大姓/g,'China’s fourth most common surname')
+      .replace(/全国广泛分布/g,'Widely distributed across China')
+      .replace(/北方偏多/g,'more common in northern China')
+      .replace(/北方分布更密集/g,'more densely distributed in northern China')
+      .replace(/分布不集中/g,'Broadly distributed')
+      .replace(/典型北方大姓/g,'a major northern Chinese surname')
+      .replace(/典型闽南姓氏/g,'a typical Southern Fujian / Minnan (闽南) surname')
+      .replace(/闽南侨乡常见姓/g,'common in overseas-Chinese hometowns of Southern Fujian / Minnan (闽南)')
+      .replace(/东南沿海高频/g,'common along China’s southeast coast')
+      .replace(/西南地区高频/g,'common in Southwest China (西南)')
+      .replace(/西北地区高频/g,'common in Northwest China (西北)')
+      .replace(/南方偏多/g,'more common in southern China')
+      .replace(/北方为主/g,'mainly northern China')
+      .replace(/南方为主/g,'mainly southern China')
+      .replace(/华东为主/g,'mainly East China (华东)')
+      .replace(/南北分布/g,'distributed across both northern and southern China')
+      .replace(/全国占比约/g,'Approx. share nationwide: ')
+      .replace(/占比约/g,'Approx. share nationwide: ')
+      .replace(/约 ([0-9,.]+) 万人/g,'about $1 ten-thousand people');
+    d.detail=detail.replace(/ · /g,' · ');
+  });
+
+  const countText=document.querySelector('.stories-count');
+  if(countText) countText.innerHTML='Showing <span id="storyCount">'+(document.getElementById('storyCount')?.textContent||'20')+'</span> stories';
+
+  const currentSurname=document.getElementById('surname-input')?.value.trim() || '陈';
+  setSurname(currentSurname);
+
+  const footer=document.querySelector('.footer p'); if(footer) footer.textContent='© 2026 RootLink · Connecting Overseas Chinese with Their Ancestral Roots';
+}
 function showSection(name){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('sec-'+name).classList.add('active');
@@ -681,9 +966,9 @@ _sb.auth.getSession().then(({ data: { session } }) => {
 // 发送验证码
 async function sendOtp() {
   const email = document.getElementById('email-input').value.trim();
-  if (!email || !email.includes('@')) { alert('请输入有效的邮箱地址'); return; }
+  if (!email || !email.includes('@')) { alert(currentLang==='en'?'Please enter a valid email address.':'请输入有效的邮箱地址'); return; }
   const btn = event.target;
-  btn.textContent = '发送中…'; btn.disabled = true;
+  btn.textContent = currentLang==='en'?'Sending…':'发送中…'; btn.disabled = true;
   const { error } = await _sb.auth.signInWithOtp({ 
   email,
   options: {
@@ -691,10 +976,10 @@ async function sendOtp() {
   }
 });
   if (error) {
-    alert('发送失败：' + error.message);
-    btn.textContent = '发送验证码'; btn.disabled = false;
+    alert((currentLang==='en'?'Failed to send: ':'发送失败：') + error.message);
+    btn.textContent = currentLang==='en'?'Send code':'发送验证码'; btn.disabled = false;
   } else {
-    document.getElementById('otp-hint').textContent = '邮件已发送至 ' + email + '。首次注册请点击邮件中的确认链接，之后登录将直接发送验证码。';
+    document.getElementById('otp-hint').textContent = currentLang==='en' ? `Email sent to ${email}. First-time users should click the confirmation link in the email; later logins will receive a verification code directly.` : '邮件已发送至 ' + email + '。首次注册请点击邮件中的确认链接，之后登录将直接发送验证码。';
     document.getElementById('step-email').style.display = 'none';
     document.getElementById('step-otp').style.display = 'block';
   }
@@ -704,9 +989,9 @@ async function sendOtp() {
 async function verifyOtp() {
   const email = document.getElementById('email-input').value.trim();
   const otp = document.getElementById('otp-input').value.trim();
-  if (!otp) { alert('请输入验证码'); return; }
+  if (!otp) { alert(currentLang==='en'?'Please enter the verification code.':'请输入验证码'); return; }
   const btn = event.target;
-  btn.textContent = '验证中…'; btn.disabled = true;
+  btn.textContent = currentLang==='en'?'Verifying…':'验证中…'; btn.disabled = true;
   const { data, error } = await _sb.auth.verifyOtp({ 
     email, 
     token: otp, 
@@ -719,8 +1004,8 @@ if (data?.session) {
     });
   }
   if (error) {
-    alert('验证码错误或已过期，请重试');
-    btn.textContent = '确认登录'; btn.disabled = false;
+    alert(currentLang==='en'?'The code is incorrect or expired. Please try again.':'验证码错误或已过期，请重试');
+    btn.textContent = currentLang==='en'?'Sign in':'确认登录'; btn.disabled = false;
   } else {
     _showProfile(data.user.email);
   }
@@ -730,7 +1015,7 @@ if (data?.session) {
 async function resendOtp() {
   const email = document.getElementById('email-input').value.trim();
   await _sb.auth.signInWithOtp({ email });
-  alert('验证码已重新发送，请查收');
+  alert(currentLang==='en'?'The verification code has been resent.':'验证码已重新发送，请查收');
 }
 
 // 返回修改邮箱
@@ -768,15 +1053,23 @@ function startRootSearch(e){
   var generation=blanks[3]?blanks[3].textContent.trim():'';
   var extra=blanks[4]?blanks[4].textContent.trim():'';
 
-  // Build message text
+  // Build message text in the selected language
   var parts=[];
-  if(surname) parts.push('我姓'+surname);
-  if(region) parts.push('祖籍可能在'+region);
-  if(dialect) parts.push('家里说'+dialect);
-  if(generation) parts.push('大约'+generation+'华人');
-  if(extra) parts.push('我还知道：'+extra);
+  if(currentLang==='en'){
+    if(surname) parts.push('My surname is '+surname);
+    if(region) parts.push('My ancestral roots may be in '+region);
+    if(dialect) parts.push('My family speaks '+dialect);
+    if(generation) parts.push('I am approximately a '+generation+' generation overseas Chinese');
+    if(extra) parts.push('I also know: '+extra);
+  }else{
+    if(surname) parts.push('我姓'+surname);
+    if(region) parts.push('祖籍可能在'+region);
+    if(dialect) parts.push('家里说'+dialect);
+    if(generation) parts.push('大约'+generation+'华人');
+    if(extra) parts.push('我还知道：'+extra);
+  }
 
-  var msg=parts.length>0?parts.join('，'):'';
+  var msg=parts.length>0?parts.join(currentLang==='en'?', ':'，'):'';
 
   // Open demo with message as URL parameter
   var url='https://getrootlink.com/agent.html';
@@ -850,6 +1143,7 @@ function searchSurname(){
 
 // Init
 renderDots('陈');
+applyHomeLanguage();
 </script>
 
 
@@ -866,8 +1160,8 @@ var DEFAULT_TITLES=[
   '新加坡侨胞恩平寻根记：故土的呼唤',
   '根系浮石，情归故里：加拿大华裔圆"寻根梦"'
 ];
-function setFilter(b){document.querySelectorAll('.filter-tab').forEach(function(t){t.classList.remove('active');});b.classList.add('active');_ac=b.getAttribute('data-country');_expanded=false;var btn=document.getElementById('btnShowMore');if(btn){btn.classList.remove('expanded');btn.innerHTML='更多故事 <span class="arrow">▼</span>';}filterStories();}
-function toggleMore(){_expanded=!_expanded;var btn=document.getElementById('btnShowMore');if(_expanded){btn.classList.add('expanded');btn.innerHTML='收起 <span class="arrow">▼</span>';}else{btn.classList.remove('expanded');btn.innerHTML='更多故事 <span class="arrow">▼</span>';}filterStories();}
+function setFilter(b){document.querySelectorAll('.filter-tab').forEach(function(t){t.classList.remove('active');});b.classList.add('active');_ac=b.getAttribute('data-country');_expanded=false;var btn=document.getElementById('btnShowMore');if(btn){btn.classList.remove('expanded');btn.innerHTML=(currentLang==='en'?'More stories':'更多故事')+' <span class="arrow">▼</span>';}filterStories();}
+function toggleMore(){_expanded=!_expanded;var btn=document.getElementById('btnShowMore');if(_expanded){btn.classList.add('expanded');btn.innerHTML=(currentLang==='en'?'Show less':'收起')+' <span class="arrow">▼</span>';}else{btn.classList.remove('expanded');btn.innerHTML=(currentLang==='en'?'More stories':'更多故事')+' <span class="arrow">▼</span>';}filterStories();}
 function filterStories(){
   var q=document.getElementById('storySearch').value.trim().toLowerCase();
   var cards=document.querySelectorAll('.story-card');
@@ -880,7 +1174,8 @@ function filterStories(){
     var text=title+(c.querySelector('.story-excerpt')?c.querySelector('.story-excerpt').textContent:'');
     var mc=isFiltered?(country===_ac):true;
     var ms=!q||text.toLowerCase().includes(q);
-    var isDefault=DEFAULT_TITLES.some(function(t){return title.trim()===t||title.trim().indexOf(t)>-1||t.indexOf(title.trim())>-1;});
+    var originalTitle=c.dataset.originalTitle||title;
+    var isDefault=DEFAULT_TITLES.some(function(t){return originalTitle.trim()===t||originalTitle.trim().indexOf(t)>-1||t.indexOf(originalTitle.trim())>-1;});
     var show=isFiltered||isSearching||_expanded||isDefault;
     if(mc&&ms&&show){c.classList.remove('hidden');visible++;}else{c.classList.add('hidden');}
   });
