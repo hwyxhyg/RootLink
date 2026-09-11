@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>寻根问祖助手 - SSE 示例</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .input-area {
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 80px;
+            resize: vertical;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .chat-area {
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        .message {
+            margin-bottom: 20px;
+        }
+        .message-user {
+            text-align: right;
+        }
+        .message-agent {
+            text-align: left;
+        }
+        .message-bubble {
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 8px;
+            max-width: 70%;
+        }
+        .message-user .message-bubble {
+            background: #007bff;
+            color: white;
+        }
+        .message-agent .message-bubble {
+            background: #e9ecef;
+            color: #333;
+        }
+        .structured-data {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .structured-data h4 {
+            margin-top: 0;
+            color: #495057;
+        }
+        .user-info, .analysis, .intermediaries, .todos {
+            margin-bottom: 15px;
+        }
+        .intermediary-card {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            margin-bottom: 10px;
+        }
+        .match-score {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .todos ul {
+            padding-left: 20px;
+        }
+        .todos li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧭 寻根问祖助手</h1>
+        
+        <div class="input-area">
+            <textarea id="messageInput" placeholder="请输入您的问题..."></textarea>
+            <button id="sendButton" onclick="sendMessage()">发送</button>
+        </div>
+        
+        <div class="chat-area" id="chatArea"></div>
+    </div>
+
+    <script>
+        const chatArea = document.getElementById('chatArea');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+
+        let userId = 'user_' + Math.random().toString(36).substr(2, 9);
+
+        function addMessage(content, isUser) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'message-user' : 'message-agent'}`;
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.textContent = content;
+            
+            messageDiv.appendChild(bubble);
+            chatArea.appendChild(messageDiv);
+            
+            // 滚动到底部
+            window.scrollTo(0, document.body.scrollHeight);
+            
+            return messageDiv;
+        }
+
+        function renderStructuredData(data, messageElement) {
+            const structuredDiv = document.createElement('div');
+            structuredDiv.className = 'structured-data';
+            
+            // 用户信息
+            if (data.user_info && (data.user_info.surname || data.user_info.location)) {
+                const userInfoDiv = document.createElement('div');
+                userInfoDiv.className = 'user-info';
+                userInfoDiv.innerHTML = `
+                    <h4>📋 您的寻根信息</h4>
+                    ${data.user_info.surname ? `<p><strong>姓氏</strong>: ${data.user_info.surname}</p>` : ''}
+                    ${data.user_info.location ? `<p><strong>祖籍地</strong>: ${data.user_info.location}</p>` : ''}
+                    ${data.user_info.dialect ? `<p><strong>方言</strong>: ${data.user_info.dialect}</p>` : ''}
+                    ${data.user_info.migration_info ? `<p><strong>迁移信息</strong>: ${data.user_info.migration_info}</p>` : ''}
+                `;
+                structuredDiv.appendChild(userInfoDiv);
+            }
+            
+            // 亲缘地分析
+            if (data.analysis) {
+                const analysisDiv = document.createElement('div');
+                analysisDiv.className = 'analysis';
+                analysisDiv.innerHTML = `
+                    <h4>🎯 亲缘地分析</h4>
+                    <p>${data.analysis}</p>
+                `;
+                structuredDiv.appendChild(analysisDiv);
+            }
+            
+            // 中间人推荐
+            if (data.intermediaries && data.intermediaries.length > 0) {
+                const intermediariesDiv = document.createElement('div');
+                intermediariesDiv.className = 'intermediaries';
+                intermediariesDiv.innerHTML = '<h4>👥 推荐的寻根向导</h4>';
+                
+                data.intermediaries.forEach(inter => {
+                    const card = document.createElement('div');
+                    card.className = 'intermediary-card';
+                    card.innerHTML = `
+                        <h5>${inter.name} <span class="match-score">(匹配度: ${inter.match_score}/100)</span></h5>
+                        <p><strong>所在地</strong>: ${inter.location}</p>
+                        <p><strong>联系方式</strong>: ${inter.contact_info}</p>
+                        ${inter.notes ? `<p><strong>备注</strong>: ${inter.notes}</p>` : ''}
+                        ${inter.success_cases && inter.success_cases.length > 0 ? `
+                            <p><strong>成功案例</strong>:</p>
+                            <ul>
+                                ${inter.success_cases.map(sc => `
+                                    <li>${sc.description} (${sc.year})</li>
+                                `).join('')}
+                            </ul>
+                        ` : ''}
+                    `;
+                    intermediariesDiv.appendChild(card);
+                });
+                
+                structuredDiv.appendChild(intermediariesDiv);
+            }
+            
+            // 行动建议
+            if (data.todos && data.todos.length > 0) {
+                const todosDiv = document.createElement('div');
+                todosDiv.className = 'todos';
+                todosDiv.innerHTML = `
+                    <h4>📝 下一步建议</h4>
+                    <ul>
+                        ${data.todos.map(todo => `<li>${todo}</li>`).join('')}
+                    </ul>
+                `;
+                structuredDiv.appendChild(todosDiv);
+            }
+            
+            messageElement.appendChild(structuredDiv);
+        }
+
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+            
+            // 禁用输入
+            sendButton.disabled = true;
+            messageInput.disabled = true;
+            
+            // 显示用户消息
+            addMessage(message, true);
+            messageInput.value = '';
+            
+            // 创建 Agent 消息占位符
+            const agentMessageDiv = addMessage('正在思考...', false);
+            const bubble = agentMessageDiv.querySelector('.message-bubble');
+            let fullText = '';
+            
+            try {
+                // 建立 SSE 连接
+                const response = await fetch(`/api/chat/sse`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        message: message
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    buffer += decoder.decode(value, { stream: true });
+                    
+                    // 处理缓冲区中的完整事件
+                    while (true) {
+                        const eventEndIndex = buffer.indexOf('\n\n');
+                        if (eventEndIndex === -1) break;
+                        
+                        const eventData = buffer.slice(0, eventEndIndex);
+                        buffer = buffer.slice(eventEndIndex + 2);
+                        
+                        // 解析事件
+                        if (eventData.startsWith('data: ')) {
+                            const jsonStr = eventData.slice(6);
+                            try {
+                                const event = JSON.parse(jsonStr);
+                                
+                                if (event.type === 'answer') {
+                                    // 处理流式文本
+                                    const textChunk = event.content.answer;
+                                    fullText += textChunk;
+                                    bubble.textContent = fullText;
+                                } else if (event.type === 'structured') {
+                                    // 处理结构化数据
+                                    renderStructuredData(event.content, agentMessageDiv);
+                                }
+                            } catch (e) {
+                                console.error('解析事件失败:', e, jsonStr);
+                            }
+                        }
+                    }
+                }
+                
+            } catch (error) {
+                console.error('发送消息失败:', error);
+                bubble.textContent = '抱歉，出现了一些问题，请稍后再试。';
+            } finally {
+                // 恢复输入
+                sendButton.disabled = false;
+                messageInput.disabled = false;
+                messageInput.focus();
+            }
+        }
+
+        // 回车发送
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

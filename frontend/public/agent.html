@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RootLink-打通全球华人的寻根连接网络 </title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Noto+Sans+SC:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#1a1208;--paper:#f5efe3;--warm:#c8956c;--gold:#b8860b;--red:#8b2020;--shadow:rgba(26,18,8,0.12);}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--paper);color:var(--ink);font-family:'Noto Sans SC',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+  body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(ellipse at 20% 50%,rgba(200,149,108,.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(139,32,32,.05) 0%,transparent 50%);pointer-events:none;z-index:0;}
+  body::after{content:'';position:fixed;left:0;top:0;bottom:0;width:4px;background:linear-gradient(to bottom,transparent,var(--red),var(--gold),var(--red),transparent);opacity:.4;z-index:100;}
+
+  header{flex-shrink:0;position:relative;z-index:50;padding:1rem 2rem;border-bottom:1px solid rgba(184,134,11,.2);display:flex;align-items:center;gap:.6rem;background:rgba(245,239,227,.97);backdrop-filter:blur(8px);}
+  .logo{font-family:'Noto Serif SC',serif;font-size:1.5rem;font-weight:600;color:var(--red);letter-spacing:.1em;}
+  .logo-sub{font-size:.78rem;color:var(--gold);letter-spacing:.2em;font-weight:300;}
+  .header-right{margin-left:auto;display:flex;align-items:center;gap:1rem;}
+  .panel-toggle{background:rgba(200,149,108,.1);border:1px solid rgba(200,149,108,.3);border-radius:4px;padding:.4rem .9rem;font-size:.78rem;color:var(--ink);cursor:pointer;font-family:'Noto Sans SC',sans-serif;transition:all .2s;display:flex;align-items:center;gap:.5rem;white-space:nowrap;}
+  .panel-toggle:hover{background:rgba(200,149,108,.2);}
+  .badge{background:var(--red);color:white;border-radius:10px;padding:1px 6px;font-size:.65rem;display:none;line-height:1.4;}
+  .badge.visible{display:inline;}
+  .status-dot{display:flex;align-items:center;gap:.4rem;font-size:.72rem;color:var(--warm);}
+  .dot{width:6px;height:6px;border-radius:50%;background:#5a8a5a;animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+  .app-body{flex:1;display:flex;overflow:hidden;position:relative;z-index:1;}
+  .chat-area{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:0 2rem;max-width:800px;margin:0 auto;width:100%;}
+
+  /* SIDE PANEL — 关键：整个侧栏用 flex 列布局撑满 */
+  .side-panel{width:0;overflow:hidden;transition:width .3s ease;border-left:1px solid rgba(184,134,11,.15);background:rgba(255,255,255,.7);backdrop-filter:blur(4px);flex-shrink:0;display:flex;flex-direction:column;}
+  .side-panel.open{width:300px;}
+  /* side-panel-inner 撑满剩余高度，flex列 */
+  .side-panel-inner{width:300px;display:flex;flex-direction:column;padding:1.2rem;gap:1rem;flex:1;overflow:hidden;}
+
+  /* 两个 panel-section —— 家族信息限高可滚动，todo 撑满剩余 */
+  .panel-section{background:white;border:1px solid rgba(184,134,11,.15);border-radius:6px;overflow:hidden;display:flex;flex-direction:column;max-height:45%;flex-shrink:0;}
+  .panel-section:not(.grow) .panel-section-body{overflow-y:auto;}
+  .panel-section.grow{flex:1;min-height:0;max-height:none;flex-shrink:1;}
+
+  .panel-section-header{padding:.6rem .9rem;background:rgba(200,149,108,.08);border-bottom:1px solid rgba(184,134,11,.1);font-family:'Noto Serif SC',serif;font-size:.8rem;color:var(--red);font-weight:600;letter-spacing:.05em;flex-shrink:0;}
+  /* body 也要 flex:1 才能让内部 todoPanel 滚动 */
+  .panel-section-body{padding:.8rem .9rem;font-size:.78rem;line-height:1.7;flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;}
+
+  /* todoPanel 撑满 body，内部滚动 */
+  #todoPanel{flex:1;overflow-y:auto;min-height:0;}
+
+  .info-row{display:flex;gap:.5rem;margin-bottom:.35rem;align-items:flex-start;}
+  .info-label{color:var(--gold);min-width:60px;flex-shrink:0;font-size:.72rem;margin-top:1px;}
+  .todo-list{display:flex;flex-direction:column;gap:.4rem;}
+  .todo-item{display:flex;align-items:flex-start;gap:.5rem;padding:.45rem .6rem;border-radius:4px;border:1px solid rgba(184,134,11,.12);cursor:pointer;transition:all .15s;font-size:.75rem;line-height:1.5;}
+  .todo-item:hover{background:rgba(200,149,108,.06);}
+  .todo-item.done{opacity:.45;}
+  .todo-item.done .todo-text{text-decoration:line-through;}
+  .todo-check{width:14px;height:14px;border:1.5px solid rgba(184,134,11,.4);border-radius:3px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:9px;color:white;transition:all .15s;}
+  .todo-item.done .todo-check{background:var(--gold);border-color:var(--gold);}
+  .empty-panel{text-align:center;padding:1.5rem .5rem;color:rgba(26,18,8,.3);font-size:.75rem;line-height:1.8;}
+
+  /* WELCOME */
+  .welcome{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2rem;animation:fadeIn .8s ease;}
+  .welcome-character{font-family:'Noto Serif SC',serif;font-size:4rem;color:var(--red);opacity:.12;line-height:1;margin-bottom:1.2rem;}
+  .welcome h1{font-family:'Noto Serif SC',serif;font-size:1.4rem;font-weight:400;margin-bottom:.6rem;}
+  .welcome p{font-size:.85rem;color:var(--warm);line-height:1.8;max-width:380px;margin:0 auto;font-weight:300;}
+  .welcome-prompts{margin-top:1.8rem;display:flex;flex-direction:column;gap:.5rem;align-items:center;}
+  .prompt-chip{background:rgba(200,149,108,.1);border:1px solid rgba(200,149,108,.25);border-radius:2px;padding:.5rem 1rem;font-size:.78rem;color:var(--ink);cursor:pointer;transition:all .2s;max-width:360px;text-align:center;}
+  .prompt-chip:hover{background:rgba(200,149,108,.18);transform:translateX(3px);}
+
+  /* MESSAGES */
+  .messages{flex:1;overflow-y:auto;padding:1.2rem 0;display:none;flex-direction:column;gap:1rem;}
+  .messages.visible{display:flex;}
+  .message{display:flex;gap:.8rem;animation:slideIn .25s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  .message.user{flex-direction:row-reverse;}
+  .avatar{width:30px;height:30px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'Noto Serif SC',serif;font-size:.75rem;flex-shrink:0;margin-top:2px;}
+  .avatar.agent{background:var(--red);color:var(--paper);}
+  .avatar.user{background:var(--ink);color:var(--paper);opacity:.7;}
+  .bubble{max-width:580px;padding:.85rem 1rem;line-height:1.8;font-size:.86rem;font-weight:300;}
+  .message.agent .bubble{background:white;border:1px solid rgba(184,134,11,.15);border-radius:0 8px 8px 8px;box-shadow:0 2px 10px var(--shadow);}
+  .message.user .bubble{background:var(--ink);color:var(--paper);border-radius:8px 0 8px 8px;opacity:.85;}
+
+  /* STRUCTURED AGENT RESPONSE */
+  .agent-response{display:flex;flex-direction:column;gap:.6rem;}
+  .agent-message-text{line-height:1.8;font-size:.86rem;}
+
+  .collapse-block{border:1px solid rgba(184,134,11,.15);border-radius:6px;overflow:hidden;}
+  .collapse-header{padding:.55rem .8rem;background:rgba(200,149,108,.07);cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:.82rem;font-weight:400;color:var(--ink);user-select:none;transition:background .15s;}
+  .collapse-header:hover{background:rgba(200,149,108,.12);}
+  .collapse-title{display:flex;align-items:center;gap:.4rem;}
+  .collapse-arrow{font-size:.65rem;color:var(--warm);transition:transform .2s;margin-left:.5rem;}
+  .collapse-header.open .collapse-arrow{transform:rotate(180deg);}
+  .collapse-body{padding:.7rem .9rem;font-size:.82rem;line-height:1.8;display:none;border-top:1px solid rgba(184,134,11,.1);}
+  .collapse-body.open{display:block;}
+
+  .info-grid{display:flex;flex-direction:column;gap:.3rem;}
+  .info-grid-row{display:flex;gap:.5rem;}
+  .info-grid-label{color:var(--gold);min-width:55px;font-size:.75rem;flex-shrink:0;}
+  .info-grid-value{color:var(--ink);font-size:.8rem;}
+
+  .guide-card{border:1px solid rgba(184,134,11,.12);border-radius:5px;padding:.6rem .8rem;margin-bottom:.5rem;}
+  .guide-card:last-child{margin-bottom:0;}
+  .guide-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem;}
+  .guide-name{font-weight:600;font-size:.84rem;color:var(--ink);}
+  .guide-score{background:var(--red);color:white;border-radius:10px;padding:1px 7px;font-size:.7rem;}
+  .guide-location{font-size:.75rem;color:var(--warm);margin-bottom:.3rem;}
+  .guide-reason{font-size:.75rem;color:rgba(26,18,8,.6);margin-bottom:.3rem;}
+  .guide-contact{font-size:.72rem;color:var(--gold);}
+  .guide-cases{margin-top:.3rem;padding-top:.3rem;border-top:1px solid rgba(184,134,11,.1);font-size:.72rem;color:rgba(26,18,8,.5);}
+
+  .analysis-text{font-size:.82rem;line-height:1.8;color:var(--ink);}
+
+  /* TYPING */
+  .typing{display:none;gap:.8rem;align-items:flex-start;padding:.5rem 0;}
+  .typing.visible{display:flex;}
+  .typing-dots{background:white;border:1px solid rgba(184,134,11,.15);border-radius:0 8px 8px 8px;padding:.8rem 1.1rem;display:flex;gap:4px;align-items:center;box-shadow:0 2px 10px var(--shadow);}
+  .typing-dots span{width:5px;height:5px;border-radius:50%;background:var(--warm);animation:bounce 1.2s infinite;}
+  .typing-dots span:nth-child(2){animation-delay:.2s;}
+  .typing-dots span:nth-child(3){animation-delay:.4s;}
+  @keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-5px);opacity:1;}}
+
+  /* INPUT */
+  .input-area{flex-shrink:0;padding:.8rem 0 1.2rem;background:linear-gradient(to top,var(--paper) 85%,transparent);}
+  .input-wrap{display:flex;border:1px solid rgba(184,134,11,.3);border-radius:3px;background:white;box-shadow:0 3px 16px var(--shadow);overflow:hidden;transition:border-color .2s;}
+  .input-wrap:focus-within{border-color:var(--warm);}
+  textarea{flex:1;border:none;outline:none;padding:.85rem 1rem;font-family:'Noto Sans SC',sans-serif;font-size:.86rem;font-weight:300;color:var(--ink);background:transparent;resize:none;min-height:46px;max-height:130px;line-height:1.6;}
+  textarea::placeholder{color:rgba(26,18,8,.3);}
+  .send-btn{background:none;border:none;border-left:1px solid rgba(184,134,11,.2);padding:0 1rem;cursor:pointer;color:var(--warm);transition:all .2s;font-size:1rem;display:flex;align-items:center;}
+  .send-btn:hover{background:rgba(200,149,108,.1);color:var(--red);}
+  .send-btn:disabled{opacity:.3;cursor:not-allowed;}
+  .hint{text-align:center;font-size:.68rem;color:rgba(26,18,8,.25);margin-top:.4rem;}
+  .error-msg{background:rgba(139,32,32,.06);border:1px solid rgba(139,32,32,.2);border-radius:4px;padding:.5rem .9rem;font-size:.78rem;color:var(--red);text-align:center;display:none;margin-bottom:.4rem;}
+  .error-msg.visible{display:block;}
+
+  .header-right { gap: .6rem; }
+  .header-right .panel-toggle { padding: .35rem .75rem; font-size: .74rem; }
+  .icon-actions{display:flex;align-items:center;gap:.35rem;}
+  .icon-ghost{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:8px;cursor:pointer;color:rgba(26,18,8,.45);font-size:1rem;padding:0;transition:background .15s ease, color .15s ease, transform .05s ease;}
+  .icon-ghost:hover{background:rgba(200,149,108,.12);color:rgba(26,18,8,.75);}
+  .icon-ghost:active{ transform:translateY(1px); }
+  .panel-actions{display:flex;gap:1rem;justify-content:flex-end;margin-bottom:.8rem;flex-shrink:0;}
+  .panel-text-btn{background:none;border:none;padding:0;cursor:pointer;font-family:'Noto Sans SC',sans-serif;font-size:.78rem;color:rgba(26,18,8,.55);transition:color .15s ease;}
+  .panel-text-btn:hover{ color:var(--ink); }
+  .panel-text-btn:active{ opacity:.6; }
+
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .messages::-webkit-scrollbar,.side-panel-inner::-webkit-scrollbar,#todoPanel::-webkit-scrollbar{display:none;}
+  .messages,.side-panel-inner,#todoPanel{-ms-overflow-style:none;scrollbar-width:none;}
+  .message-wrap{display:flex;flex-direction:column;gap:.25rem;}
+  .message-actions{display:flex;gap:.3rem;padding-left:38px;}
+  .message.user .message-actions{padding-left:0;padding-right:38px;justify-content:flex-end;}
+  .retry-btn{background:none;border:none;cursor:pointer;color:rgba(26,18,8,.25);font-size:.72rem;padding:.15rem .4rem;border-radius:3px;transition:all .15s;display:flex;align-items:center;gap:.25rem;font-family:'Noto Sans SC',sans-serif;}
+  .retry-btn:hover{background:rgba(200,149,108,.1);color:var(--warm);}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" id="backLink" style="
+    display:flex;align-items:center;gap:4px;
+    text-decoration:none;
+    color:rgba(26,18,8,.45);
+    font-size:.75rem;
+    padding:.3rem .6rem;
+    border-radius:4px;
+    transition:all .2s;
+    white-space:nowrap;
+    flex-shrink:0;
+  " onmouseover="this.style.background='rgba(200,149,108,.1)';this.style.color='var(--warm)'"
+     onmouseout="this.style.background='transparent';this.style.color='rgba(26,18,8,.45)'">
+    ← 返回
+</a>
+  <img src="images/image_000.png" alt="RootLink" style="height:38px;object-fit:contain;">
+  <div class="logo-sub" id="logoSub">RootLink · 打通全球华人的寻根连接网络</div>
+  <div class="header-right">
+    <button class="panel-toggle" onclick="toggleLanguage()" id="langBtn">中文</button>
+    <button class="panel-toggle" onclick="togglePanel()" id="panelBtn">
+      📋 寻根档案 <span class="badge" id="todoBadge"></span>
+    </button>
+    <div class="icon-actions">
+      <button class="icon-ghost" onclick="resetConversation()" id="resetBtn" aria-label="重新开始" title="重新开始">↻</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none" />
+    </div>
+    <div class="status-dot" id="statusText"><span class="dot"></span>向导在线</div>
+  </div>
+</header>
+
+<div class="app-body">
+  <div class="chat-area">
+    <div class="welcome" id="welcome">
+      <div class="welcome-character" id="welcomeChar"></div>
+      <h1 id="welcomePoem"></h1>
+      <p id="welcomeDesc">告诉我你正在寻找的故乡——哪怕只是一个模糊的地名，或是老人留下的只言片语。</p>
+      <div class="welcome-prompts">
+        <div class="prompt-chip" onclick="usePrompt(this)">我是马来西亚华人，只知道祖籍是福建，想找到更具体的地方</div>
+        <div class="prompt-chip" onclick="usePrompt(this)">爷爷说我们是广东人，家里说客家话，想帮他完成回乡的心愿</div>
+        <div class="prompt-chip" onclick="usePrompt(this)">我有一张老照片和一个祖先的名字，不知道从哪里开始寻根</div>
+      </div>
+    </div>
+    <div class="messages" id="messages"></div>
+    <div class="typing" id="typing">
+      <div class="avatar agent">向</div>
+      <div class="typing-dots"><span></span><span></span><span></span></div>
+    </div>
+    <div class="input-area">
+      <div class="error-msg" id="error"></div>
+      <div class="input-wrap">
+        <textarea id="input" placeholder="告诉我你知道的关于故乡的任何信息……" rows="1"
+          onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()">↑</button>
+      </div>
+      <div class="hint" id="inputHint">Enter 发送 · Shift+Enter 换行</div>
+    </div>
+  </div>
+
+  <div class="side-panel" id="sidePanel">
+    <div class="side-panel-inner">
+      <div class="panel-actions">
+        <button class="panel-text-btn" onclick="exportArchive()" title="导出">📤 导出</button>
+        <button class="panel-text-btn" onclick="triggerImport()" title="导入">📥 导入</button>
+      </div>
+
+      <!-- 家族信息：自适应内容高度 -->
+      <div class="panel-section">
+        <div class="panel-section-header">📋 已收集的家族信息</div>
+        <div class="panel-section-body" id="infoPanel">
+          <div class="empty-panel">开始对话后，<br>信息会自动整理在这里</div>
+        </div>
+      </div>
+
+      <!-- 下一步行动：撑满剩余空间 -->
+      <div class="panel-section grow">
+        <div class="panel-section-header">✅ 下一步行动</div>
+        <div class="panel-section-body">
+          <div id="todoPanel">
+            <div class="empty-panel">Agent会为你<br>生成可勾选的行动清单</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API_BASE_URL = window.ROOTLINK_API_BASE_URL || (
+    ['localhost', '127.0.0.1'].includes(window.location.hostname)
+      ? 'http://localhost:8000'
+      : 'https://api.getrootlink.com'
+  );
+  const API_URL = API_BASE_URL + '/api/chat/sse';
+  var currentUser = null;
+  var _sb = window.supabase.createClient(
+    'https://zjxtyukdvuvhoxldpakk.supabase.co',
+    'sb_publishable_prGtV9CcT8uchDMPF643vg_K8FkKy2m'
+  );
+  _sb.auth.getSession().then(({ data: { session } }) => {
+    if (session) {
+      currentUser = session.user;
+      sessionId = 'user_' + session.user.id;
+      loadFromServer();
+    }
+  });
+  
+async function loadFromServer() {
+  try {
+    const { data: { session } } = await _sb.auth.getSession();
+    if (!session) return;
+    const res = await fetch(API_BASE_URL + '/api/archive/load', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + session.access_token
+      }
+    });
+    if (!res.ok) throw new Error('Archive load failed (' + res.status + ')');
+    const { data } = await res.json();
+    if (!data) return;
+    if (data.familyInfo) { familyInfo = data.familyInfo; updateInfoPanel(); }
+    if (data.todos) { todos = data.todos; updateTodoPanel(); updateBadge(); }
+    if (data.conversation && data.conversation.length) {
+      const messages = document.getElementById('messages');
+      messages.innerHTML = '';
+      document.getElementById('welcome').style.display = 'none';
+      messages.classList.add('visible');
+      conversationStarted = true;
+      data.conversation.forEach(item => {
+        const div = document.createElement('div');
+        div.className = `message ${item.role}`;
+        div.innerHTML = `<div class="avatar ${item.role}">${item.role === 'user' ? (currentLang==='zh'?'我':'ME') : (currentLang==='zh'?'向':'AI')}</div><div class="bubble">${item.html}</div>`;
+        messages.appendChild(div);
+      });
+      messages.scrollTop = messages.scrollHeight;
+    }
+  } catch(e) { console.log('读档失败', e); }
+}
+
+async function saveToServer() {
+  if (!currentUser) return;
+  const payload = {
+    familyInfo,
+    todos,
+    conversation: Array.from(document.querySelectorAll('#messages .message')).map(node => ({
+      role: node.classList.contains('user') ? 'user' : 'agent',
+      html: node.querySelector('.bubble')?.innerHTML || ''
+    }))
+  };
+  try {
+    const { data: { session } } = await _sb.auth.getSession();
+    if (!session) return;
+    const res = await fetch(API_BASE_URL + '/api/archive/save', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + session.access_token
+      },
+      body: JSON.stringify({ data: payload })
+    });
+    if (!res.ok) throw new Error('Archive save failed (' + res.status + ')');
+  } catch(e) { console.log('存档失败', e); }
+}
+  let currentLang = localStorage.getItem('rootlink_lang') || 'en';
+
+  const LANG = {
+    en: {
+      back: '← Back', tagline: 'RootLink · Connecting Overseas Chinese with Their Ancestral Roots',
+      archive: '📋 Root Archive', closeArchive: '✕ Close Archive', online: 'Guide Online',
+      welcomeDesc: 'Tell me anything you know about your ancestral home — even a vague place name, a family story, or a fragment passed down by an elder.',
+      prompt1: 'I am Malaysian Chinese. I only know that my ancestral roots are in Fujian, and I want to find the exact place.',
+      prompt2: 'My grandfather said our family came from Guangdong and speaks Hakka. I want to help him find our ancestral hometown.',
+      prompt3: 'I have an old photograph and the name of an ancestor, but I do not know where to begin.',
+      placeholder: 'Tell me anything you know about your ancestral home…', hint: 'Enter to send · Shift+Enter for a new line',
+      export: '📤 Export', import: '📥 Import', familyInfoTitle: '📋 Collected Family Information', familyInfoEmpty: 'Your family information<br>will appear here as we talk.',
+      nextStepsTitle: '✅ Next Steps', nextStepsEmpty: 'Your personalized action list<br>will appear here.',
+      surname: 'Surname', location: 'Ancestral origin', dialect: 'Dialect', migration: 'Migration',
+      collected: '📋 Collected Information', analysis: '🎯 Ancestral Origin Analysis', guides: '👥 Recommended Guides', nextActions: '💡 Next Steps',
+      regenerate: '↻ Regenerate', requestFailed: 'Request failed', connectionError: 'Connection error: ', processing: 'I received your information and am organizing it…',
+      noExport: 'There is nothing to export yet. Please start a conversation first.', importSuccess: 'Import successful. Your archive has been restored.',
+      importFailed: 'Import failed: ', invalidJSON: 'The file is not a valid JSON object.', invalidArchive: 'This is not a valid RootLink archive file.',
+      resetConfirm: 'Start over? This will clear the current conversation, archive, and action list. Export a backup first if needed.', resetTitle: 'Start over'
+    },
+    zh: {
+      back: '← 返回', tagline: 'RootLink · 打通全球华人的寻根连接网络', archive: '📋 寻根档案', closeArchive: '✕ 关闭档案', online: '向导在线',
+      welcomeDesc: '告诉我你正在寻找的故乡——哪怕只是一个模糊的地名，或是老人留下的只言片语。',
+      prompt1: '我是马来西亚华人，只知道祖籍是福建，想找到更具体的地方', prompt2: '爷爷说我们是广东人，家里说客家话，想帮他完成回乡的心愿', prompt3: '我有一张老照片和一个祖先的名字，不知道从哪里开始寻根',
+      placeholder: '告诉我你知道的关于故乡的任何信息……', hint: 'Enter 发送 · Shift+Enter 换行', export: '📤 导出', import: '📥 导入',
+      familyInfoTitle: '📋 已收集的家族信息', familyInfoEmpty: '开始对话后，<br>信息会自动整理在这里', nextStepsTitle: '✅ 下一步行动', nextStepsEmpty: 'Agent会为你<br>生成可勾选的行动清单',
+      surname: '姓氏', location: '祖籍', dialect: '方言', migration: '迁移', collected: '📋 已收集信息', analysis: '🎯 亲缘地分析', guides: '👥 推荐向导', nextActions: '💡 下一步行动',
+      regenerate: '↻ 重新生成', requestFailed: '请求失败', connectionError: '连接出现问题：', processing: '我收到了你的信息，正在整理中……',
+      noExport: '当前没有可导出的内容（请先开始对话）', importSuccess: '导入成功：档案已恢复', importFailed: '导入失败：', invalidJSON: '文件内容不是合法 JSON 对象', invalidArchive: '不是 RootLink 档案文件（缺少必要字段）',
+      resetConfirm: '确定要重新开始吗？这会清空当前对话、档案和行动清单（建议先导出备份）。', resetTitle: '重新开始'
+    }
+  };
+
+  const poemsZh = [
+    { char: '故乡', text: '少小离家老大回，乡音无改鬓毛催' }, { char: '根', text: '树高千尺，叶落归根' },
+    { char: '乡', text: '举头望明月，低头思故乡' }, { char: '归', text: '露从今夜白，月是故乡明' },
+    { char: '寻', text: '问君何处是家乡，万里烟波一雁行' }
+  ];
+  const poemsEn = [
+    { char: 'ROOTS', text: 'Every family story begins somewhere.' }, { char: 'HOME', text: 'Across generations, the way home remains.' },
+    { char: 'ROOTS', text: 'Follow the clues. Find where your story began.' }, { char: 'HOME', text: 'A name, a dialect, a village — every clue matters.' }
+  ];
+
+  function t(key) { return LANG[currentLang][key] || key; }
+  function updateWelcomePoem() {
+    const list = currentLang === 'zh' ? poemsZh : poemsEn;
+    const p = list[Math.floor(Math.random() * list.length)];
+    document.getElementById('welcomeChar').textContent = p.char;
+    document.getElementById('welcomePoem').textContent = p.text;
+  }
+  function toggleLanguage() {
+    currentLang = currentLang === 'en' ? 'zh' : 'en';
+    localStorage.setItem('rootlink_lang', currentLang);
+    applyLanguage();
+  }
+  function updatePanelButton() {
+    const btn = document.getElementById('panelBtn');
+    if (!btn) return;
+    btn.innerHTML = panelOpen ? t('closeArchive') : `${t('archive')} <span class="badge" id="todoBadge"></span>`;
+    updateBadge();
+  }
+  function applyLanguage() {
+    document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+    document.title = currentLang === 'zh' ? 'RootLink-打通全球华人的寻根连接网络' : 'RootLink · Find Your Ancestral Roots';
+    const langBtn = document.getElementById('langBtn'); if (langBtn) langBtn.textContent = currentLang === 'en' ? '中文' : 'EN';
+    const back = document.getElementById('backLink'); if (back) back.textContent = t('back');
+    const logoSub = document.getElementById('logoSub'); if (logoSub) logoSub.textContent = t('tagline');
+    const status = document.getElementById('statusText'); if (status) status.innerHTML = `<span class="dot"></span>${t('online')}`;
+    const wd = document.getElementById('welcomeDesc'); if (wd) wd.textContent = t('welcomeDesc');
+    const prompts = document.querySelectorAll('.prompt-chip'); if (prompts[0]) prompts[0].textContent=t('prompt1'); if (prompts[1]) prompts[1].textContent=t('prompt2'); if (prompts[2]) prompts[2].textContent=t('prompt3');
+    const input = document.getElementById('input'); if (input) input.placeholder=t('placeholder');
+    const hint = document.getElementById('inputHint'); if (hint) hint.textContent=t('hint');
+    const acts = document.querySelectorAll('.panel-text-btn'); if (acts[0]) {acts[0].innerHTML=t('export'); acts[0].title=currentLang==='en'?'Export':'导出';} if (acts[1]) {acts[1].innerHTML=t('import'); acts[1].title=currentLang==='en'?'Import':'导入';}
+    const hs = document.querySelectorAll('.panel-section-header'); if (hs[0]) hs[0].innerHTML=t('familyInfoTitle'); if (hs[1]) hs[1].innerHTML=t('nextStepsTitle');
+    const reset = document.getElementById('resetBtn'); if(reset){reset.title=t('resetTitle');reset.setAttribute('aria-label',t('resetTitle'));}
+    updateWelcomePoem(); updateInfoPanel(); updateTodoPanel(); updatePanelButton();
+  }
+
+
+  let sessionId = 'sess_' + Math.random().toString(36).substr(2,16);
+  let isLoading = false, conversationStarted = false, panelOpen = false;
+  let todos = [], familyInfo = {};
+
+  function togglePanel() {
+    panelOpen = !panelOpen;
+    document.getElementById('sidePanel').classList.toggle('open', panelOpen);
+    updatePanelButton();
+  }
+
+  function updateBadge() {
+    const badge = document.getElementById('todoBadge');
+    if (!badge) return;
+    const undone = todos.filter(t => !t.done).length;
+    badge.textContent = undone;
+    badge.classList.toggle('visible', !panelOpen && undone > 0);
+  }
+
+  function usePrompt(el) { document.getElementById('input').value = el.textContent; sendMessage(); }
+  function handleKey(e) { if (e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();} }
+  function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,130)+'px'; }
+  function showError(msg) {
+    const el = document.getElementById('error');
+    el.textContent=msg; el.classList.add('visible');
+    setTimeout(()=>el.classList.remove('visible'),5000);
+  }
+
+  function toggleCollapse(header) {
+    header.classList.toggle('open');
+    header.nextElementSibling.classList.toggle('open');
+  }
+
+  function tryParseJSON(text) {
+    if (!text || typeof text !== 'string') return null;
+    const start = text.indexOf('{');
+    if (start === -1) return null;
+    let depth = 0;
+    for (let i = start; i < text.length; i++) {
+      const ch = text[i];
+      if (ch === '{') depth++;
+      else if (ch === '}') depth--;
+      if (depth === 0) {
+        const candidate = text.slice(start, i + 1);
+        try { return JSON.parse(candidate); } catch (e) { return null; }
+      }
+    }
+    return null;
+  }
+
+  function renderStructuredResponse(data) {
+    const parts = [];
+    if (data.message) {
+      parts.push(`<div class="agent-message-text">${escapeHTML(data.message).replace(/\n/g,'<br>')}</div>`);
+    }
+    if (data.user_info) {
+      const info = data.user_info;
+      const rows = [
+        [t('surname'), info.surname],[t('location'), info.location],[t('dialect'), info.dialect],[t('migration'), info.migration_info],
+      ].filter(([,v]) => v && !['未提供','未知','Not provided','Unknown'].includes(v));
+      if (rows.length) {
+        parts.push(`<div class="collapse-block">
+          <div class="collapse-header" onclick="toggleCollapse(this)">
+            <span class="collapse-title">${t('collected')}</span><span class="collapse-arrow">▼</span>
+          </div>
+          <div class="collapse-body"><div class="info-grid">
+            ${rows.map(([l,v])=>`<div class="info-grid-row"><span class="info-grid-label">${escapeHTML(l)}</span><span class="info-grid-value">${escapeHTML(v)}</span></div>`).join('')}
+          </div></div></div>`);
+        rows.forEach(([l,v]) => { familyInfo[l] = v; });
+        // 同步到英文key方便兼容
+        if (info.surname && info.surname !== '未提供') familyInfo['姓氏'] = info.surname;
+        if (info.location && info.location !== '未提供') familyInfo['祖籍'] = info.location;
+        if (info.dialect && info.dialect !== '未提供') familyInfo['方言'] = info.dialect;
+        if (info.migration_info && info.migration_info !== '未提供') familyInfo['迁移'] = info.migration_info;
+        updateInfoPanel();
+      }
+    }
+    if (data.analysis) {
+      parts.push(`<div class="collapse-block">
+        <div class="collapse-header open" onclick="toggleCollapse(this)">
+          <span class="collapse-title">${t('analysis')}</span><span class="collapse-arrow">▼</span>
+        </div>
+        <div class="collapse-body open"><div class="analysis-text">${escapeHTML(data.analysis).replace(/\n/g,'<br>')}</div></div>
+      </div>`);
+    }
+    if (data.intermediaries && data.intermediaries.length > 0) {
+      const guideCards = data.intermediaries.map(g => `
+        <div class="guide-card">
+          <div class="guide-header"><span class="guide-name">${escapeHTML(g.name)}</span><span class="guide-score">${escapeHTML(String(g.match_score))}${currentLang === 'zh' ? '分' : ''}</span></div>
+          <div class="guide-location">📍 ${escapeHTML(g.location)}</div>
+          ${g.notes ? `<div class="guide-reason">${escapeHTML(g.notes)}</div>` : ''}
+          ${g.contact_info ? `<div class="guide-contact">✉️ ${escapeHTML(g.contact_info)}</div>` : ''}
+          ${g.success_cases && g.success_cases.length ? `<div class="guide-cases">${g.success_cases.map(c=>`✓ ${escapeHTML(c.description)}${currentLang === 'zh' ? '（' : ' ('}${escapeHTML(String(c.year))}${currentLang === 'zh' ? '）' : ')'}`).join('<br>')}</div>` : ''}
+        </div>`).join('');
+      parts.push(`<div class="collapse-block">
+        <div class="collapse-header open" onclick="toggleCollapse(this)">
+          <span class="collapse-title">${t('guides')} (${data.intermediaries.length})</span><span class="collapse-arrow">▼</span>
+        </div>
+        <div class="collapse-body open">${guideCards}</div></div>`);
+    }
+    if (data.todos && data.todos.length > 0) {
+      data.todos.forEach(t => {
+        const todoId   = (typeof t === 'object' && t !== null) ? t.id   : null;
+        const todoText = (typeof t === 'object' && t !== null) ? (t.text || t.action || t.title || JSON.stringify(t)) : String(t);
+        const todoDone = (typeof t === 'object' && t !== null) ? !!t.done : false;
+        if (!todoText) return;
+        const existing = todoId
+          ? todos.find(x => x.id === todoId)
+          : todos.find(x => x.text === todoText);
+        if (existing) {
+          existing.done = todoDone;
+          existing.text = todoText;
+          if (todoId) existing.id = todoId;
+        } else {
+          todos.push({ id: todoId, text: todoText, done: todoDone });
+        }
+      });
+      updateTodoPanel(); updateBadge();
+
+      // 在气泡里显示未完成的 todo（简洁版）
+      const undone = data.todos.filter(t => (typeof t === 'object' && t !== null) ? !t.done : true);
+      if (undone.length > 0) {
+        const todoLines = undone.map(t => {
+          const text = (typeof t === 'object' && t !== null) ? (t.text || '') : String(t);
+          return `<div style="display:flex;align-items:flex-start;gap:.4rem;padding:.2rem 0;">
+            <span style="color:var(--gold);margin-top:2px;flex-shrink:0;">·</span>
+            <span>${escapeHTML(text)}</span>
+          </div>`;
+        }).join('');
+        parts.push(`<div class="collapse-block">
+          <div class="collapse-header open" onclick="toggleCollapse(this)">
+            <span class="collapse-title">${t('nextActions')}</span><span class="collapse-arrow">▼</span>
+          </div>
+          <div class="collapse-body open" style="font-size:.8rem;line-height:1.8;">${todoLines}</div>
+        </div>`);
+      }
+    }
+    return `<div class="agent-response">${parts.join('')}</div>`;
+  }
+
+  function renderPlainText(text) {
+    return text
+      .replace(/### (.+)/g,'<h4 style="font-family:Noto Serif SC;color:var(--red);margin:.6em 0 .2em;font-size:.88rem;">$1</h4>')
+      .replace(/## (.+)/g,'<h3 style="font-family:Noto Serif SC;color:var(--red);margin:.8em 0 .3em;">$1</h3>')
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/\n/g,'<br>');
+  }
+
+  function escapeHTML(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function extractAndUpdatePanel(text) {
+    if (!text) return;
+    const allEmojis = ['📋','🎯','👥','💡','💬','💌','📊'];
+
+    function getSection(emoji) {
+      let pos = -1;
+      for (let i = 0; i < text.length; i++) {
+        if (text.startsWith(emoji, i) && (i === 0 || text[i-1] === '\n')) {
+          pos = i; break;
+        }
+      }
+      if (pos === -1) return null;
+      let end = text.length;
+      for (let i = pos + 1; i < text.length; i++) {
+        if (text[i-1] === '\n' && allEmojis.some(e => text.startsWith(e, i))) {
+          end = i; break;
+        }
+      }
+      const section = text.slice(pos, end).trim();
+      const newline = section.indexOf('\n');
+      return newline === -1 ? '' : section.slice(newline + 1).trim();
+    }
+
+    const infoBody = getSection('📋');
+    if (infoBody) {
+      familyInfo._raw = infoBody;
+      updateInfoPanel();
+    }
+
+    const todoBody = getSection('💡');
+    if (todoBody) {
+      const todoRe = /^[1-9][.、]\s*(.{5,60})/gm;
+      let m, updated = false;
+      while ((m = todoRe.exec(todoBody)) !== null) {
+        let t = m[1].replace(/\*\*/g,'').trim();
+        t = t.replace(/[：:]\s*$/g, '').trim();
+        if (t.includes('[') || t.includes('【') || t.includes('请提供')) continue;
+        if (!todos.find(x => x.text === t)) { todos.push({text: t, done: false}); updated = true; }
+      }
+      if (updated) { updateTodoPanel(); updateBadge(); }
+    }
+  }
+
+  function updateInfoPanel() {
+    const infoPanel = document.getElementById('infoPanel');
+
+    // 优先用结构化 user_info 字段渲染
+    const structuredRows = [
+      [t('surname'), familyInfo['姓氏']], [t('location'), familyInfo['祖籍']],
+      [t('dialect'), familyInfo['方言']], [t('migration'), familyInfo['迁移']]
+    ].filter(([, v]) => v && !['未提供','未知','Not provided','Unknown'].includes(v));
+
+    if (structuredRows.length > 0) {
+      const html = structuredRows.map(([l, v]) =>
+        `<div class="info-row"><span class="info-label">${escapeHTML(l)}</span><span>${escapeHTML(v)}</span></div>`
+      ).join('');
+      infoPanel.innerHTML = `<div style="font-size:.78rem;line-height:1.9;">${html}</div>`;
+    } else if (familyInfo._raw) {
+      // 旧格式兼容
+      const lines = familyInfo._raw.split('\n').map(l => l.trim()).filter(l => l && l !== '---');
+      const html = lines.map(line => {
+        const fieldMatch = line.match(/^\*\*(.+?)\*\*[：:]\s*(.*)/);
+        if (fieldMatch) {
+          return `<div class="info-row"><span class="info-label">${escapeHTML(fieldMatch[1])}</span><span>${escapeHTML(fieldMatch[2])}</span></div>`;
+        }
+        if (line.startsWith('- ')) {
+          return `<div style="padding-left:.8rem;color:rgba(26,18,8,.6);font-size:.73rem;line-height:1.7;">· ${escapeHTML(line.slice(2))}</div>`;
+        }
+        return `<div style="font-size:.78rem;line-height:1.8;">${escapeHTML(line)}</div>`;
+      }).join('');
+      infoPanel.innerHTML = `<div style="font-size:.78rem;line-height:1.9;">${html}</div>`;
+    } else {
+      infoPanel.innerHTML = `<div class="empty-panel">${t('familyInfoEmpty')}</div>`;
+    }
+  }
+
+  function updateTodoPanel() {
+    const todoPanel = document.getElementById('todoPanel');
+    if (todos.length > 0) {
+      todoPanel.innerHTML = `<div class="todo-list">${todos.map((t,i)=>`
+        <div class="todo-item ${t.done?'done':''}" style="display:flex;align-items:flex-start;justify-content:space-between;gap:.3rem;">
+          <div style="display:flex;align-items:flex-start;gap:.5rem;flex:1;cursor:pointer;" onclick="toggleTodo(${i})">
+            <div class="todo-check">${t.done?'✓':''}</div>
+            <span class="todo-text">${escapeHTML(t.text)}</span>
+          </div>
+          <button onclick="deleteTodo(${i})" style="background:none;border:none;cursor:pointer;color:rgba(26,18,8,.2);font-size:.8rem;padding:1px 2px;flex-shrink:0;line-height:1;transition:color .15s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(26,18,8,.2)'">🗑</button>
+        </div>`).join('')}</div>`;
+    } else {
+      todoPanel.innerHTML = `<div class="empty-panel">${t('nextStepsEmpty')}</div>`;
+    }
+  }
+
+  function toggleTodo(i) { todos[i].done=!todos[i].done; updateTodoPanel(); updateBadge(); }
+  function deleteTodo(i) { todos.splice(i, 1); updateTodoPanel(); updateBadge(); }
+
+  function addMessage(role, content, isHTML=false) {
+    if (!conversationStarted) {
+      document.getElementById('welcome').style.display='none';
+      document.getElementById('messages').classList.add('visible');
+      conversationStarted=true;
+    }
+    const messages = document.getElementById('messages');
+
+    // 外层 wrap（包含气泡 + 操作按钮）
+    const wrap = document.createElement('div');
+    wrap.className = 'message-wrap';
+
+    const div = document.createElement('div');
+    div.className = `message ${role}`;
+    const bubbleContent = isHTML ? content : renderPlainText(content);
+    div.innerHTML = `<div class="avatar ${role}">${role==='agent'?(currentLang==='zh'?'向':'AI'):(currentLang==='zh'?'我':'ME')}</div><div class="bubble">${bubbleContent}</div>`;
+    wrap.appendChild(div);
+
+    // agent 消息加重试按钮
+    if (role === 'agent') {
+      const actions = document.createElement('div');
+      actions.className = 'message-actions';
+      actions.innerHTML = `<button class="retry-btn" onclick="retryMessage(this)" title="${currentLang === 'en' ? 'Regenerate' : '重新生成'}">${t('regenerate')}</button>`;
+      wrap.appendChild(actions);
+    }
+
+    messages.appendChild(wrap);
+    messages.scrollTop = messages.scrollHeight;
+    return div;
+  }
+
+  function retryMessage(btn) {
+    if (isLoading) return;
+    // 找到这条 agent 回复对应的上一条 user 消息
+    const wrap = btn.closest('.message-wrap');
+    const allWraps = Array.from(document.querySelectorAll('#messages .message-wrap'));
+    const idx = allWraps.indexOf(wrap);
+    // 往前找最近的 user 消息
+    let userText = null;
+    for (let i = idx - 1; i >= 0; i--) {
+      const userMsg = allWraps[i].querySelector('.message.user .bubble');
+      if (userMsg) { userText = userMsg.textContent.trim(); break; }
+    }
+    if (!userText) return;
+    // 删除这条 agent 回复及之后所有内容
+    for (let i = allWraps.length - 1; i >= idx; i--) {
+      allWraps[i].remove();
+    }
+    // 重新发送
+    document.getElementById('input').value = userText;
+    sendMessage();
+  }
+
+  function showTyping() { document.getElementById('typing').classList.add('visible'); scrollDown(); }
+  function hideTyping() { document.getElementById('typing').classList.remove('visible'); }
+  function scrollDown() { const m=document.getElementById('messages'); m.scrollTop=m.scrollHeight; }
+
+  async function sendMessage() {
+    const input = document.getElementById('input');
+    const text = input.value.trim();
+    if (!text || isLoading) return;
+    input.value=''; input.style.height='auto';
+    isLoading=true; document.getElementById('sendBtn').disabled=true;
+    addMessage('user', text);
+    showTyping();
+
+    try {
+      const response = await fetch(API_URL, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({user_id:sessionId, message:text, lang:currentLang})
+      });
+      if (!response.ok) {
+        let detail = '';
+        try { detail = (await response.json()).detail || ''; } catch (e) {}
+        throw new Error(`${t('requestFailed')} (${response.status})${detail ? ': ' + detail : ''}`);
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText='', agentDiv=null, firstChunk=true, structuredData=null, sseBuffer='';
+      let streamedMessageLen = 0;
+
+      function extractMessageSoFar(text) {
+        const t = text.trim().replace(/^```json/, '').replace(/^```/, '').replace(/```$/, '').trim();
+        // 先尝试完整 JSON 解析
+        try { const obj = JSON.parse(t); if (obj && obj.message) return obj.message; } catch(e) {}
+        // JSON 未完整：提取 "message": "..." 已有内容，支持多行（\n转义）
+        const msgStart = t.indexOf('"message"');
+        if (msgStart === -1) return null;
+        const quoteStart = t.indexOf('"', t.indexOf(':', msgStart) + 1);
+        if (quoteStart === -1) return null;
+        let result = '', i = quoteStart + 1;
+        while (i < t.length) {
+          const ch = t[i];
+          if (ch === '\\') {
+            const next = t[i+1];
+            if (next === 'n') { result += '\n'; i += 2; }
+            else if (next === '"') { result += '"'; i += 2; }
+            else if (next === '\\') { result += '\\'; i += 2; }
+            else { result += next; i += 2; }
+          } else if (ch === '"') {
+            break; // 字段结束
+          } else {
+            result += ch; i++;
+          }
+        }
+        return result || null;
+      }
+
+      function processSseBlock(block) {
+        const raw = block.split(/\r?\n/)
+          .filter(line => line.startsWith('data:'))
+          .map(line => line.slice(5).trimStart())
+          .join('\n');
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (data.type === 'error') {
+          throw new Error(data.content?.message || t('requestFailed'));
+        }
+        if (data.type === 'structured') {
+          structuredData = data.content;
+          return;
+        }
+        const newText =
+          (data.type === 'answer' && data.content?.answer) ? data.content.answer :
+          (data.type === 'answer' && typeof data.content === 'string') ? data.content :
+          '';
+        if (!newText) return;
+        if (firstChunk) { hideTyping(); firstChunk = false; }
+        fullText += newText;
+        const isJSON = fullText.trimStart().startsWith('{') || fullText.trimStart().startsWith('```');
+        if (!isJSON) {
+          if (!agentDiv) agentDiv = addMessage('agent', fullText);
+          else { agentDiv.querySelector('.bubble').innerHTML = renderPlainText(fullText); scrollDown(); }
+          return;
+        }
+        const msgSoFar = extractMessageSoFar(fullText);
+        if (msgSoFar && msgSoFar.length > streamedMessageLen) {
+          streamedMessageLen = msgSoFar.length;
+          if (!agentDiv) agentDiv = addMessage('agent', msgSoFar);
+          else { agentDiv.querySelector('.bubble').innerHTML = renderPlainText(msgSoFar); scrollDown(); }
+        } else if (!agentDiv) {
+          agentDiv = addMessage('agent', '');
+        }
+      }
+
+      while (true) {
+        const {done, value} = await reader.read();
+        if (done) break;
+        sseBuffer += decoder.decode(value,{stream:true});
+        const blocks = sseBuffer.split(/\r?\n\r?\n/);
+        sseBuffer = blocks.pop() || '';
+        for (const block of blocks) {
+          processSseBlock(block);
+        }
+      }
+      sseBuffer += decoder.decode();
+      if (sseBuffer.trim()) processSseBlock(sseBuffer);
+
+      hideTyping();
+
+      if (structuredData) {
+        if (!agentDiv) agentDiv = addMessage('agent', '');
+        agentDiv.querySelector('.bubble').innerHTML = renderStructuredResponse(structuredData);
+        scrollDown();
+      } else if (!fullText) {
+        addMessage('agent', t('processing'));
+      } else {
+        let cleanText = fullText.trim();
+        if (cleanText.startsWith('```json')) cleanText = cleanText.slice(7);
+        else if (cleanText.startsWith('```')) cleanText = cleanText.slice(3);
+        if (cleanText.endsWith('```')) cleanText = cleanText.slice(0, -3);
+        cleanText = cleanText.trim();
+
+        const parsed = tryParseJSON(cleanText) || tryParseJSON(fullText);
+        if (parsed && agentDiv) {
+          agentDiv.querySelector('.bubble').innerHTML = renderStructuredResponse(parsed);
+          scrollDown();
+        } else if (agentDiv) {
+          agentDiv.querySelector('.bubble').innerHTML = renderPlainText(cleanText || fullText);
+          scrollDown();
+        }
+      }
+      extractAndUpdatePanel(structuredData ? JSON.stringify(structuredData) : fullText);
+
+    } catch(err) {
+      hideTyping();
+      showError(t('connectionError') + err.message);
+    } finally {
+      isLoading=false;
+      document.getElementById('sendBtn').disabled=false;
+      input.focus();
+      await saveToServer();
+    }
+  }
+
+  // ====== Prefill + Auto send from URL (?q=...) ======
+  (function prefillAndSendFromQuery() {
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get("q");
+    if (!q) return;
+    const key = "rootlink_prefill_sent_" + q;
+    if (sessionStorage.getItem(key)) return;
+    const input = document.getElementById("input");
+    if (!input) return;
+    input.value = q;
+    autoResize(input);
+    input.focus();
+    setTimeout(() => {
+      if (isLoading) return;
+      sessionStorage.setItem(key, "1");
+      sendMessage();
+      history.replaceState({}, "", window.location.pathname);
+    }, 120);
+  })();
+
+  // ====== ARCHIVE: Export / Import ======
+  function getArchivePayload() {
+    return {
+      version: 1,
+      exported_at: new Date().toISOString(),
+      session_id: sessionId,
+      familyInfo: familyInfo || {},
+      todos: (todos || []).map(t => ({ text: t.text, done: !!t.done })),
+      conversation: Array.from(document.querySelectorAll('#messages .message')).map(node => {
+        const role = node.classList.contains('user') ? 'user' : 'agent';
+        const bubble = node.querySelector('.bubble');
+        return { role, html: bubble ? bubble.innerHTML : '' };
+      })
+    };
+  }
+
+  function exportArchive() {
+    const hasInfo = (familyInfo && (familyInfo._raw || Object.keys(familyInfo).length > 0));
+    const hasTodos = (todos && todos.length > 0);
+    const hasConversation = document.querySelectorAll('#messages .message').length > 0;
+    if (!hasInfo && !hasTodos && !hasConversation) {
+      showError(t('noExport'));
+      return;
+    }
+    const payload = getArchivePayload();
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const ts = new Date();
+    const filename = `RootLink_${currentLang === 'en' ? 'Archive' : '寻根档案'}_${ts.getFullYear()}-${String(ts.getMonth()+1).padStart(2,'0')}-${String(ts.getDate()).padStart(2,'0')}.json`;
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function triggerImport() {
+    const fileInput = document.getElementById('importFile');
+    if (!fileInput) return;
+    fileInput.value = '';
+    fileInput.click();
+  }
+
+  document.getElementById('importFile')?.addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        if (!data || typeof data !== 'object') throw new Error(t('invalidJSON'));
+        if (!('familyInfo' in data) && !('todos' in data) && !('conversation' in data)) {
+          throw new Error(t('invalidArchive'));
+        }
+        familyInfo = data.familyInfo || {};
+        todos = Array.isArray(data.todos) ? data.todos.map(t => ({ text: t.text, done: !!t.done })) : [];
+        updateInfoPanel(); updateTodoPanel(); updateBadge();
+        if (Array.isArray(data.conversation) && data.conversation.length) {
+          const messages = document.getElementById('messages');
+          messages.innerHTML = '';
+          document.getElementById('welcome').style.display = 'none';
+          messages.classList.add('visible');
+          conversationStarted = true;
+          data.conversation.forEach(item => {
+            const div = document.createElement('div');
+            div.className = `message ${item.role === 'user' ? 'user' : 'agent'}`;
+            div.innerHTML = `<div class="avatar ${item.role === 'user' ? 'user' : 'agent'}">${item.role === 'user' ? (currentLang==='zh'?'我':'ME') : (currentLang==='zh'?'向':'AI')}</div><div class="bubble">${item.html || ''}</div>`;
+            messages.appendChild(div);
+          });
+          messages.scrollTop = messages.scrollHeight;
+        }
+        showError(t('importSuccess'));
+      } catch (err) {
+        showError(t('importFailed') + err.message);
+      }
+    };
+    reader.readAsText(file, 'utf-8');
+  });
+
+  function resetConversation() {
+    const ok = confirm(t('resetConfirm'));
+    if (!ok) return;
+    const messages = document.getElementById('messages');
+    messages.innerHTML = ''; messages.classList.remove('visible');
+    document.getElementById('welcome').style.display = '';
+    conversationStarted = false;
+    todos = []; familyInfo = {};
+    updateInfoPanel(); updateTodoPanel(); updateBadge();
+    panelOpen = false;
+    document.getElementById('sidePanel').classList.remove('open');
+    updatePanelButton();
+    sessionId = 'sess_' + Math.random().toString(36).substr(2,16);
+    Object.keys(sessionStorage).forEach(k => {
+      if (k.startsWith('rootlink_prefill_sent_')) sessionStorage.removeItem(k);
+    });
+  }
+
+  applyLanguage();
+</script>
+</body>
+</html>

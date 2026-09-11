@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "public/**", "use": "@vercel/static" },
+    { "src": "api/chat.js", "use": "@vercel/node" },
+    { "src": "api/save.js", "use": "@vercel/node" },
+    { "src": "api/load.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/chat", "dest": "/api/chat.js" },
+    { "src": "/api/save", "dest": "/api/save.js" },
+    { "src": "/api/load", "dest": "/api/load.js" },
+    { "src": "/(.*)", "dest": "/public/$1" }
+  ]
+}

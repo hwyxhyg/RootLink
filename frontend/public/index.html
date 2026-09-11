@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RootLink · 寻根连接</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1612;--paper:#faf7f2;--paper-warm:#f0ebe2;--accent:#b8864a;--accent-light:#d4a672;--accent-glow:rgba(184,134,74,0.1);--jade:#4a7c6f;--jade-light:#6ba393;--gold:#b4903a;--gold-light:#d4b86a;--mist:#c8c1b6;--deep:#f2e9db;--card:#fff;--shadow-sm:0 1px 3px rgba(26,22,18,0.06);--shadow-md:0 4px 16px rgba(26,22,18,0.08);--shadow-lg:0 8px 40px rgba(26,22,18,0.12);--max-w:1200px;--nav-h:64px;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans SC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;}
+.topnav{position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--nav-h);background:rgba(250,247,242,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;}
+.nav-inner{width:100%;max-width:var(--max-w);padding:0 40px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;text-decoration:none;}
+.nav-logo img{height:44px;width:auto;object-fit:contain;}
+.nav-links{display:flex;gap:28px;align-items:center;}
+.nav-links a{text-decoration:none;color:#7a7168;font-size:14px;font-weight:500;transition:color .2s;position:relative;}
+.nav-links a:hover,.nav-links a.active{color:var(--accent);}
+.nav-links a.active::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:2px;background:var(--accent);border-radius:2px;}
+.nav-cta{padding:8px 20px;background:var(--accent);color:#ffffff!important;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;font-family:'Noto Sans SC',sans-serif;}
+.section{display:none;padding-top:var(--nav-h);}.section.active{display:block;}
+.container{max-width:var(--max-w);margin:0 auto;padding:0 40px;}
+.section-tag{font-size:12px;letter-spacing:3px;color:var(--accent);font-weight:600;text-transform:uppercase;margin-bottom:8px;}
+.section-heading{font-family:'Noto Serif SC',serif;font-size:36px;font-weight:900;line-height:1.3;}
+.section-sub{font-size:15px;color:#8a8178;margin-top:8px;line-height:1.7;max-width:560px;}
+.hero{min-height:calc(100vh - var(--nav-h));background:linear-gradient(170deg,#d4c4a0 0%,#e0d1b0 35%,#f2e9db 70%,#e8dcc4 100%);display:flex;align-items:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 30%,rgba(196,85,58,0.06) 0%,transparent 55%),radial-gradient(ellipse at 75% 65%,rgba(74,124,111,0.05) 0%,transparent 50%),radial-gradient(ellipse at 50% 90%,rgba(180,144,58,0.04) 0%,transparent 40%);}
+.hero-inner{position:relative;z-index:2;width:100%;max-width:var(--max-w);margin:0 auto;padding:80px 40px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+.hero-text{color:var(--ink);}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.08);border-radius:24px;padding:6px 16px;font-size:12px;color:rgba(26,22,18,0.6);margin-bottom:24px;}
+.hero-badge .dot{width:6px;height:6px;background:var(--jade-light);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero-title{font-family:'Noto Serif SC',serif;font-size:48px;font-weight:900;line-height:1.25;margin-bottom:16px;}
+.hero-title .hl{background:linear-gradient(135deg,var(--gold),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-desc{font-size:16px;color:rgba(26,22,18,0.55);line-height:1.8;margin-bottom:32px;max-width:480px;}
+.quick-card{background:rgba(255,255,255,0.7);backdrop-filter:blur(16px);border:1px solid rgba(0,0,0,0.08);border-radius:20px;padding:32px;}
+.qc-title{font-family:'Noto Serif SC',serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:20px;}
+.fill-row{margin-bottom:12px;font-size:15px;color:var(--ink);line-height:2.2;}
+.fill-blank{display:inline-block;min-width:90px;border-bottom:2px dashed var(--gold);color:var(--gold);font-weight:600;padding:0 6px;text-align:center;outline:none;}
+.fill-blank:focus{border-bottom-style:solid;border-color:var(--accent);color:var(--accent);}
+.fill-blank:empty::before{content:attr(data-placeholder);opacity:.5;font-weight:400;}
+.hero-btn{margin-top:20px;width:100%;height:52px;background:linear-gradient(135deg,var(--accent),#9a7040);color:#fff;border:none;border-radius:14px;font-family:'Noto Sans SC',sans-serif;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;}
+.hero-btn:hover{transform:translateY(-1px);}
+.stories-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:28px;}
+.story-card{background:var(--card);border-radius:16px;overflow:hidden;box-shadow:var(--shadow-md);transition:transform .25s,box-shadow .25s;cursor:pointer;}
+.story-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);}
+.story-banner{height:200px;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:16px;background-size:cover;background-position:center;}
+.story-banner .overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.1) 60%,transparent 100%);}
+.story-tag{position:relative;z-index:2;background:rgba(255,255,255,0.92);border-radius:8px;padding:4px 12px;font-size:11px;font-weight:700;color:var(--accent);}
+.story-body{padding:20px;}
+.story-title{font-family:'Noto Serif SC',serif;font-size:15px;font-weight:700;margin-bottom:6px;line-height:1.4;}
+.story-excerpt{font-size:12px;color:#8a8178;line-height:1.65;margin-bottom:10px;}
+.story-route{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--jade);font-weight:600;flex-wrap:wrap;}
+.story-route .arr{color:var(--mist);}
+.story-link{font-size:12px;color:var(--accent);text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:4px;margin-top:8px;}
+.story-link:hover{text-decoration:underline;}
+.viz-section{padding:48px 0;}
+.viz-wrap{display:grid;grid-template-columns:1.2fr 1fr;grid-template-areas:"map ctrl" "info ctrl";gap:0;background:var(--card);border-radius:20px;overflow:hidden;box-shadow:var(--shadow-md);margin-top:24px;max-width:100%;}
+.viz-map-area{min-height:380px;background:#eae5dc;position:relative;overflow:hidden;padding:20px;grid-area:map;}
+.china-svg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:88%;height:auto;}
+.map-dot-abs{position:absolute;border-radius:50%;z-index:2;transition:all .6s ease;}
+@keyframes mapP{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:1;transform:scale(1.5)}}
+.map-info{background:var(--card);padding:16px 20px;border-top:1px solid rgba(0,0,0,0.06);grid-area:info;}
+.map-info h3{font-family:'Noto Serif SC',serif;font-size:22px;font-weight:900;}
+.map-info p{font-size:12px;color:#8a8178;margin-top:2px;line-height:1.6;}
+.viz-controls{padding:32px;display:flex;flex-direction:column;justify-content:center;grid-area:ctrl;}
+.viz-controls h3{font-family:'Noto Serif SC',serif;font-size:20px;font-weight:700;margin-bottom:16px;}
+.viz-input-row{display:flex;gap:10px;margin-bottom:16px;}
+.viz-input{flex:1;height:46px;border:1.5px solid var(--mist);border-radius:12px;padding:0 16px;font-family:'Noto Sans SC',sans-serif;font-size:15px;background:var(--paper);outline:none;}
+.viz-input:focus{border-color:var(--accent);}
+.viz-btn{height:46px;padding:0 24px;background:var(--jade);color:#fff;border:none;border-radius:12px;font-family:'Noto Sans SC',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
+.viz-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.viz-tag{padding:6px 16px;border-radius:24px;font-size:13px;font-weight:500;background:var(--paper);color:#7a7168;cursor:pointer;border:1px solid transparent;transition:all .2s;}
+.viz-tag:hover,.viz-tag.active{background:var(--accent-glow);color:var(--accent);border-color:rgba(196,85,58,0.2);}
+.path-section{padding:48px 0 60px;}
+.path-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:28px;}
+.path-timeline{position:relative;padding-left:32px;}
+.path-timeline::before{content:'';position:absolute;left:9px;top:6px;bottom:6px;width:2.5px;background:linear-gradient(to bottom,var(--accent),var(--jade),var(--gold));border-radius:2px;}
+.path-step{position:relative;margin-bottom:28px;}.path-step:last-child{margin-bottom:0;}
+.p-dot{position:absolute;left:-28px;top:4px;width:14px;height:14px;border-radius:50%;border:3px solid;background:var(--paper);}
+.path-step:nth-child(1) .p-dot{border-color:var(--accent);}
+.path-step:nth-child(2) .p-dot{border-color:var(--accent-light);}
+.path-step:nth-child(3) .p-dot{border-color:var(--jade);}
+.path-step:nth-child(4) .p-dot{border-color:var(--jade-light);}
+.path-step:nth-child(5) .p-dot{border-color:var(--gold);}
+.p-title{font-family:'Noto Serif SC',serif;font-size:15px;font-weight:700;margin-bottom:4px;}
+.p-desc{font-size:13px;color:#8a8178;line-height:1.6;}
+.p-example{margin-top:8px;background:rgba(74,124,111,0.06);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--jade);line-height:1.6;}
+.pi-box{background:var(--card);border-radius:16px;padding:28px;box-shadow:var(--shadow-md);}
+.pi-title{font-family:'Noto Serif SC',serif;font-size:18px;font-weight:700;margin-bottom:16px;}
+.pi-item{padding:14px 0;border-bottom:1px solid rgba(0,0,0,0.04);font-size:13px;line-height:1.7;color:#5a5248;}
+.pi-item:last-child{border-bottom:none;}.pi-item strong{color:var(--ink);}
+.case-card{background:var(--paper);border-radius:12px;padding:14px 16px;margin-bottom:10px;border:1px solid rgba(0,0,0,0.05);}
+.case-card:last-child{margin-bottom:0;}
+.case-card-name{font-size:13px;font-weight:700;margin-bottom:4px;}
+.case-card-desc{font-size:12px;color:#7a7168;line-height:1.6;margin-bottom:8px;}
+.case-steps-row{display:flex;flex-wrap:wrap;gap:5px;}
+.case-step-pill{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;}
+.pill-1{background:rgba(184,134,74,0.12);color:var(--accent);}
+.pill-2{background:rgba(184,134,74,0.08);color:var(--accent-light);}
+.pill-3{background:rgba(74,124,111,0.1);color:var(--jade);}
+.pill-4{background:rgba(107,163,147,0.12);color:var(--jade-light);}
+.pill-5{background:rgba(180,144,58,0.1);color:var(--gold);}
+.agent-section{padding:60px 0;}
+.agent-hero{background:var(--card);border-radius:20px;overflow:hidden;box-shadow:var(--shadow-md);display:grid;grid-template-columns:1fr 1fr;min-height:480px;}
+.agent-info{padding:48px 40px;display:flex;flex-direction:column;justify-content:center;}
+.agent-logo{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--accent),#9a7040);display:flex;align-items:center;justify-content:center;margin-bottom:20px;box-shadow:0 4px 16px rgba(184,134,74,0.3);}
+.agent-logo svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:1.5;}
+.agent-features{margin-top:24px;display:flex;flex-direction:column;gap:12px;}
+.af-item{display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.6;}
+.af-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.af-icon svg{width:16px;height:16px;fill:none;stroke-width:2;}
+.agent-cta{margin-top:28px;display:inline-flex;align-items:center;gap:10px;padding:14px 28px;background:linear-gradient(135deg,var(--accent),#9a7040);color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;font-family:'Noto Sans SC',sans-serif;width:fit-content;}
+.agent-cta:hover{transform:translateY(-1px);}
+.agent-cta svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;}
+.agent-preview{background:linear-gradient(170deg,#e8dcc4,#f2e9db);padding:32px;display:flex;flex-direction:column;gap:12px;justify-content:center;}
+.cbd{max-width:88%;}
+.cbd.bot{margin-right:auto;}.cbd.user{margin-left:auto;}
+.cbd-c{padding:14px 18px;border-radius:18px;font-size:13px;line-height:1.7;}
+.bot .cbd-c{background:rgba(0,0,0,0.05);color:var(--ink);border-bottom-left-radius:6px;}
+.user .cbd-c{background:var(--accent);color:#fff;border-bottom-right-radius:6px;}
+.conf-bar{margin-top:8px;height:6px;background:rgba(0,0,0,0.08);border-radius:4px;overflow:hidden;}
+.conf-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--jade),var(--jade-light));}
+.conf-label{display:flex;justify-content:space-between;font-size:10px;color:rgba(26,22,18,0.4);margin-top:3px;}
+.comm-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:28px;}
+.comm-col h3{font-family:'Noto Serif SC',serif;font-size:18px;font-weight:700;margin-bottom:16px;}
+.group-card{background:var(--card);border-radius:14px;padding:18px;box-shadow:var(--shadow-sm);margin-bottom:12px;display:flex;gap:14px;cursor:pointer;transition:transform .2s;}
+.group-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.g-avatar{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Noto Serif SC',serif;font-size:18px;font-weight:900;color:#fff;}
+.g-name{font-family:'Noto Serif SC',serif;font-size:14px;font-weight:700;margin-bottom:2px;}
+.g-meta{font-size:11px;color:#9a9088;line-height:1.5;}
+.g-tags{display:flex;gap:6px;margin-top:6px;}
+.g-tag{font-size:10px;padding:2px 8px;border-radius:6px;font-weight:500;}
+.g-tag-green{background:rgba(74,124,111,0.1);color:var(--jade);}
+.g-tag-red{background:rgba(196,85,58,0.08);color:var(--accent);}
+.g-tag-gold{background:rgba(180,144,58,0.1);color:var(--gold);}
+.med-card{background:var(--card);border-radius:14px;padding:20px;box-shadow:var(--shadow-sm);margin-bottom:12px;}
+.med-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.med-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--paper-warm),var(--mist));display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.med-name{font-family:'Noto Serif SC',serif;font-size:14px;font-weight:700;}
+.med-role{font-size:11px;color:#9a9088;}
+.med-badge{display:flex;align-items:center;gap:3px;font-size:10px;color:var(--jade);font-weight:600;}
+.med-badge svg{width:14px;height:14px;fill:var(--jade);}
+.med-stats{display:flex;gap:16px;padding:10px 0;border-top:1px solid rgba(0,0,0,0.04);border-bottom:1px solid rgba(0,0,0,0.04);margin-bottom:10px;}
+.ms{text-align:center;flex:1;}.ms-num{font-size:16px;font-weight:700;}.ms-label{font-size:10px;color:#9a9088;}
+.med-specs{display:flex;flex-wrap:wrap;gap:6px;}
+.m-spec{font-size:10px;padding:3px 10px;border-radius:8px;background:var(--paper);color:#7a7168;}
+.connect-btn{width:100%;height:40px;margin-top:12px;background:transparent;border:1.5px solid var(--accent);color:var(--accent);border-radius:12px;font-family:'Noto Sans SC',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.connect-btn:hover{background:var(--accent);color:#fff;}
+.ql-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:20px;}
+.ql-card{background:var(--card);border-radius:14px;padding:20px;box-shadow:var(--shadow-sm);transition:transform .2s;}
+.ql-card:hover{transform:translateY(-2px);}
+.ql-region{font-family:'Noto Serif SC',serif;font-size:15px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.ql-region .ql-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.ql-item{font-size:12px;color:#7a7168;line-height:1.8;}.ql-item strong{color:var(--ink);}
+.contact-card{background:linear-gradient(145deg,#f2e9db,#e8dcc4);border-radius:20px;padding:60px;display:grid;grid-template-columns:1fr 1fr;gap:48px;color:var(--ink);box-shadow:var(--shadow-lg);}
+.ct-title{font-family:'Noto Serif SC',serif;font-size:28px;font-weight:900;margin-bottom:12px;}
+.ct-desc{font-size:14px;color:rgba(26,22,18,0.5);line-height:1.8;margin-bottom:24px;}
+.ct-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(0,0,0,0.06);}
+.ct-icon{width:44px;height:44px;border-radius:12px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ct-icon svg{width:20px;height:20px;stroke:var(--ink);fill:none;stroke-width:1.8;}
+.ct-label{font-size:12px;color:rgba(26,22,18,0.4);}.ct-value{font-size:14px;font-weight:500;}
+.privacy-inner{background:rgba(74,124,111,0.06);border:1px solid rgba(74,124,111,0.12);border-radius:14px;padding:20px 24px;display:flex;align-items:flex-start;gap:12px;margin-bottom:48px;}
+.privacy-inner svg{width:20px;height:20px;stroke:var(--jade);fill:none;stroke-width:2;flex-shrink:0;margin-top:2px;}
+.privacy-text{font-size:12px;color:#5a7a6f;line-height:1.7;}.privacy-text strong{color:var(--ink);}
+.footer{background:var(--deep);padding:40px 0;text-align:center;color:rgba(26,22,18,0.35);font-size:12px;}
+.footer a{color:rgba(26,22,18,0.5);text-decoration:none;}
+@media(max-width:1024px){
+.stories-grid{grid-template-columns:repeat(2,1fr);}
+.features-grid{grid-template-columns:1fr!important;gap:16px!important;}
+}
+@media(max-width:900px){
+.hero-inner,.agent-hero,.comm-grid,.contact-card,.path-grid{grid-template-columns:1fr;}
+.viz-wrap{grid-template-columns:1fr!important;grid-template-areas:"map" "info" "ctrl"!important;}
+.viz-map-area{min-height:280px;padding:16px;}
+.viz-controls{padding:24px;}
+.viz-controls h3{font-size:18px;}
+.viz-tags{gap:6px;}
+.viz-tag{padding:5px 12px;font-size:12px;}
+.hero-title{font-size:32px;}.section-heading{font-size:26px;}
+.nav-links{gap:10px;}.nav-links a{font-size:12px;}
+.container{padding:0 16px;}.nav-inner{padding:0 12px;}.contact-card{padding:28px;}
+.stories-grid{grid-template-columns:1fr;}
+.ql-grid{grid-template-columns:1fr;}
+.agent-preview{padding:24px;}
+}
+.nav-links a .n2{display:inline;}
+@media(max-width:640px){
+.topnav{height:auto;}
+.nav-inner{flex-wrap:wrap;padding:6px 8px 2px;gap:0;}
+.nav-logo{padding:4px 0;}
+.nav-logo img{height:28px;}
+.nav-links{width:100%;display:flex;gap:0;padding:4px 0 2px;justify-content:space-around;align-items:stretch;}
+.nav-links a{
+  font-size:11px;text-align:center;padding:4px 2px 6px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  line-height:1;gap:2px;flex:1;min-width:0;
+  white-space:normal;
+}
+.nav-links a .n2{display:block;font-size:9px;opacity:0.6;line-height:1;}
+.nav-links a.active .n2{opacity:1;}
+.nav-links a.active::after{bottom:0px;}
+.nav-cta{
+  background:var(--accent)!important;color:#ffffff!important;
+  border-radius:8px!important;padding:4px 4px 6px!important;
+  flex:1;min-width:0;
+}
+.nav-cta .n1,.nav-cta .n2{color:#ffffff!important;opacity:1!important;}
+.section{padding-top:90px;}
+.hero{min-height:calc(100vh - 90px);}
+.hero-inner{padding:32px 16px;gap:24px;}
+.hero-title{font-size:26px;}
+.hero-desc{font-size:14px;}
+.section-heading{font-size:22px;}
+.section-sub{font-size:13px;}
+.quick-card{padding:20px;}
+.fill-row{font-size:13px;}
+.fill-blank{min-width:60px;font-size:13px;}
+.viz-map-area{min-height:220px;padding:12px;}
+.viz-controls{padding:16px;}
+.viz-input-row{flex-direction:column;gap:8px;}
+.viz-input{width:100%;}
+.viz-btn{width:100%;}
+.viz-tag{padding:4px 10px;font-size:11px;}
+.map-info h3{font-size:18px;}
+.map-info p{font-size:11px;}
+.story-banner{height:160px;}
+.story-body{padding:14px;}
+.story-title{font-size:14px;}
+.story-excerpt{font-size:11px;}
+.path-grid{grid-template-columns:1fr;gap:24px;}
+.comm-grid{gap:20px;}
+.contact-card{padding:24px 16px;gap:28px;}
+.ct-title{font-size:22px;}
+.agent-hero{grid-template-columns:1fr;}
+.agent-info{padding:28px 20px;}
+.agent-preview{padding:20px;gap:10px;}
+.cbd-c{font-size:12px;padding:10px 14px;}
+.hero-btn{height:46px;font-size:14px;}
+}
+}
+
+.stories-filter-bar{padding:0 0 28px;}
+.stories-search{position:relative;margin-bottom:16px;}
+.stories-search input{width:100%;box-sizing:border-box;padding:10px 16px 10px 40px;border:1.5px solid rgba(74,124,111,0.25);border-radius:10px;font-size:14px;background:var(--paper);color:var(--ink);outline:none;transition:border-color .2s;font-family:inherit;}
+.stories-search input:focus{border-color:var(--jade);}
+.stories-search .search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;}
+.filter-tabs{display:flex;flex-wrap:wrap;gap:8px;}
+.filter-tab{padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;border:1.5px solid rgba(74,124,111,0.25);background:transparent;color:#7a7168;cursor:pointer;transition:all .18s;font-family:inherit;}
+.filter-tab:hover{border-color:var(--jade);color:var(--jade);}
+.filter-tab.active{background:var(--jade);border-color:var(--jade);color:#fff;}
+.story-card.hidden{display:none;}
+.stories-empty{display:none;text-align:center;padding:60px 0;color:#b0a89a;font-size:15px;width:100%;}
+.stories-empty.visible{display:block;}
+.stories-count{font-size:12px;color:#9a9088;margin-bottom:16px;}
+.stories-count span{font-weight:700;color:var(--jade);}
+
+
+.stories-grid{grid-template-columns:repeat(4,1fr);}
+@media(max-width:1024px){.stories-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:600px){.stories-grid{grid-template-columns:1fr;}}
+.show-more-wrap{text-align:center;margin-top:32px;}
+.btn-show-more{display:inline-flex;align-items:center;gap:8px;padding:12px 32px;border-radius:28px;border:1.5px solid var(--jade);background:transparent;color:var(--jade);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;}
+.btn-show-more:hover{background:var(--jade);color:#fff;}
+.btn-show-more .arrow{transition:transform .3s;display:inline-block;}
+.btn-show-more.expanded .arrow{transform:rotate(180deg);}
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<nav class="topnav"><div class="nav-inner">
+<a href="#" class="nav-logo" onclick="showSection('home')"><img src="images/image_001.png" alt="RootLink"></a>
+<div class="nav-links">
+<button id="langBtn" onclick="toggleLanguage()" style="background:transparent;border:1px solid rgba(0,0,0,.12);border-radius:8px;padding:6px 10px;cursor:pointer;font-family:inherit;color:#7a7168;white-space:nowrap;">中文</button>
+<a href="#" class="active" data-section="home" onclick="showSection('home')"><span class="n1">首页</span></a>
+<a href="#" data-section="explore" onclick="showSection('explore')"><span class="n1">寻根</span><span class="n2">探索</span></a>
+<a href="#" data-section="agent" onclick="showSection('agent')"><span class="n1">寻根</span><span class="n2">助手</span></a>
+<a href="#" data-section="community" onclick="showSection('community')"><span class="n1">寻根</span><span class="n2">社群</span></a>
+<a href="#" data-section="contact" onclick="showSection('contact')"><span class="n1">联系</span><span class="n2">我们</span></a>
+<a href="#" data-section="profile" onclick="showSection('profile')"><span class="n1">我的</span><span class="n2">档案</span></a>
+<a href="https://getrootlink.com/agent.html" target="_blank" class="nav-cta"><span class="n1">开启</span><span class="n2">智能寻根</span></a>
+</div></div></nav>
+
+<!-- HOME -->
+<div class="section active" id="sec-home">
+<div class="hero"><div class="hero-inner">
+<div class="hero-text">
+<div class="hero-badge"><span class="dot"></span> AI 寻根智能体 · 已上线</div>
+<h1 class="hero-title">寻找你的<br><span class="hl">根脉连接</span></h1>
+<p class="hero-desc">为全球 6000万+ 海外华人打通从模糊线索到回乡归根的完整路径。AI驱动的寻根路径引导 + 可信中间人连接网络。</p>
+<div style="display:flex;gap:12px;flex-wrap:wrap;">
+<a href="https://getrootlink.com/agent.html" target="_blank" style="padding:14px 28px;background:linear-gradient(135deg,var(--accent),#9a7040);color:#fff;border-radius:14px;font-size:15px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:8px;">寻根助手<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+<a href="#" onclick="showSection('explore')" style="padding:14px 28px;border:1.5px solid rgba(0,0,0,0.15);color:var(--ink);border-radius:14px;font-size:15px;font-weight:600;text-decoration:none;">浏览寻根故事</a>
+</div>
+</div>
+<div class="quick-card">
+<div class="qc-title">🌱 快速开始寻根</div>
+<div class="fill-row">我姓 <span class="fill-blank" contenteditable="true" data-placeholder="输入姓氏"></span>，祖籍可能在 <span class="fill-blank" contenteditable="true" data-placeholder="省份/地区"></span></div>
+<div class="fill-row">家里说 <span class="fill-blank" contenteditable="true" data-placeholder="方言"></span>，大约 <span class="fill-blank" contenteditable="true" data-placeholder="第几代"></span> 华人</div>
+<div class="fill-row">我还知道 <span class="fill-blank" contenteditable="true" data-placeholder="村镇名/祖辈名字/其他线索" style="min-width:200px"></span></div>
+<a href="#" onclick="startRootSearch(event)" class="hero-btn">开始寻根对话<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+</div>
+</div></div>
+<div class="container" style="padding-top:60px;padding-bottom:60px;">
+<div style="text-align:center;margin-bottom:40px;"><div class="section-tag">核心功能</div><div class="section-heading">三大模块，全程陪伴你的寻根之旅</div></div>
+<div class="features-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
+<div style="background:var(--card);border-radius:16px;padding:32px;box-shadow:var(--shadow-md);cursor:pointer;" onclick="showSection('agent')">
+<div style="width:48px;height:48px;border-radius:14px;background:var(--accent-glow);display:flex;align-items:center;justify-content:center;margin-bottom:16px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+<h3 style="font-family:'Noto Serif SC',serif;font-size:17px;font-weight:700;margin-bottom:6px;">寻根助手</h3>
+<p style="font-size:13px;color:#8a8178;line-height:1.7;">专业对话引导，从零线索到行动路径。可解释推理，置信度评分，持续陪伴。</p></div>
+<div style="background:var(--card);border-radius:16px;padding:32px;box-shadow:var(--shadow-md);cursor:pointer;" onclick="showSection('explore')">
+<div style="width:48px;height:48px;border-radius:14px;background:rgba(74,124,111,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:16px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--jade)" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+<h3 style="font-family:'Noto Serif SC',serif;font-size:17px;font-weight:700;margin-bottom:6px;">寻根探索</h3>
+<p style="font-size:13px;color:#8a8178;line-height:1.7;">成功案例启发、姓氏分布可视化、寻根路径梳理。</p></div>
+<div style="background:var(--card);border-radius:16px;padding:32px;box-shadow:var(--shadow-md);cursor:pointer;" onclick="showSection('community')">
+<div style="width:48px;height:48px;border-radius:14px;background:rgba(180,144,58,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:16px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+<h3 style="font-family:'Noto Serif SC',serif;font-size:17px;font-weight:700;margin-bottom:6px;">寻根社群</h3>
+<p style="font-size:13px;color:#8a8178;line-height:1.7;">连接同乡互助群、认证中间人、各地侨联。</p></div>
+</div></div>
+<div style="max-width:var(--max-w);margin:0 auto;padding:0 40px;">
+<div class="privacy-inner">
+<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+<div class="privacy-text"><strong>数据隐私保护与安全承诺</strong> · RootLink 以"隐私优先（Privacy by Design）"为核心设计原则，坚持数据最小化采集与用途限定原则，采用分级脱敏存储与加密传输机制，确保用户个人信息与家族数据的安全与独立管理。联系方式与家族线索分离存储，仅在用户明确授权后启用对接服务。RootLink 绝不向任何第三方出售用户数据，并参照 PIPL、GDPR 与 PDPA 等国际数据保护框架进行产品设计与数据治理，持续保障用户信任与数据安全。</div>
+</div></div>
+</div>
+<!-- EXPLORE -->
+<div class="section" id="sec-explore"><div class="container">
+<div style="padding:60px 0 40px;"><div class="section-tag">寻根探索</div><div class="section-heading">那些成功寻根的故事</div><div class="section-sub">每一个成功寻根的故事，都是下一个寻根者最好的路标。</div></div>
+<div class="stories-filter-bar">
+  <div class="stories-search">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="storySearch" placeholder="搜索故事名称、地点…" oninput="filterStories()">
+  </div>
+  <div class="filter-tabs">
+    <button class="filter-tab active" data-country="全部" onclick="setFilter(this)">全部</button>
+    <button class="filter-tab" data-country="马来西亚" onclick="setFilter(this)">马来西亚</button><button class="filter-tab" data-country="台湾" onclick="setFilter(this)">台湾</button><button class="filter-tab" data-country="印尼" onclick="setFilter(this)">印尼</button><button class="filter-tab" data-country="泰国" onclick="setFilter(this)">泰国</button><button class="filter-tab" data-country="美国" onclick="setFilter(this)">美国</button><button class="filter-tab" data-country="澳大利亚" onclick="setFilter(this)">澳大利亚</button><button class="filter-tab" data-country="新加坡" onclick="setFilter(this)">新加坡</button><button class="filter-tab" data-country="菲律宾" onclick="setFilter(this)">菲律宾</button><button class="filter-tab" data-country="加拿大" onclick="setFilter(this)">加拿大</button>
+  </div>
+</div>
+<p class="stories-count">显示 <span id="storyCount">20</span> 个故事</p>
+<p class="stories-empty" id="storiesEmpty">没有找到相关故事</p>
+<div class="stories-grid">
+<div class="story-card" data-country="台湾"><div class="story-banner" style="background:url('images/image_002.png') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">🏛 台联协助</div></div><div class="story-body"><div class="story-title">林彦辰：兄妹三人上北大，圆爷爷心愿</div><div class="story-excerpt">台湾青年林彦辰在福建平潭实习时，携族谱通过全国台联→福建省台联→莆田市台联层层协助，找到了莆田的家人和明代御赐宅邸。</div><div class="story-route">台湾 <span class="arr">→</span> 台联协助 <span class="arr">→</span> 福建莆田 <span class="arr">→</span> 成功</div><a href="https://www.52hrtt.com/www/n/w/info/F1760670776437" target="_blank" class="story-link">阅读全文 →</a></div></div>
+<div class="story-card" data-country="台湾"><div class="story-banner" style="background:url('images/image_003.jpg') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">🎬 视频记录</div></div><div class="story-body"><div class="story-title">黄吉米：为爷爷圆梦，只身赴泗阳生活一个月</div><div class="story-excerpt">90多岁爷爷一生的心愿是回乡，黄吉米只身来到江苏泗阳生活一个月，用8期抖音视频记录了这段寻根之旅。</div><div class="story-route">台湾 <span class="arr">→</span> 抖音记录 <span class="arr">→</span> 江苏泗阳 <span class="arr">→</span> 成功</div><a href="https://www.douyin.com" target="_blank" class="story-link">观看视频 →</a></div></div>
+<div class="story-card" data-country="马来西亚"><div class="story-banner" style="background:url('images/image_003.jpg') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">💌 书信寻根</div></div><div class="story-body"><div class="story-title">洪氏姐妹：信件是最关键的开始</div><div class="story-excerpt">马来西亚华人姐妹，通过早期书信与照片、同乡探亲打听和村落熟人网络，成功回到福建南安祖籍地。"树有根，人不能忘本。"</div><div class="story-route">马来西亚 <span class="arr">→</span> 书信线索 <span class="arr">→</span> 福建南安 <span class="arr">→</span> 成功</div></div></div>
+<div class="story-card" data-country="泰国"><div class="story-banner" style="background:url('images/image_004.jpg') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">🏛 官方协助</div></div><div class="story-body"><div class="story-title">曼谷副市长在澄海圆了寻根梦</div><div class="story-excerpt">泰国曼谷副市长亲赴广东澄海寻根，官方渠道迅速打通，同时为"泰国V姐"开启了寻根之窗。</div><div class="story-route">泰国 <span class="arr">→</span> 官方协助 <span class="arr">→</span> 广东澄海 <span class="arr">→</span> 成功</div><a href="https://www.nfnews.com/content/ky9vdLOA3G.html" target="_blank" class="story-link">阅读全文 →</a></div></div>
+<div class="story-card" data-country="泰国"><div class="story-banner" style="background:url('images/image_005.jpg') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">👴 阔别86载</div></div><div class="story-body"><div class="story-title">94岁泰国老华侨陈惠刁：阔别故乡86载，终圆回乡梦</div><div class="story-excerpt">94岁的陈惠刁离乡86年后终于踏上归途，回到广东揭阳，圆了一生中最深的心愿。</div><div class="story-route">泰国 <span class="arr">→</span> 86年思乡 <span class="arr">→</span> 广东揭阳 <span class="arr">→</span> 圆梦</div><a href="http://www.jieyang.gov.cn/zgb/rwfc/content/post_919984.html" target="_blank" class="story-link">阅读全文 →</a></div></div>
+<div class="story-card" data-country="泰国"><div class="story-banner" style="background:url('images/image_006.jpg') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">🧵 文化寻根</div></div><div class="story-body"><div class="story-title">泰国华裔青少年"丝绸"：感悟华夏八千年文明</div><div class="story-excerpt">泰国华裔青少年沿丝绸之路探访中华文明发源地，通过寻根之旅重建与祖籍地的文化纽带。</div><div class="story-route">泰国 <span class="arr">→</span> 文化寻根营 <span class="arr">→</span> 中华文明 <span class="arr">→</span> 文化认同</div><a href="https://news.sina.cn/2019-10-19/detail-iicezuev3346418.d.html?vt=4" target="_blank" class="story-link">阅读全文 →</a></div></div>
+<div class="story-card" data-country="印尼"><div class="story-banner" style="background:url('images/image_007.png') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">📚 查40余本族谱</div></div><div class="story-body"><div class="story-title">遍寻40多本族谱，"00后"印尼华裔女孩寻根成功</div><div class="story-excerpt">"00后"印尼华裔女孩翻遍40多本族谱，终于找到祖籍地，完成了家族几代人的夙愿。</div><div class="story-route">印尼 <span class="arr">→</span> 翻查40余本族谱 <span class="arr">→</span> 祖籍地 <span class="arr">→</span> 成功</div><a href="https://m.chinanews.com/wap/detail/chs/zw/10348800.shtml" target="_blank" class="story-link">阅读全文 →</a></div></div>
+<div class="story-card" data-country="印尼"><div class="story-banner" style="background:url('images/image_008.jpg') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">🌺 百年圆梦</div></div><div class="story-body"><div class="story-title">跨越百年，印尼华裔寻根梦圆漳州角美</div><div class="story-excerpt">印尼华裔家族跨越百年时光，终于在福建漳州角美找到祖籍地，完成了几代人的夙愿。</div><div class="story-route">印尼 <span class="arr">→</span> 百年传承 <span class="arr">→</span> 福建漳州角美 <span class="arr">→</span> 成功</div><a href="https://zzpd.fjsen.com/2025-06/01/content_31914970.htm" target="_blank" class="story-link">阅读全文 →</a></div></div>
+<div class="story-card" data-country="印尼"><div class="story-banner" style="background:url('images/image_009.jpg') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">👨‍👩‍👧 三代亲情</div></div><div class="story-body"><div class="story-title">印尼华裔返泉寻根后：一场家族会议唤醒三代亲情</div><div class="story-excerpt">印尼华裔家族回到福建泉州寻根，召开家族会议后，三代人的亲情在一夕之间重燃。</div><div class="story-route">印尼 <span class="arr">→</span> 返泉寻根 <span class="arr">→</span> 家族会议 <span class="arr">→</span> 三代团聚</div><a href="https://www.hepingribao.id/home/2025/08/22/%E5%8D%B0%E5%B0%BC%E5%8D%8E%E8%A3%94%E8%BF%94%E6%B3%89%E5%AF%BB%E6%A0%B9%E4%B9%8B%E6%97%85%E5%90%8E-%E4%B8%80%E5%9C%BA%E5%AE%B6%E6%97%8F%E4%BC%9A%E8%AE%AE%E5%94%A4/" target="_blank" class="story-link">阅读全文 →</a></div></div>
+<div class="story-card" data-country="印尼"><div class="story-banner" style="background:url('images/image_010.jpg') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">🛤 千里寻亲</div></div><div class="story-body"><div class="story-title">千里寻亲，印尼华人终圆梦</div><div class="story-excerpt">印尼华人不远千里回到中国祖籍地，历经重重困难，终于与分离已久的亲属团聚圆梦。</div><div class="story-route">印尼 <span class="arr">→</span> 千里寻访 <span class="arr">→</span> 祖籍地 <span class="arr">→</span> 团圆</div><a href="http://www.xmweekly.com/Digital/detail/9458" target="_blank" class="story-link">阅读全文 →</a></div></div>
+<div class="story-card" data-country="美国"><div class="story-banner" style="background:url('images/image_011.jpg') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">🤝 集体寻根</div></div><div class="story-body"><div class="story-title">客从何处来？13位美籍华人回广东集体寻根</div><div class="story-excerpt">来自美国各地的13位华人（最年长者80岁）组团回广东寻根问祖，找回跨越百年的血脉连接。</div><div class="story-route">美国 <span class="arr">→</span> 集体组团 <span class="arr">→</span> 广东 <span class="arr">→</span> 成功</div><a href="https://www.cnr.cn/gd/tpxw/20170523/t20170523_523768657.shtml" target="_blank" class="story-link">阅读全文 →</a></div></div>
+<div class="story-card" data-country="美国"><div class="story-banner" style="background:url('images/image_012.jpg') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">🌟 寻根推动者</div></div><div class="story-body"><div class="story-title">美国华裔青年"寻根之父"郑国和</div><div class="story-excerpt">美国华裔郑国和数十年积极推动华裔青年寻根活动，引领无数海外华人踏上回乡寻根之路。</div><div class="story-route">美国 <span class="arr">→</span> 寻根倡导 <span class="arr">→</span> 广东开平 <span class="arr">→</span> 传承使命</div><a href="https://us.xinhuanet.com/2017-08/07/c_129673968.htm" target="_blank" class="story-link">阅读全文 →</a></div></div>
+<div class="story-card" data-country="美国"><div class="story-banner" style="background:url('images/image_013.jpg') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">🏯 碉楼寻根</div></div><div class="story-body"><div class="story-title">美国华裔青年到开平寻根，强化家乡情结</div><div class="story-excerpt">美国华裔青年赴广东开平，在碉楼古村中寻访祖先足迹，深化对家乡的情感认同与文化传承。</div><div class="story-route">美国 <span class="arr">→</span> 青年访问 <span class="arr">→</span> 广东开平 <span class="arr">→</span> 文化认同</div><a href="http://www.qb.gd.gov.cn/xgbd/content/post_53369.html" target="_blank" class="story-link">阅读全文 →</a></div></div>
+<div class="story-card" data-country="马来西亚"><div class="story-banner" style="background:url('images/image_014.jpg') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">💛 了却心愿</div></div><div class="story-body"><div class="story-title">马来西亚华人青年千里赴华，了却祖辈心愿</div><div class="story-excerpt">马来西亚华人青年不远千里来到中国，亲手了却了祖辈几代人最深的寻根心愿。</div><div class="story-route">马来西亚 <span class="arr">→</span> 千里赴华 <span class="arr">→</span> 祖籍地 <span class="arr">→</span> 成功</div><a href="https://www.chinaqw.com/hqhr/2018/05-16/189814.shtml" target="_blank" class="story-link">阅读全文 →</a></div></div>
+<div class="story-card" data-country="马来西亚"><div class="story-banner" style="background:url('images/image_015.jpg') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">👨‍👩‍👧 九姐弟同行</div></div><div class="story-body"><div class="story-title">代父圆愿：9姐弟结伴寻根，制成大马版族谱</div><div class="story-excerpt">马来西亚华人9位姐弟为圆父亲遗愿，结伴回到祖籍地寻根，并自制了一部大马版家族族谱。</div><div class="story-route">马来西亚 <span class="arr">→</span> 代父圆愿 <span class="arr">→</span> 祖籍地 <span class="arr">→</span> 编制族谱</div><a href="https://www.chinanews.com.cn/m/hr/2018/05-17/8516272.shtml" target="_blank" class="story-link">阅读全文 →</a></div></div>
+<div class="story-card" data-country="澳大利亚"><div class="story-banner" style="background:url('images/image_008.jpg') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">🦘 澳洲青年</div></div><div class="story-body"><div class="story-title">澳大利亚华裔青年返乡："走得再远，根永远在这里"</div><div class="story-excerpt">澳大利亚华裔青年踏上寻根之旅，回到祖籍地后感叹："走得再远，根永远在这里。"</div><div class="story-route">澳大利亚 <span class="arr">→</span> 返乡寻根 <span class="arr">→</span> 祖籍地 <span class="arr">→</span> 成功</div><a href="https://www.chinanews.com.cn/txy/2025/07-16/10448655.shtml" target="_blank" class="story-link">阅读全文 →</a></div></div>
+<div class="story-card" data-country="澳大利亚"><div class="story-banner" style="background:url('images/image_016.jpg') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">🏛 议员寻根</div></div><div class="story-body"><div class="story-title">澳洲首位女华裔州议员回深圳坪山寻根</div><div class="story-excerpt">澳大利亚首位女华裔州议员专程回到深圳坪山，探访祖籍地，追寻家族脉络与历史记忆。</div><div class="story-route">澳大利亚 <span class="arr">→</span> 深圳坪山 <span class="arr">→</span> 祖籍地 <span class="arr">→</span> 成功</div><a href="https://ipingshan.sznews.com/content/2017-11/13/content_17732988.htm" target="_blank" class="story-link">阅读全文 →</a></div></div>
+<div class="story-card" data-country="新加坡"><div class="story-banner" style="background:url('images/image_017.jpg') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">🌿 故土归情</div></div><div class="story-body"><div class="story-title">新加坡侨胞恩平寻根记：故土的呼唤</div><div class="story-excerpt">旅居新加坡的华裔侨胞专程来到广东恩平，追寻祖辈留下的足迹，感受浓浓的故土情怀。</div><div class="story-route">新加坡 <span class="arr">→</span> 恩平寻根 <span class="arr">→</span> 广东恩平 <span class="arr">→</span> 成功</div><a href="https://www.pandavennews.com/9783-%E3%80%90%E6%95%85%E5%9C%9F%E5%AF%BB%E6%A0%B9%E3%80%91%E6%96%B0%E5%8A%A0%E5%9D%A1%E4%BE%A8%E8%83%9E%E6%81%A9%E5%B9%B3%E5%AF%BB%E6%A0%B9%E8%AE%B0" target="_blank" class="story-link">阅读全文 →</a></div></div>
+<div class="story-card" data-country="菲律宾"><div class="story-banner" style="background:url('images/image_018.jpg') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">🤝 中菲团聚</div></div><div class="story-body"><div class="story-title">菲律宾侨四代"寻亲专家"：20余年助逾60个中菲家庭团聚</div><div class="story-excerpt">菲律宾华侨家族四代传承，20余年间协助超过60个中菲家庭成功团聚，成为跨国寻亲传奇。</div><div class="story-route">菲律宾 <span class="arr">→</span> 四代传承 <span class="arr">→</span> 60余家庭 <span class="arr">→</span> 团圆</div><a href="https://www.dotdotnews.com/s/202504/04/AP67ee6c9ee4b0e343b0e557f9.html" target="_blank" class="story-link">阅读全文 →</a></div></div>
+
+<div class="story-card" data-country="加拿大"><div class="story-banner" style="background-image: url('images/image_023.jpg');background-size:cover;background-position:center;"><div class="overlay"></div><div class="story-tag">🍁 加拿大归根</div></div><div class="story-body"><div class="story-title">根系浮石，情归故里：加拿大华裔圆"寻根梦"</div><div class="story-excerpt">旅居加拿大的华裔家族历经艰难，终于回到祖籍地浮石村圆了寻根梦，情归故里。</div><div class="story-route">加拿大 <span class="arr">→</span> 浮石村 <span class="arr">→</span> 祖籍地 <span class="arr">→</span> 圆梦</div><a href="http://www.cnts.gov.cn/zjzc/dszrmzf/zwgk/zfxxgkml/gzdt/content/post_2855796.html" target="_blank" class="story-link">阅读全文 →</a></div></div>
+
+<div class="story-card" data-country="马来西亚"><div class="story-banner" style="background:url('images/image_019.jpg') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">🕰 百年等待</div></div><div class="story-body"><div class="story-title">跨越一世纪，终于回到家</div><div class="story-excerpt">马来西亚老华侨寻根记——跨越百年的等待，终于在祖籍地找到了血脉相连的亲人。</div><div class="story-route">马来西亚 <span class="arr">→</span> 中国 <span class="arr">→</span> 成功归乡</div><a href="https://local.cctv.com/2024/03/25/ARTI0pQN4bPZw2kjp19qYuLL240325.shtml" target="_blank" class="story-link">阅读全文 →</a></div></div>
+<div class="story-card" data-country="马来西亚"><div class="story-banner" style="background:url('images/image_020.png') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">🌏 多国团聚</div></div><div class="story-body"><div class="story-title">"带爷爷奶奶家人们回祖籍地，是我的心愿" 马来堂哥一家从3国回南安寻亲</div><div class="story-excerpt">分散在马来西亚、新加坡等多国的家族成员，齐聚一堂回到福建南安寻亲团聚。</div><div class="story-route">马来西亚+多国 <span class="arr">→</span> 福建南安 <span class="arr">→</span> 成功</div><a href="http://fjsql.fqworld.org/hwly/87468.jhtml" target="_blank" class="story-link">阅读全文 →</a></div></div>
+<div class="story-card" data-country="马来西亚"><div class="story-banner" style="background:url('images/image_021.jpg') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">🛥 逆行航线</div></div><div class="story-body"><div class="story-title">郑六月：沿着祖先的路寻找归途</div><div class="story-excerpt">马来西亚华裔主持人、艺人郑六月的跨洋寻根之旅，沿着祖先下南洋的航线逆行回乡。</div><div class="story-route">马来西亚 <span class="arr">→</span> 祖先航线 <span class="arr">→</span> 寻根</div><a href="https://www.52hrtt.com/sln/n/w/info/G1747709011600" target="_blank" class="story-link">阅读全文 →</a></div></div>
+<div class="story-card" data-country="台湾"><div class="story-banner" style="background:url('images/image_022.png') center/cover no-repeat;"><div class="overlay"></div><div class="story-tag">🎭 艺人寻根</div></div><div class="story-body"><div class="story-title">郭品超山东寻根激动落泪</div><div class="story-excerpt">台湾艺人郭品超前往山东寻根，激动落泪感叹"没有什么能阻挡血脉！"</div><div class="story-route">台湾 <span class="arr">→</span> 山东 <span class="arr">→</span> 成功寻根</div><a href="https://www.sohu.com/a/717629505_162522" target="_blank" class="story-link">阅读全文 →</a></div></div>
+</div>
+<div class="show-more-wrap" id="showMoreWrap">
+  <button class="btn-show-more" id="btnShowMore" onclick="toggleMore()">更多故事 <span class="arrow">▼</span></button>
+</div>
+
+<!-- Surname Map -->
+<div class="viz-section">
+<div class="section-tag">姓氏分布</div><div class="section-heading">输入姓氏，看看你的根在哪</div>
+<div class="section-sub">中国87%的人口姓百家姓中的姓氏，大多数姓氏都有明确的地理集中区域。</div>
+<div class="viz-wrap">
+<div class="viz-map-area" id="map-area">
+<!-- China map outline SVG -->
+<svg class="china-svg" viewBox="0 0 600 500" xmlns="http://www.w3.org/2000/svg">
+<!-- Province labels -->
+<text x="468" y="195" font-size="10" fill="#5a4a30" opacity="0.6" font-family="Noto Sans SC">福建</text>
+<text x="420" y="280" font-size="10" fill="#5a4a30" opacity="0.6" font-family="Noto Sans SC">广东</text>
+<text x="370" y="230" font-size="10" fill="#5a4a30" opacity="0.6" font-family="Noto Sans SC">江西</text>
+<text x="420" y="170" font-size="10" fill="#5a4a30" opacity="0.6" font-family="Noto Sans SC">浙江</text>
+<text x="300" y="195" font-size="10" fill="#5a4a30" opacity="0.6" font-family="Noto Sans SC">湖北</text>
+<text x="280" y="255" font-size="10" fill="#5a4a30" opacity="0.6" font-family="Noto Sans SC">湖南</text>
+<text x="200" y="275" font-size="10" fill="#5a4a30" opacity="0.6" font-family="Noto Sans SC">贵州</text>
+<text x="150" y="230" font-size="10" fill="#5a4a30" opacity="0.6" font-family="Noto Sans SC">四川</text>
+<text x="270" y="145" font-size="10" fill="#5a4a30" opacity="0.6" font-family="Noto Sans SC">河南</text>
+<text x="370" y="110" font-size="10" fill="#5a4a30" opacity="0.6" font-family="Noto Sans SC">山东</text>
+<text x="310" y="85" font-size="10" fill="#5a4a30" opacity="0.6" font-family="Noto Sans SC">河北</text>
+<text x="430" y="80" font-size="10" fill="#5a4a30" opacity="0.6" font-family="Noto Sans SC">辽宁</text>
+<text x="170" y="165" font-size="10" fill="#5a4a30" opacity="0.6" font-family="Noto Sans SC">陕西</text>
+<text x="310" y="310" font-size="10" fill="#5a4a30" opacity="0.6" font-family="Noto Sans SC">广西</text>
+<text x="100" y="100" font-size="10" fill="#5a4a30" opacity="0.6" font-family="Noto Sans SC">甘肃</text>
+<text x="460" y="55" font-size="10" fill="#5a4a30" opacity="0.6" font-family="Noto Sans SC">吉林</text>
+<text x="370" y="155" font-size="10" fill="#5a4a30" opacity="0.6" font-family="Noto Sans SC">安徽</text>
+<text x="330" y="165" font-size="10" fill="#5a4a30" opacity="0.6" font-family="Noto Sans SC">江苏</text>
+<text x="160" y="330" font-size="10" fill="#5a4a30" opacity="0.6" font-family="Noto Sans SC">云南</text>
+</svg>
+<div id="map-dots"></div>
+</div>
+<div class="map-info"><h3 id="map-surname">「陈」姓分布</h3><p id="map-detail">主要集中于福建、广东、浙江 · 全国占比约 4.53% · 约 5,440 万人</p></div>
+<div class="viz-controls">
+<h3>探索你的姓氏分布</h3>
+<div class="viz-input-row"><input class="viz-input" id="surname-input" placeholder="输入你的姓氏" value="陈"><button class="viz-btn" onclick="searchSurname()">查看分布</button></div>
+<div class="viz-tags" id="viz-tags">
+<div class="viz-tag active" onclick="setSurname('陈')">陈</div><div class="viz-tag" onclick="setSurname('林')">林</div><div class="viz-tag" onclick="setSurname('黄')">黄</div><div class="viz-tag" onclick="setSurname('李')">李</div><div class="viz-tag" onclick="setSurname('张')">张</div><div class="viz-tag" onclick="setSurname('王')">王</div><div class="viz-tag" onclick="setSurname('洪')">洪</div><div class="viz-tag" onclick="setSurname('郑')">郑</div><div class="viz-tag" onclick="setSurname('刘')">刘</div><div class="viz-tag" onclick="setSurname('杨')">杨</div><div class="viz-tag" onclick="setSurname('赵')">赵</div><div class="viz-tag" onclick="setSurname('吴')">吴</div><div class="viz-tag" onclick="setSurname('周')">周</div><div class="viz-tag" onclick="setSurname('徐')">徐</div><div class="viz-tag" onclick="setSurname('孙')">孙</div><div class="viz-tag" onclick="setSurname('马')">马</div><div class="viz-tag" onclick="setSurname('朱')">朱</div><div class="viz-tag" onclick="setSurname('胡')">胡</div><div class="viz-tag" onclick="setSurname('郭')">郭</div><div class="viz-tag" onclick="setSurname('何')">何</div><div class="viz-tag" onclick="setSurname('高')">高</div><div class="viz-tag" onclick="setSurname('罗')">罗</div><div class="viz-tag" onclick="setSurname('梁')">梁</div><div class="viz-tag" onclick="setSurname('谢')">谢</div><div class="viz-tag" onclick="setSurname('宋')">宋</div><div class="viz-tag" onclick="setSurname('唐')">唐</div><div class="viz-tag" onclick="setSurname('许')">许</div><div class="viz-tag" onclick="setSurname('韩')">韩</div><div class="viz-tag" onclick="setSurname('邓')">邓</div><div class="viz-tag" onclick="setSurname('冯')">冯</div>
+</div>
+<p style="font-size:13px;color:#7a7168;line-height:1.7;margin-bottom:8px;">姓氏分布反映该姓在各地人口中的比例。不同姓氏的地理集中程度差异很大——有些高度集中于特定区域（如洪姓集中于闽南），有些则广泛分布（如王姓偏北方）。</p>
+<p style="font-size:11px;color:#b0a99e;line-height:1.6;">数据来源：《中国四百大姓》，2013年</p>
+</div></div></div>
+
+<!-- Path -->
+<div class="path-section">
+<div class="section-tag">寻根路径</div><div class="section-heading">常见寻根路径与案例启发</div><div class="section-sub">了解前人的寻根方式，找到属于你的路径。</div>
+<div class="path-grid">
+<div class="path-timeline">
+<div class="path-step"><div class="p-dot"></div><div class="p-title">🌱 整理线索</div><div class="p-desc">收集姓氏、祖籍地名、方言、老照片、信件、老物件中的文字线索。</div></div>
+<div class="path-step"><div class="p-dot"></div><div class="p-title">🧭 定位祖籍</div><div class="p-desc">通过方言分析、姓氏聚居数据、历史迁徙路线缩小祖籍范围。</div></div>
+<div class="path-step"><div class="p-dot"></div><div class="p-title">🤝 连接中间人</div><div class="p-desc">找到当地宗亲会、族谱研究者、侨联工作者或官方机构协助。</div></div>
+<div class="path-step"><div class="p-dot"></div><div class="p-title">📋 核实确认</div><div class="p-desc">比对族谱记录、验证家族信息、确认亲属关系。祠堂、坟墓、地方分区信息都是重要线索。</div></div>
+<div class="path-step"><div class="p-dot"></div><div class="p-title">🏠 归乡圆梦</div><div class="p-desc">规划回乡行程、拜访祖籍地、与亲人团聚。</div></div>
+</div>
+<div class="pi-box">
+<div class="pi-title">真实案例 × 路径对照</div>
+<div class="case-card">
+  <div class="case-card-name">洪氏姐妹</div>
+  <div class="case-card-desc">以家族旧信件和照片为起点，通过书信中的地址与邮戳逐步找回闽南祖籍地与失散亲属。</div>
+  <div class="case-steps-row">
+    <span class="case-step-pill pill-1">🌱 整理线索</span>
+    <span class="case-step-pill pill-2">🧭 定位祖籍</span>
+  </div>
+</div>
+<div class="case-card">
+  <div class="case-card-name">林彦辰</div>
+  <div class="case-card-desc">凭族谱与身份证籍贯记录，借助台联体系层层协助，精准找到福建莆田家人。</div>
+  <div class="case-steps-row">
+    <span class="case-step-pill pill-2">🧭 定位祖籍</span>
+    <span class="case-step-pill pill-3">🤝 连接中间人</span>
+    <span class="case-step-pill pill-4">📋 核实确认</span>
+  </div>
+</div>
+<div class="case-card">
+  <div class="case-card-name">黄吉米</div>
+  <div class="case-card-desc">为完成90多岁爷爷的心愿，独自赴江苏泗阳生活一个月，以8期视频记录归乡全程。</div>
+  <div class="case-steps-row">
+    <span class="case-step-pill pill-5">🏠 归乡圆梦</span>
+  </div>
+</div>
+</div></div></div>
+</div></div>
+<!-- AGENT -->
+<div class="section" id="sec-agent"><div class="container"><div class="agent-section">
+<div class="section-tag">寻根助手</div><div class="section-heading" style="margin-bottom:24px;">通过专业对话，引导你的寻根之路</div>
+<div class="agent-hero">
+<div class="agent-info">
+<div class="agent-logo"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+<h2 style="font-family:'Noto Serif SC',serif;font-size:24px;font-weight:900;margin-bottom:8px;">RootLink Agent</h2>
+<p style="font-size:14px;color:#8a8178;line-height:1.7;">基于系统化寻根方法论构建的 AI 智能体，内嵌祖籍地检索、寻根向导匹配与官方档案查询三大核心工具。</p>
+<div class="agent-features">
+<div class="af-item"><div class="af-icon" style="background:var(--accent-glow)"><svg viewBox="0 0 24 24" stroke="var(--accent)"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div><strong>流程引导引擎</strong> — 帮你判断"现在处于哪个阶段"和"下一步做什么"</div></div>
+<div class="af-item"><div class="af-icon" style="background:rgba(74,124,111,0.1)"><svg viewBox="0 0 24 24" stroke="var(--jade)"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div><strong>亲缘地推理</strong> — 综合方言、姓氏、迁徙路线，输出置信度评分</div></div>
+<div class="af-item"><div class="af-icon" style="background:rgba(180,144,58,0.1)"><svg viewBox="0 0 24 24" stroke="var(--gold)"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div><strong>中间人匹配</strong> — 连接族谱研究者、宗亲会、地方向导</div></div>
+<div class="af-item"><div class="af-icon" style="background:rgba(196,85,58,0.06)"><svg viewBox="0 0 24 24" stroke="var(--accent)"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div><strong>持续陪伴</strong> — 记录进展、主动推送、避免中途放弃</div></div>
+</div>
+<a href="https://getrootlink.com/agent.html" target="_blank" class="agent-cta">开始寻根之旅<svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a>
+</div>
+<div class="agent-preview" id="agent-chat">
+<div class="cbd bot"><div class="cbd-c">你好！我是寻根助手 🌳 让我帮你分析已有线索，看看下一步可以怎么做。</div></div>
+<div class="cbd user"><div class="cbd-c">我姓陈，家里人说祖籍在福建，讲闽南话，第三代华人</div></div>
+<div class="cbd bot"><div class="cbd-c">根据你的信息，初步推理：<br><br><strong>最可能祖籍：</strong>福建省泉州市南安/晋江一带<br><strong>推理依据：</strong>闽南语 + 陈姓 + 东南亚第三代<div class="conf-bar"><div class="conf-fill" style="width:72%"></div></div><div class="conf-label"><span>置信度</span><span>72% 中高</span></div></div></div>
+<div class="cbd user"><div class="cbd-c">我奶奶说过一个地名，好像叫"石狮"</div></div>
+<div class="cbd bot"><div class="cbd-c">这个线索非常有价值！石狮是泉州下辖县级市，正好在闽南核心侨乡区域。<div class="conf-bar"><div class="conf-fill" style="width:86%"></div></div><div class="conf-label"><span>置信度更新</span><span>86% 高</span></div></div></div>
+</div></div>
+</div></div></div>
+
+<!-- COMMUNITY -->
+<div class="section" id="sec-community"><div class="container">
+<div style="padding:60px 0 32px;"><div class="section-tag">寻根社群</div><div class="section-heading">找到对的人，帮助你寻根</div><div class="section-sub">加入同乡互助群、连接认证中间人、联络各地侨联，像校友会一样互相帮助。</div></div>
+<div class="comm-grid">
+<div class="comm-col"><h3>互助群组</h3>
+<div class="group-card"><div class="g-avatar" style="background:linear-gradient(135deg,var(--accent),#9a7040)">陈</div><div class="g-info"><div class="g-name">闽南陈氏寻根互助群</div><div class="g-meta">128 位成员 · 活跃中 · 23人已成功</div><div class="g-tags"><div class="g-tag g-tag-green">活跃</div><div class="g-tag g-tag-red">福建</div></div></div></div>
+<div class="group-card"><div class="g-avatar" style="background:linear-gradient(135deg,var(--jade),#3a6a5f)">马</div><div class="g-info"><div class="g-name">马来西亚华人寻根会</div><div class="g-meta">256 位成员 · 活跃中 · 41人已成功</div><div class="g-tags"><div class="g-tag g-tag-green">活跃</div><div class="g-tag g-tag-gold">跨地区</div></div></div></div>
+<div class="group-card"><div class="g-avatar" style="background:linear-gradient(135deg,var(--gold),#9a7a30)">潮</div><div class="g-info"><div class="g-name">潮汕寻根互助群</div><div class="g-meta">89 位成员 · 42人已成功</div><div class="g-tags"><div class="g-tag g-tag-red">广东</div><div class="g-tag g-tag-gold">潮汕话</div></div></div></div>
+<div class="group-card"><div class="g-avatar" style="background:linear-gradient(135deg,#6a5a4a,#8a7a6a)">台</div><div class="g-info"><div class="g-name">台湾同胞寻根交流群</div><div class="g-meta">167 位成员 · 活跃中</div><div class="g-tags"><div class="g-tag g-tag-green">活跃</div><div class="g-tag g-tag-gold">两岸</div></div></div></div>
+</div>
+<div class="comm-col"><h3>认证中间人</h3>
+<div class="med-card"><div class="med-top"><div class="med-avatar">👨‍🏫</div><div class="med-info"><div class="med-name">林建华</div><div class="med-role">泉州市族谱研究会 · 副会长</div></div><div class="med-badge"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>已认证</div></div><div class="med-stats"><div class="ms"><div class="ms-num">47</div><div class="ms-label">成功案例</div></div><div class="ms"><div class="ms-num">4.9</div><div class="ms-label">用户评分</div></div><div class="ms"><div class="ms-num">8年</div><div class="ms-label">从业经验</div></div></div><div class="med-specs"><div class="m-spec">闽南陈氏</div><div class="m-spec">族谱核查</div><div class="m-spec">南安/晋江</div></div><button class="connect-btn">申请连接</button></div>
+<div class="med-card"><div class="med-top"><div class="med-avatar">👩‍💼</div><div class="med-info"><div class="med-name">张美玲</div><div class="med-role">马来西亚高州会馆 · 理事</div></div><div class="med-badge"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>已认证</div></div><div class="med-stats"><div class="ms"><div class="ms-num">31</div><div class="ms-label">成功案例</div></div><div class="ms"><div class="ms-num">4.8</div><div class="ms-label">用户评分</div></div><div class="ms"><div class="ms-num">12年</div><div class="ms-label">从业经验</div></div></div><div class="med-specs"><div class="m-spec">广东高州</div><div class="m-spec">会馆资源</div><div class="m-spec">马来华人</div></div><button class="connect-btn">申请连接</button></div>
+</div></div>
+
+<!-- Qiaolian -->
+<div style="padding:40px 0 60px;">
+<div class="section-tag">侨务资源</div><div class="section-heading">各地侨联与寻根服务机构</div><div class="section-sub">这些官方与半官方机构可以为你的寻根提供权威支持。</div>
+<div class="ql-grid">
+<div class="ql-card"><div class="ql-region"><div class="ql-dot" style="background:var(--accent)"></div>福建省</div><div class="ql-item"><strong>福建省归国华侨联合会</strong><br>网址：<a href="http://fjsql.fqworld.org/" target="_blank" style="color:var(--accent);text-decoration:none;">fjsql.fqworld.org</a><br>会址：鼓楼区华大街道鼓屏路192号山海大厦<br>电话：0591-87823901</div><div class="ql-item"><strong>福建省台湾同胞联谊会</strong><br>网址：<a href="http://fjtl.taiwan.cn" target="_blank" style="color:var(--accent);text-decoration:none;">fjtl.taiwan.cn</a><br>会址：福建省福州市湖东路276号18层<br>电话：（0591）87802143</div></div>
+<div class="ql-card"><div class="ql-region"><div class="ql-dot" style="background:var(--jade)"></div>广东省</div><div class="ql-item"><strong>广东省归国华侨联合会</strong><br>网址：<a href="http://www.gdql.org.cn" target="_blank" style="color:var(--accent);text-decoration:none;">gdql.org.cn</a><br>会址：广州市天河区体育东路140-148号23楼、6楼<br>电话：020-38879251</div></div>
+<div class="ql-card"><div class="ql-region"><div class="ql-dot" style="background:var(--gold)"></div>广西壮族自治区</div><div class="ql-item"><strong>广西壮族自治区归国华侨联合会</strong><br>网址：<a href="http://www.gxql.cn/home" target="_blank" style="color:var(--accent);text-decoration:none;">gxql.cn</a><br>会址：南宁市青秀区新民路34号办公区<br>电话：0771-2211900</div></div>
+<div class="ql-card"><div class="ql-region"><div class="ql-dot" style="background:#8a6a4a"></div>海南省</div><div class="ql-item"><strong>海南省归国华侨联合会</strong><br>网址：<a href="https://www.hnsql.com.cn" target="_blank" style="color:var(--accent);text-decoration:none;">hnsql.com.cn</a><br>会址：海口市琼山区文坛路2号海南工商职业学院行政楼7楼<br>电话：0898-65331609</div></div>
+<div class="ql-card"><div class="ql-region"><div class="ql-dot" style="background:#5a6a8a"></div>全国性机构</div><div class="ql-item"><strong>中华全国归国华侨联合会</strong><br>官方网站：<a href="http://www.chinaql.org/" target="_blank" style="color:var(--accent);text-decoration:none;">chinaql.org</a></div><div class="ql-item"><strong>中国家谱知识服务平台</strong><br>官方网站：<a href="https://jiapu.library.sh.cn/" target="_blank" style="color:var(--accent);text-decoration:none;">jiapu.library.sh.cn</a></div><div class="ql-item"><strong>全国台联 / 各省台联</strong><br>官方渠道：<a href="http://fjtl.taiwan.cn/n1080/n1239/n226102/n227433/236222.html" target="_blank" style="color:var(--accent);text-decoration:none;">各省台联联系方式</a></div></div>
+<div class="ql-card"><div class="ql-region"><div class="ql-dot" style="background:#6a8a5a"></div>海外会馆</div><div class="ql-item"><strong>马来西亚中华大会堂总会（大马华总）</strong><br>官方网站：<a href="https://www.dama-huazong.com/" target="_blank" style="color:var(--accent);text-decoration:none;">dama-huazong.com</a></div><div class="ql-item"><strong>新加坡宗乡会馆联合总会</strong><br>官方网站：<a href="https://sfcca.sg/" target="_blank" style="color:var(--accent);text-decoration:none;">sfcca.sg</a></div><div class="ql-item"><strong>泰国各姓宗亲总会联合会</strong><br>官方网站：<a href="http://www.zonglianthai.com/index.php?langtype=tw&pageid=tw_1" target="_blank" style="color:var(--accent);text-decoration:none;">zonglianthai.com</a></div></div>
+</div></div>
+</div></div>
+
+<!-- CONTACT -->
+<div class="section" id="sec-contact"><div class="container">
+<div style="padding:60px 0 32px;"><div class="section-tag">联系我们</div><div class="section-heading">期待与你一起，连接根脉</div></div>
+<div class="contact-card">
+<div>
+<div class="ct-title">联系 RootLink 团队</div>
+<div class="ct-desc">无论你是想寻根的海外华人、希望入驻的中间人、有合作意向的机构，还是有任何建议，都欢迎联系我们。</div>
+<div class="ct-item"><div class="ct-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div><div class="ct-label">邮箱</div><div class="ct-value">rootlink.social@gmail.com</div></div></div>
+<div class="ct-item"><div class="ct-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></div><div><div class="ct-label">微信公众号</div><div class="ct-value">RootLink 寻根连接</div></div></div>
+<div class="ct-item" style="border-bottom:none;"><div class="ct-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div><div class="ct-label">地址</div><div class="ct-value">上海市杨浦区邯郸路220号</div></div></div>
+</div>
+<div>
+<h3 style="font-family:'Noto Serif SC',serif;font-size:18px;font-weight:700;margin-bottom:16px;">合作邀请</h3>
+<p style="font-size:13px;color:rgba(26,22,18,0.5);line-height:1.8;margin-bottom:20px;">RootLink 正在积极寻找以下合作伙伴：</p>
+<div style="display:flex;flex-direction:column;gap:12px;">
+<div style="padding:14px 16px;background:rgba(0,0,0,0.04);border-radius:12px;font-size:13px;line-height:1.6;"><strong style="color:var(--accent)">🏛 侨务机构</strong><br><span style="color:rgba(26,22,18,0.5)">各地侨联、台联、侨务办公室</span></div>
+<div style="padding:14px 16px;background:rgba(0,0,0,0.04);border-radius:12px;font-size:13px;line-height:1.6;"><strong style="color:var(--jade)">📚 族谱研究者</strong><br><span style="color:rgba(26,22,18,0.5)">各地族谱研究会、宗亲会负责人</span></div>
+<div style="padding:14px 16px;background:rgba(0,0,0,0.04);border-radius:12px;font-size:13px;line-height:1.6;"><strong style="color:var(--gold)">🌏 海外社团</strong><br><span style="color:rgba(26,22,18,0.5)">各国华人会馆、留学生组织、文化博主</span></div>
+</div></div></div>
+<div style="margin-top:32px;">
+<div class="privacy-inner">
+<svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:var(--jade);fill:none;stroke-width:2;flex-shrink:0;margin-top:2px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+<div class="privacy-text"><strong>数据隐私保护与安全承诺</strong> · RootLink 以"隐私优先（Privacy by Design）"为核心设计原则，坚持数据最小化采集与用途限定原则，采用分级脱敏存储与加密传输机制，确保用户个人信息与家族数据的安全与独立管理。联系方式与家族线索分离存储，仅在用户明确授权后启用对接服务。RootLink 绝不向任何第三方出售用户数据，并参照 PIPL、GDPR 与 PDPA 等国际数据保护框架进行产品设计与数据治理，持续保障用户信任与数据安全。</div>
+</div></div>
+</div></div>
+
+<!-- PROFILE / 我的 -->
+<div class="section" id="sec-profile"><div class="container">
+<div style="padding:60px 0 32px;">
+
+<!-- Login Modal (shown when not logged in) -->
+<div id="login-view">
+<!-- 状态一：输入邮箱 -->
+<div id="step-email">
+  <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--gold-light),var(--gold));margin:0 auto 20px;display:flex;align-items:center;justify-content:center;">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+  </div>
+  <h2 style="font-family:'Noto Serif SC',serif;font-size:26px;font-weight:900;margin-bottom:8px;">开始寻根之旅</h2>
+  <p style="font-size:14px;color:#8a8178;margin-bottom:28px;">输入邮箱即可开始，新用户自动注册</p>
+  <div style="background:var(--card);border-radius:20px;padding:28px;box-shadow:var(--shadow-md);text-align:left;">
+    <label style="font-size:12px;font-weight:600;color:#7a7168;display:block;margin-bottom:6px;">邮箱地址</label>
+    <input id="email-input" type="email" placeholder="请输入你的邮箱"
+      style="width:100%;height:48px;border:1.5px solid var(--mist);border-radius:12px;padding:0 16px;font-family:'Noto Sans SC',sans-serif;font-size:14px;background:var(--paper);outline:none;box-sizing:border-box;"
+      onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--mist)'"
+      onkeydown="if(event.key==='Enter') sendOtp()">
+    <button onclick="sendOtp()"
+      style="width:100%;height:50px;background:linear-gradient(135deg,var(--accent),#9a7040);color:#fff;border:none;border-radius:14px;font-family:'Noto Sans SC',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:14px;">
+      发送验证码
+    </button>
+    <p style="font-size:11px;color:#c8c1b6;margin-top:14px;text-align:center;">登录即表示同意
+      <span style="color:var(--jade);cursor:pointer;">用户协议</span> 和
+      <span style="color:var(--jade);cursor:pointer;">隐私政策</span>
+    </p>
+  </div>
+</div>
+
+<!-- 状态二：输入验证码 -->
+<div id="step-otp" style="display:none;">
+  <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--jade),var(--jade-light));margin:0 auto 20px;display:flex;align-items:center;justify-content:center;">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+  </div>
+  <h2 style="font-family:'Noto Serif SC',serif;font-size:26px;font-weight:900;margin-bottom:8px;">请查收邮件</h2>
+  <p id="otp-hint" style="font-size:14px;color:#8a8178;margin-bottom:28px;">验证码已发送</p>
+  <div style="background:var(--card);border-radius:20px;padding:28px;box-shadow:var(--shadow-md);text-align:left;">
+    <label style="font-size:12px;font-weight:600;color:#7a7168;display:block;margin-bottom:6px;">6位验证码</label>
+    <input id="otp-input" type="text" placeholder="请输入验证码" maxlength="6"
+      style="width:100%;height:48px;border:1.5px solid var(--mist);border-radius:12px;padding:0 16px;font-family:'Noto Sans SC',sans-serif;font-size:20px;letter-spacing:8px;text-align:center;background:var(--paper);outline:none;box-sizing:border-box;"
+      onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--mist)'"
+      onkeydown="if(event.key==='Enter') verifyOtp()">
+    <button onclick="verifyOtp()"
+      style="width:100%;height:50px;background:linear-gradient(135deg,var(--jade),#3a6a5f);color:#fff;border:none;border-radius:14px;font-family:'Noto Sans SC',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:14px;">
+      确认登录
+    </button>
+    <p style="text-align:center;font-size:13px;color:#b0a99e;margin-top:14px;">
+      没收到？<span onclick="resendOtp()" style="color:var(--accent);cursor:pointer;font-weight:600;">重新发送</span>
+      &nbsp;·&nbsp;
+      <span onclick="backToEmail()" style="color:#b0a99e;cursor:pointer;">修改邮箱</span>
+    </p>
+  </div>
+</div>
+</div>
+
+<!-- Profile View (shown after login) -->
+<div id="profile-view" style="display:none;">
+<div style="max-width:600px;margin:0 auto;">
+<p style="font-size:14px;color:#8a8178;" id="user-email">登录用户</p>
+
+<!-- Profile Header -->
+<div style="text-align:center;margin-bottom:32px;">
+<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--paper-warm),var(--mist));margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:32px;">👤</div>
+<h2 style="font-family:'Noto Serif SC',serif;font-size:24px;font-weight:900;margin-bottom:4px;">我的寻根档案</h2>
+<p style="font-size:14px;color:#8a8178;">陈氏 · 福建石狮（推测） · 第三代</p>
+</div>
+
+<!-- Progress -->
+<div style="background:var(--card);border-radius:16px;padding:24px;box-shadow:var(--shadow-md);margin-bottom:20px;">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+<span style="font-family:'Noto Serif SC',serif;font-size:16px;font-weight:700;">寻根进度</span>
+<span style="font-size:16px;font-weight:700;color:var(--accent);">35%</span>
+</div>
+<div style="height:8px;background:var(--paper);border-radius:6px;overflow:hidden;margin-bottom:16px;">
+<div style="width:35%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-light));border-radius:6px;"></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;">
+<div style="display:flex;align-items:center;gap:10px;font-size:14px;"><div style="width:22px;height:22px;border-radius:50%;background:var(--jade);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div> 基础信息录入</div>
+<div style="display:flex;align-items:center;gap:10px;font-size:14px;"><div style="width:22px;height:22px;border-radius:50%;background:var(--jade);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div> AI亲缘地初步推理</div>
+<div style="display:flex;align-items:center;gap:10px;font-size:14px;color:#8a8178;"><div style="width:22px;height:22px;border-radius:50%;border:2px solid var(--mist);flex-shrink:0;"></div> 补充详细线索</div>
+<div style="display:flex;align-items:center;gap:10px;font-size:14px;color:#8a8178;"><div style="width:22px;height:22px;border-radius:50%;border:2px solid var(--mist);flex-shrink:0;"></div> 匹配中间人</div>
+<div style="display:flex;align-items:center;gap:10px;font-size:14px;color:#8a8178;"><div style="width:22px;height:22px;border-radius:50%;border:2px solid var(--mist);flex-shrink:0;"></div> 建立宗亲联系</div>
+<div style="display:flex;align-items:center;gap:10px;font-size:14px;color:#8a8178;"><div style="width:22px;height:22px;border-radius:50%;border:2px solid var(--mist);flex-shrink:0;"></div> 规划回乡行程</div>
+</div>
+</div>
+
+<!-- Menu Items -->
+<div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
+<div style="background:var(--card);border-radius:14px;padding:16px 20px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:14px;cursor:pointer;" class="group-card">
+<div style="width:40px;height:40px;border-radius:12px;background:var(--accent-glow);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+<div style="flex:1;font-size:15px;font-weight:600;">我的家族档案</div>
+<span style="color:var(--mist);font-size:20px;">›</span>
+</div>
+<div style="background:var(--card);border-radius:14px;padding:16px 20px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:14px;cursor:pointer;" class="group-card">
+<div style="width:40px;height:40px;border-radius:12px;background:rgba(74,124,111,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--jade)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+<div style="flex:1;font-size:15px;font-weight:600;">对话历史记录</div>
+<span style="color:var(--mist);font-size:20px;">›</span>
+</div>
+<div style="background:var(--card);border-radius:14px;padding:16px 20px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:14px;cursor:pointer;" class="group-card">
+<div style="width:40px;height:40px;border-radius:12px;background:rgba(180,144,58,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+<div style="flex:1;font-size:15px;font-weight:600;">隐私与安全设置</div>
+<span style="color:var(--mist);font-size:20px;">›</span>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px;">
+<div style="background:var(--card);border-radius:14px;padding:16px 20px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:14px;cursor:pointer;" class="group-card">
+<div style="width:40px;height:40px;border-radius:12px;background:var(--paper);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7a7168" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+<div style="flex:1;font-size:15px;font-weight:600;">应用设置</div>
+<span style="color:var(--mist);font-size:20px;">›</span>
+</div>
+<div onclick="doLogout()" style="background:var(--card);border-radius:14px;padding:16px 20px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:14px;cursor:pointer;" class="group-card">
+<div style="width:40px;height:40px;border-radius:12px;background:rgba(196,85,58,0.06);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+<div style="flex:1;font-size:15px;font-weight:600;color:var(--accent);">退出登录</div>
+<span style="color:var(--mist);font-size:20px;">›</span>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div></div>
+<div class="footer"><div class="container">
+<p>© 2026 RootLink · 寻根连接 · 打通全球华人的寻根连接网络</p>
+<p style="margin-top:6px;"><a href="https://getrootlink.com/agent.html" target="_blank">Demo</a> · AI-powered Ancestral Pathway Platform for Overseas Chinese</p>
+</div></div>
+<script>
+let currentLang = localStorage.getItem('rootlink_lang') || 'en';
+function toggleLanguage(){
+  currentLang = currentLang === 'en' ? 'zh' : 'en';
+  localStorage.setItem('rootlink_lang', currentLang);
+  location.reload();
+}
+function applyHomeLanguage(){
+  document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+  const langBtn=document.getElementById('langBtn'); if(langBtn) langBtn.textContent=currentLang==='en'?'中文':'EN';
+  if(currentLang==='zh') return;
+  document.title='RootLink · Find Your Ancestral Roots';
+  const nav=document.querySelectorAll('.nav-links a');
+  const navLabels=['Home','Explore','Assistant','Community','Contact','Profile'];
+  for(let i=0;i<6;i++){ if(nav[i]) nav[i].innerHTML=`<span class="n1">${navLabels[i]}</span>`; }
+  if(nav[6]) nav[6].innerHTML='<span class="n1">Start</span><span class="n2">Root Search</span>';
+  const badge=document.querySelector('.hero-badge'); if(badge) badge.innerHTML='<span class="dot"></span> AI Ancestry Assistant · Now Live';
+  const title=document.querySelector('.hero-title'); if(title) title.innerHTML='Find Your<br><span class="hl">Ancestral Connection</span>';
+  const desc=document.querySelector('.hero-desc'); if(desc) desc.textContent='Helping 60M+ overseas Chinese turn fragmented family clues into a path back to their ancestral roots — powered by AI guidance and trusted human connections.';
+  const heroLinks=document.querySelectorAll('.hero-text a'); if(heroLinks[0]) heroLinks[0].childNodes[0].textContent='AI Root Assistant '; if(heroLinks[1]) heroLinks[1].textContent='Explore Root Stories';
+  const qc=document.querySelector('.qc-title'); if(qc) qc.textContent='🌱 Start with What You Know';
+  const rows=document.querySelectorAll('.fill-row');
+  if(rows[0]) rows[0].innerHTML='My surname is <span class="fill-blank" contenteditable="true" data-placeholder="surname"></span>, and my ancestral roots may be in <span class="fill-blank" contenteditable="true" data-placeholder="province / region"></span>';
+  if(rows[1]) rows[1].innerHTML='My family speaks <span class="fill-blank" contenteditable="true" data-placeholder="dialect"></span>, and I am approximately a <span class="fill-blank" contenteditable="true" data-placeholder="generation"></span> generation overseas Chinese';
+  if(rows[2]) rows[2].innerHTML='I also know <span class="fill-blank" contenteditable="true" data-placeholder="village / ancestor / other clue" style="min-width:200px"></span>';
+  const start=document.querySelector('.hero-btn'); if(start) start.childNodes[0].textContent='Start Your Root Search ';
+  const tag=document.querySelector('#sec-home .section-tag'); if(tag) tag.textContent='CORE FEATURES';
+  const head=document.querySelector('#sec-home .section-heading'); if(head) head.textContent='Three Ways to Explore Your Roots';
+  const cards=document.querySelectorAll('#sec-home .features-grid > div');
+  if(cards[0]){cards[0].querySelector('h3').textContent='AI Root Assistant';cards[0].querySelector('p').textContent='Guided conversations that turn fragmented clues into a practical research path.';}
+  if(cards[1]){cards[1].querySelector('h3').textContent='Root Explorer';cards[1].querySelector('p').textContent='Explore successful cases, surname distributions, and common ancestry research paths.';}
+  if(cards[2]){cards[2].querySelector('h3').textContent='Root Community';cards[2].querySelector('p').textContent='Connect with hometown communities, verified intermediaries, and overseas Chinese associations.';}
+  const homePrivacy=document.querySelector('#sec-home .privacy-text'); if(homePrivacy) homePrivacy.innerHTML='<strong>Privacy & Security Commitment</strong> · RootLink follows a privacy-by-design approach with data minimization, purpose limitation, protected storage, and encrypted transmission. Contact information and family clues are stored separately, and connection services are enabled only with user authorization. RootLink does not sell user data to third parties.';
+  const explore=document.querySelector('#sec-explore');
+  if(explore){const tg=explore.querySelector('.section-tag'),hd=explore.querySelector('.section-heading'),sub=explore.querySelector('.section-sub');if(tg)tg.textContent='ROOT STORIES';if(hd)hd.textContent='Stories of Finding the Way Home';if(sub)sub.textContent='Every successful search offers clues for the next person looking for their roots.';}
+  const search=document.getElementById('storySearch'); if(search) search.placeholder='Search stories, people, or places…';
+  const em=document.getElementById('storiesEmpty'); if(em) em.textContent='No matching stories found.';
+
+  // Country filters: English first, Chinese in parentheses for orientation.
+  const countryLabels={
+    '全部':'All',
+    '马来西亚':'Malaysia',
+    '台湾':'Taiwan',
+    '印尼':'Indonesia',
+    '泰国':'Thailand',
+    '美国':'United States',
+    '澳大利亚':'Australia',
+    '新加坡':'Singapore',
+    '菲律宾':'Philippines',
+    '加拿大':'Canada'
+  };
+  document.querySelectorAll('.filter-tab').forEach(btn=>{
+    const c=btn.getAttribute('data-country');
+    if(countryLabels[c]) btn.textContent=countryLabels[c];
+  });
+
+  // English story copy. Proper nouns keep the original Chinese in parentheses.
+  const storyTranslations=[
+    {
+      title:'Lin Yanchen: Three Siblings Make It to Peking University, Fulfilling Their Grandfather’s Wish',
+      tag:'🏛 Taiwan Federation Assistance',
+      excerpt:'While interning in Pingtan (平潭), Fujian, Taiwan youth Lin Yanchen used his family genealogy to trace his roots through the All-China Federation of Taiwan Compatriots, the Fujian Provincial Federation, and the Putian (莆田) City Federation, eventually reconnecting with family in Putian (莆田).',
+      route:'Taiwan → Federation assistance → Putian (莆田), Fujian → Success',
+      link:'Read more →'
+    },
+    {
+      title:'Huang Jimi: A Month in Siyang (泗阳) to Fulfill His Grandfather’s Dream',
+      tag:'🎬 Video Diary',
+      excerpt:'Huang Jimi traveled alone to Siyang (泗阳), Jiangsu, where he lived for a month and documented his root-seeking journey in eight Douyin videos for his grandfather in his nineties.',
+      route:'Taiwan → Douyin diary → Siyang (泗阳), Jiangsu → Success',
+      link:'Watch video →'
+    },
+    {
+      title:'The Hong Sisters: Letters Were the Crucial Starting Point',
+      tag:'💌 Letters & Family Clues',
+      excerpt:'Two Malaysian Chinese sisters used old letters, photographs, visits by fellow villagers, and local acquaintance networks to return to their ancestral home in Nan’an (南安), Fujian.',
+      route:'Malaysia → Letter clues → Nan’an (南安), Fujian → Success'
+    },
+    {
+      title:'Bangkok Deputy Mayor Fulfills a Root-Seeking Dream in Chenghai (澄海)',
+      tag:'🏛 Official Assistance',
+      excerpt:'The deputy mayor of Bangkok, Thailand, traveled to Chenghai (澄海), Guangdong to trace family roots, with official channels helping accelerate the search.',
+      route:'Thailand → Official assistance → Chenghai (澄海), Guangdong → Success',
+      link:'Read more →'
+    },
+    {
+      title:'94-Year-Old Thai Chinese Chen Huidiao: Returning Home After 86 Years',
+      tag:'👴 86 Years Away',
+      excerpt:'After 86 years away, Chen Huidiao, a 94-year-old Thai Chinese elder, finally returned to Jieyang (揭阳), Guangdong, fulfilling a lifelong wish.',
+      route:'Thailand → 86 years of longing → Jieyang (揭阳), Guangdong → Homecoming',
+      link:'Read more →'
+    },
+    {
+      title:'Thai Chinese Youth Trace Cultural Roots Along the Silk Road',
+      tag:'🧵 Cultural Roots',
+      excerpt:'Thai Chinese youth followed the Silk Road to explore the origins of Chinese civilization and rebuild cultural connections with their ancestral homeland.',
+      route:'Thailand → Root-seeking camp → Chinese civilization → Cultural identity',
+      link:'Read more →'
+    },
+    {
+      title:'Indonesian Chinese Gen-Z Girl Finds Her Roots After Searching More Than 40 Genealogies',
+      tag:'📚 40+ Genealogies',
+      excerpt:'A young Indonesian Chinese woman searched through more than 40 family genealogies before finally identifying her ancestral hometown and completing a multigenerational family wish.',
+      route:'Indonesia → 40+ genealogies → Ancestral hometown → Success',
+      link:'Read more →'
+    },
+    {
+      title:'Across a Century: Indonesian Chinese Family Reconnects with Jiaomei (角美), Zhangzhou',
+      tag:'🌺 Century-Long Homecoming',
+      excerpt:'After more than a century, an Indonesian Chinese family finally traced its ancestral roots to Jiaomei (角美), Zhangzhou, Fujian.',
+      route:'Indonesia → A century of inheritance → Jiaomei (角美), Zhangzhou, Fujian → Success',
+      link:'Read more →'
+    },
+    {
+      title:'After Returning to Quanzhou (泉州), an Indonesian Chinese Family Meeting Reconnects Three Generations',
+      tag:'👨‍👩‍👧 Three Generations',
+      excerpt:'An Indonesian Chinese family returned to Quanzhou (泉州), Fujian, where a family gathering helped reconnect three generations.',
+      route:'Indonesia → Quanzhou (泉州) root search → Family meeting → Three generations reunited',
+      link:'Read more →'
+    },
+    {
+      title:'A Long Journey Home: Indonesian Chinese Family Finally Reunites',
+      tag:'🛤 Long-Distance Search',
+      excerpt:'An Indonesian Chinese family traveled a long distance back to China, overcoming difficulties before finally reuniting with long-separated relatives.',
+      route:'Indonesia → Long-distance search → Ancestral hometown → Reunion',
+      link:'Read more →'
+    },
+    {
+      title:'Where Did We Come From? 13 Chinese Americans Return to Guangdong Together',
+      tag:'🤝 Group Root Search',
+      excerpt:'Thirteen Chinese Americans from across the United States, including participants up to age 80, traveled together to Guangdong to reconnect with family roots stretching back more than a century.',
+      route:'United States → Group journey → Guangdong → Success',
+      link:'Read more →'
+    },
+    {
+      title:'Chinese American Root-Seeking Advocate Zheng Guohe',
+      tag:'🌟 Root-Seeking Advocate',
+      excerpt:'Zheng Guohe, a Chinese American, spent decades promoting root-seeking programs for younger generations and helping overseas Chinese reconnect with their ancestral homeland.',
+      route:'United States → Root-seeking advocacy → Kaiping (开平), Guangdong → Continuing the mission',
+      link:'Read more →'
+    },
+    {
+      title:'Chinese American Youth Trace Their Roots in Kaiping (开平)',
+      tag:'🏯 Diaolou Root Search',
+      excerpt:'Chinese American youth visited Kaiping (开平), Guangdong, exploring ancestral traces among historic diaolou villages and strengthening their connection to family heritage.',
+      route:'United States → Youth visit → Kaiping (开平), Guangdong → Cultural identity',
+      link:'Read more →'
+    },
+    {
+      title:'Young Malaysian Chinese Travels to China to Fulfill an Ancestral Wish',
+      tag:'💛 Fulfilling a Family Wish',
+      excerpt:'A young Malaysian Chinese traveler journeyed to China to fulfill a long-held root-seeking wish passed down through generations.',
+      route:'Malaysia → Journey to China → Ancestral hometown → Success',
+      link:'Read more →'
+    },
+    {
+      title:'Nine Siblings Trace Their Roots Together and Create a Malaysian Family Genealogy',
+      tag:'👨‍👩‍👧 Nine Siblings',
+      excerpt:'Nine Malaysian Chinese siblings returned to their ancestral hometown to fulfill their father’s wish and compiled a Malaysian edition of their family genealogy.',
+      route:'Malaysia → Fulfilling father’s wish → Ancestral hometown → Family genealogy',
+      link:'Read more →'
+    },
+    {
+      title:'Australian Chinese Youth Return Home: “No Matter How Far We Go, Our Roots Are Here”',
+      tag:'🦘 Australian Chinese Youth',
+      excerpt:'Young Australian Chinese participants returned to their ancestral hometown and reflected on the enduring connection between migration, family, and home.',
+      route:'Australia → Root-seeking journey → Ancestral hometown → Success',
+      link:'Read more →'
+    },
+    {
+      title:'Australia’s First Female Chinese State MP Returns to Pingshan (坪山), Shenzhen',
+      tag:'🏛 MP Root Search',
+      excerpt:'Australia’s first female state parliamentarian of Chinese heritage made a special trip to Pingshan (坪山), Shenzhen to visit her ancestral hometown and trace her family history.',
+      route:'Australia → Pingshan (坪山), Shenzhen → Ancestral hometown → Success',
+      link:'Read more →'
+    },
+    {
+      title:'Singaporean Chinese Return to Enping (恩平): The Call of the Homeland',
+      tag:'🌿 Return to the Homeland',
+      excerpt:'Chinese Singaporeans traveled to Enping (恩平), Guangdong to trace the footsteps of their ancestors and reconnect with their family homeland.',
+      route:'Singapore → Enping (恩平) root search → Enping (恩平), Guangdong → Success',
+      link:'Read more →'
+    },
+    {
+      title:'Four Generations of a Filipino Chinese Family Help Reunite 60+ China–Philippines Families',
+      tag:'🤝 China–Philippines Reunions',
+      excerpt:'Across four generations, a Filipino Chinese family spent more than 20 years helping over 60 families across China and the Philippines reconnect.',
+      route:'Philippines → Four generations → 60+ families → Reunion',
+      link:'Read more →'
+    },
+    {
+      title:'Roots in Fushi Village (浮石村): A Canadian Chinese Family Finds Its Way Home',
+      tag:'🍁 Canadian Homecoming',
+      excerpt:'A Chinese Canadian family eventually returned to Fushi Village (浮石村), their ancestral hometown, after a difficult search spanning generations.',
+      route:'Canada → Fushi Village (浮石村) → Ancestral hometown → Homecoming',
+      link:'Read more →'
+    },
+    {
+      title:'Across a Century, Finally Home',
+      tag:'🕰 A Century of Waiting',
+      excerpt:'A Malaysian Chinese elder’s root-seeking story spans a century before the family finally reconnects with relatives in their ancestral homeland in China.',
+      route:'Malaysia → China → Successful homecoming',
+      link:'Read more →'
+    },
+    {
+      title:'“Bringing My Grandparents Home Is My Wish”: A Malaysian Family Reunites in Nan’an (南安)',
+      tag:'🌏 Multi-Country Reunion',
+      excerpt:'Family members living across Malaysia, Singapore, and other countries reunited and returned together to Nan’an (南安), Fujian to reconnect with relatives.',
+      route:'Malaysia + multiple countries → Nan’an (南安), Fujian → Success',
+      link:'Read more →'
+    },
+    {
+      title:'Zheng Liuyue: Following Her Ancestors’ Route Back Home',
+      tag:'🛥 Reverse Migration Route',
+      excerpt:'Malaysian Chinese host and entertainer Zheng Liuyue retraced the maritime route once taken by her ancestors to Southeast Asia, traveling it in reverse to seek her roots.',
+      route:'Malaysia → Ancestral migration route → Root search',
+      link:'Read more →'
+    },
+    {
+      title:'Taiwanese Actor Dylan Kuo Traces His Roots in Shandong',
+      tag:'🎭 Celebrity Root Search',
+      excerpt:'Taiwanese actor Dylan Kuo traveled to Shandong to trace his roots, becoming emotional as he reflected on blood ties and family heritage.',
+      route:'Taiwan → Shandong → Successful root search',
+      link:'Read more →'
+    }
+  ];
+  document.querySelectorAll('.story-card').forEach((card,i)=>{
+    const tr=storyTranslations[i];
+    if(!tr) return;
+    const titleEl=card.querySelector('.story-title');
+    if(titleEl){ card.dataset.originalTitle=titleEl.textContent.trim(); titleEl.textContent=tr.title; }
+    const tagEl=card.querySelector('.story-tag'); if(tagEl) tagEl.textContent=tr.tag;
+    const excerptEl=card.querySelector('.story-excerpt'); if(excerptEl) excerptEl.textContent=tr.excerpt;
+    const routeEl=card.querySelector('.story-route'); if(routeEl) routeEl.textContent=tr.route;
+    const linkEl=card.querySelector('.story-link'); if(linkEl && tr.link) linkEl.textContent=tr.link;
+  });
+
+  // Surname visualization labels: Romanization first, Chinese surname in parentheses.
+  const surnameRomanization={
+    '陈':'Chen','林':'Lin','黄':'Huang','李':'Li','张':'Zhang','王':'Wang','洪':'Hong','郑':'Zheng','刘':'Liu','杨':'Yang','赵':'Zhao','吴':'Wu','周':'Zhou','徐':'Xu','孙':'Sun','马':'Ma','朱':'Zhu','胡':'Hu','郭':'Guo','何':'He','高':'Gao','罗':'Luo','梁':'Liang','谢':'Xie','宋':'Song','唐':'Tang','许':'Xu','韩':'Han','邓':'Deng','冯':'Feng'
+  };
+  const placePairs=[
+    ['福建','Fujian'],['广东','Guangdong'],['浙江','Zhejiang'],['广西','Guangxi'],['河南','Henan'],['山东','Shandong'],['四川','Sichuan'],['贵州','Guizhou'],['云南','Yunnan'],['河北','Hebei'],['湖南','Hunan'],['江苏','Jiangsu'],['东北','Northeast China (东北)'],['甘肃','Gansu'],['宁夏','Ningxia'],['青海','Qinghai'],['安徽','Anhui'],['江西','Jiangxi'],['台湾','Taiwan'],['华东','East China'],['华南','South China'],['西南','Southwest China'],['西北','Northwest China'],['长江流域','Yangtze River region'],['江浙闽粤','Jiangsu–Zhejiang–Fujian–Guangdong'],['闽南','Southern Fujian / Minnan (闽南)'],['岭南','Lingnan']
+  ];
+  Object.keys(surnameDB).forEach(ch=>{
+    const d=surnameDB[ch];
+    if(!d) return;
+    d.title=`${surnameRomanization[ch]||ch} (${ch}) Surname Distribution`;
+    let detail=d.detail;
+    placePairs.forEach(([cn,en])=>{ detail=detail.split(cn).join(en); });
+    detail=detail
+      .replace(/主要集中于/g,'Mainly concentrated in ')
+      .replace(/集中于/g,'Concentrated in ')
+      .replace(/高度集中于/g,'Highly concentrated in ')
+      .replace(/全国第一大姓/g,'China’s most common surname')
+      .replace(/全国第二大姓/g,'China’s second most common surname')
+      .replace(/全国第四大姓/g,'China’s fourth most common surname')
+      .replace(/全国广泛分布/g,'Widely distributed across China')
+      .replace(/北方偏多/g,'more common in northern China')
+      .replace(/北方分布更密集/g,'more densely distributed in northern China')
+      .replace(/分布不集中/g,'Broadly distributed')
+      .replace(/典型北方大姓/g,'a major northern Chinese surname')
+      .replace(/典型闽南姓氏/g,'a typical Southern Fujian / Minnan (闽南) surname')
+      .replace(/闽南侨乡常见姓/g,'common in overseas-Chinese hometowns of Southern Fujian / Minnan (闽南)')
+      .replace(/东南沿海高频/g,'common along China’s southeast coast')
+      .replace(/西南地区高频/g,'common in Southwest China')
+      .replace(/西北地区高频/g,'common in Northwest China')
+      .replace(/南方偏多/g,'more common in southern China')
+      .replace(/北方为主/g,'mainly northern China')
+      .replace(/南方为主/g,'mainly southern China')
+      .replace(/华东为主/g,'mainly East China')
+      .replace(/南北分布/g,'distributed across both northern and southern China')
+      .replace(/全国占比约/g,'Approx. share nationwide: ')
+      .replace(/占比约/g,'Approx. share nationwide: ')
+      .replace(/约 ([0-9,.]+) 万人/g,'about $1 ten-thousand people');
+    d.detail=detail.replace(/ · /g,' · ');
+  });
+
+  // Agent section
+  const agentSec=document.querySelector('#sec-agent');
+  if(agentSec){
+    const tg=agentSec.querySelector('.section-tag'); if(tg) tg.textContent='AI ROOT ASSISTANT';
+    const hd=agentSec.querySelector('.section-heading'); if(hd) hd.textContent='A Guided Path from Family Clues to Ancestral Roots';
+    const infoP=agentSec.querySelector('.agent-info > p'); if(infoP) infoP.textContent='An AI assistant built around a systematic root-seeking methodology, with tools for ancestral-place research, intermediary matching, and official archive discovery.';
+    const af=agentSec.querySelectorAll('.af-item > div:last-child');
+    if(af[0]) af[0].innerHTML='<strong>Guided Research Flow</strong> — Understand where you are in the process and what to do next.';
+    if(af[1]) af[1].innerHTML='<strong>Ancestral-Place Reasoning</strong> — Combine dialect, surname, and migration clues with confidence scoring.';
+    if(af[2]) af[2].innerHTML='<strong>Intermediary Matching</strong> — Connect with genealogy researchers, clan associations, and local guides.';
+    if(af[3]) af[3].innerHTML='<strong>Ongoing Support</strong> — Save progress, surface next steps, and keep the search moving.';
+    const cta=agentSec.querySelector('.agent-cta'); if(cta) cta.childNodes[0].textContent='Start Your Root Search ';
+    const chats=agentSec.querySelectorAll('.cbd-c');
+    if(chats[0]) chats[0].textContent='Hi! I’m the RootLink Assistant 🌳 Tell me what you know, and I’ll help you work out the next step.';
+    if(chats[1]) chats[1].textContent='My surname is Chen. My family says our roots are in Fujian, we speak Minnan, and I’m third-generation overseas Chinese.';
+    if(chats[2]) chats[2].innerHTML='Based on these clues:<br><br><strong>Most likely origin:</strong> Nan’an (南安) / Jinjiang (晋江), Quanzhou<br><strong>Reasoning:</strong> Minnan dialect + Chen surname + third-generation Southeast Asian Chinese<div class="conf-bar"><div class="conf-fill" style="width:72%"></div></div><div class="conf-label"><span>Confidence</span><span>72% · medium-high</span></div>';
+    if(chats[3]) chats[3].textContent='My grandmother once mentioned a place that sounded like “Shishi.”';
+    if(chats[4]) chats[4].innerHTML='That is a strong clue. Shishi (石狮) is a county-level city under Quanzhou and sits in the heart of the Minnan overseas-Chinese region.<div class="conf-bar"><div class="conf-fill" style="width:86%"></div></div><div class="conf-label"><span>Updated confidence</span><span>86% · high</span></div>';
+  }
+
+  // Community section
+  const community=document.querySelector('#sec-community');
+  if(community){
+    const top=community.querySelector(':scope > .container > div:first-child');
+    if(top){
+      const tg=top.querySelector('.section-tag'); if(tg) tg.textContent='ROOT COMMUNITY';
+      const hd=top.querySelector('.section-heading'); if(hd) hd.textContent='Find the Right People to Help with Your Search';
+      const sub=top.querySelector('.section-sub'); if(sub) sub.textContent='Join peer groups, connect with verified intermediaries, and reach official overseas-Chinese organizations.';
+    }
+    const cols=community.querySelectorAll('.comm-col');
+    if(cols[0]){
+      const h=cols[0].querySelector('h3'); if(h) h.textContent='Peer Support Groups';
+      const cards=cols[0].querySelectorAll('.group-card');
+      const groupData=[
+        ['Chen Family Roots in Minnan','128 members · Active · 23 successful searches',['Active','Fujian']],
+        ['Malaysian Chinese Root-Seeking Network','256 members · Active · 41 successful searches',['Active','Cross-region']],
+        ['Chaoshan Root-Seeking Group','89 members · 42 successful searches',['Guangdong','Teochew']],
+        ['Taiwan Family Roots Exchange','167 members · Active',['Active','Cross-Strait']]
+      ];
+      cards.forEach((c,i)=>{ const d=groupData[i]; if(!d)return; const n=c.querySelector('.g-name'); if(n)n.textContent=d[0]; const m=c.querySelector('.g-meta'); if(m)m.textContent=d[1]; const tags=c.querySelectorAll('.g-tag'); tags.forEach((x,j)=>{if(d[2][j])x.textContent=d[2][j];}); });
+    }
+    if(cols[1]){
+      const h=cols[1].querySelector('h3'); if(h) h.textContent='Verified Intermediaries';
+      const meds=cols[1].querySelectorAll('.med-card');
+      const medData=[
+        ['Lin Jianhua','Quanzhou Genealogy Research Association · Vice President',['Successful cases','User rating','Years of experience'],['Minnan Chen genealogy','Genealogy verification','Nan’an (南安) / Jinjiang (晋江)']],
+        ['Zhang Meiling','Malaysia Gaozhou Association · Committee Member',['Successful cases','User rating','Years of experience'],['Gaozhou (高州), Guangdong','Association network','Malaysian Chinese']]
+      ];
+      meds.forEach((c,i)=>{ const d=medData[i]; if(!d)return; const n=c.querySelector('.med-name'); if(n)n.textContent=d[0]; const r=c.querySelector('.med-role'); if(r)r.textContent=d[1]; const badge=c.querySelector('.med-badge'); if(badge) badge.lastChild.textContent=' Verified'; const labels=c.querySelectorAll('.ms-label'); labels.forEach((x,j)=>{if(d[2][j])x.textContent=d[2][j];}); const nums=c.querySelectorAll('.ms-num'); if(nums[2]) nums[2].textContent=(i===0?'8':'12')+' yrs'; const specs=c.querySelectorAll('.m-spec'); specs.forEach((x,j)=>{if(d[3][j])x.textContent=d[3][j];}); const b=c.querySelector('.connect-btn'); if(b)b.textContent='Request Connection'; });
+    }
+    const resources=[...community.querySelectorAll('.section-tag')].find(x=>x.textContent.includes('侨务资源'));
+    if(resources){
+      resources.textContent='OFFICIAL RESOURCES';
+      const wrap=resources.parentElement; const hd=wrap.querySelector('.section-heading'); if(hd) hd.textContent='Overseas Chinese Federations & Root-Seeking Resources'; const sub=wrap.querySelector('.section-sub'); if(sub) sub.textContent='Official and semi-official organizations that may support archive research, local introductions, and family-history searches.';
+      const ql=wrap.querySelectorAll('.ql-card');
+      const regions=['Fujian','Guangdong','Guangxi','Hainan','National Organizations','Overseas Associations'];
+      ql.forEach((c,i)=>{const r=c.querySelector('.ql-region'); if(r&&regions[i]){const dot=r.querySelector('.ql-dot'); r.textContent=''; if(dot)r.appendChild(dot); r.append(document.createTextNode(regions[i]));}});
+      const items=wrap.querySelectorAll('.ql-item');
+      const repl=[
+        ['Fujian Federation of Returned Overseas Chinese','Website:','Address: Gulou District, Fuzhou · 192 Guping Road, Shanhai Building','Tel:'],
+        ['Fujian Federation of Taiwan Compatriots','Website:','Address: 18F, 276 Hudong Road, Fuzhou','Tel:'],
+        ['Guangdong Federation of Returned Overseas Chinese','Website:','Address: Tianhe District, Guangzhou · 140–148 Tiyu East Road','Tel:'],
+        ['Guangxi Federation of Returned Overseas Chinese','Website:','Address: Qingxiu District, Nanning · 34 Xinmin Road','Tel:'],
+        ['Hainan Federation of Returned Overseas Chinese','Website:','Address: Qiongshan District, Haikou · Hainan Technology and Business College','Tel:'],
+        ['All-China Federation of Returned Overseas Chinese','Official website:','',''],
+        ['China Genealogy Knowledge Service Platform','Official website:','',''],
+        ['All-China Federation of Taiwan Compatriots / Provincial Federations','Official channel:','',''],
+        ['Federation of Chinese Associations Malaysia','Official website:','',''],
+        ['Singapore Federation of Chinese Clan Associations','Official website:','',''],
+        ['Federation of Thai Chinese Clan Associations','Official website:','','']
+      ];
+      items.forEach((it,i)=>{const d=repl[i]; if(!d)return; const strong=it.querySelector('strong'); if(strong)strong.textContent=d[0]; let html=it.innerHTML; html=html.replace(/网址：|官方网站：|官方渠道：/g,d[1]); html=html.replace(/会址：[^<]*(?=<br>|$)/g,d[2]||''); html=html.replace(/电话：/g,d[3]); it.innerHTML=html;});
+    }
+  }
+
+  // Contact section
+  const contact=document.querySelector('#sec-contact');
+  if(contact){
+    const tg=contact.querySelector('.section-tag'); if(tg) tg.textContent='CONTACT';
+    const hd=contact.querySelector('.section-heading'); if(hd) hd.textContent='Build the Connection with RootLink';
+    const ct=contact.querySelector('.ct-title'); if(ct) ct.textContent='Contact the RootLink Team';
+    const cd=contact.querySelector('.ct-desc'); if(cd) cd.textContent='Whether you are tracing your family roots, joining as an intermediary, exploring institutional cooperation, or sharing feedback, you can reach us here.';
+    const labels=contact.querySelectorAll('.ct-label'); const vals=contact.querySelectorAll('.ct-value');
+    if(labels[0])labels[0].textContent='Email'; if(labels[1])labels[1].textContent='WeChat Official Account'; if(labels[2])labels[2].textContent='Address';
+    if(vals[1]) vals[1].textContent='RootLink'; if(vals[2]) vals[2].textContent='220 Handan Road, Yangpu District, Shanghai';
+    const h3=contact.querySelector('h3'); if(h3)h3.textContent='Partnerships';
+    const ps=contact.querySelectorAll('.contact-card p'); if(ps[0]) ps[0].textContent='RootLink is currently looking for partners in the following areas:';
+    const partnerBoxes=contact.querySelectorAll('.contact-card [style*="padding:14px 16px"]');
+    const pdata=[['🏛 Overseas Chinese Affairs Organizations','Local federations, Taiwan compatriot associations, and overseas-Chinese affairs offices'],['📚 Genealogy Researchers','Genealogy associations, clan associations, and local family-history researchers'],['🌏 Overseas Chinese Communities','Chinese associations, student groups, and cultural creators around the world']];
+    partnerBoxes.forEach((b,i)=>{const d=pdata[i]; if(!d)return; const st=b.querySelector('strong'); const sp=b.querySelector('span'); if(st)st.textContent=d[0]; if(sp)sp.textContent=d[1];});
+    const priv=contact.querySelector('.privacy-text'); if(priv) priv.innerHTML='<strong>Privacy & Security Commitment</strong> · RootLink follows a privacy-by-design approach: minimizing data collection, limiting use, separating contact information from family clues, and using protected storage and transmission. RootLink does not sell user data to third parties and references frameworks including PIPL, GDPR, and PDPA in product and data governance.';
+  }
+
+  // Profile / login section
+  const profile=document.querySelector('#sec-profile');
+  if(profile){
+    const emailStep=profile.querySelector('#step-email');
+    if(emailStep){ const h=emailStep.querySelector('h2'); if(h)h.textContent='Start Your Root-Seeking Journey'; const p=emailStep.querySelector('p'); if(p)p.textContent='Enter your email to begin. New users will be registered automatically.'; const label=emailStep.querySelector('label'); if(label)label.textContent='Email address'; const inp=emailStep.querySelector('#email-input'); if(inp)inp.placeholder='Enter your email'; const btn=emailStep.querySelector('button'); if(btn)btn.textContent='Send verification code'; const terms=emailStep.querySelector('p[style*="font-size:11px"]'); if(terms)terms.innerHTML='By signing in, you agree to the <span style="color:var(--jade);cursor:pointer;">Terms of Service</span> and <span style="color:var(--jade);cursor:pointer;">Privacy Policy</span>.'; }
+    const otp=profile.querySelector('#step-otp');
+    if(otp){ const h=otp.querySelector('h2'); if(h)h.textContent='Check Your Email'; const hint=otp.querySelector('#otp-hint'); if(hint)hint.textContent='We sent you a verification code.'; const label=otp.querySelector('label'); if(label)label.textContent='6-digit verification code'; const inp=otp.querySelector('#otp-input'); if(inp)inp.placeholder='Enter code'; const btn=otp.querySelector('button'); if(btn)btn.textContent='Sign in'; const p=otp.querySelector('p'); if(p)p.innerHTML='Didn’t receive it? <span onclick="resendOtp()" style="color:var(--accent);cursor:pointer;font-weight:600;">Resend</span> &nbsp;·&nbsp; <span onclick="backToEmail()" style="color:#b0a99e;cursor:pointer;">Change email</span>'; }
+    const pv=profile.querySelector('#profile-view');
+    if(pv){ const h=pv.querySelector('h2'); if(h)h.textContent='My Root-Seeking Archive'; const desc=h?.nextElementSibling; if(desc)desc.textContent='Chen · Shishi (石狮), Fujian (estimated) · Third generation'; const prog=[...pv.querySelectorAll('span')].find(x=>x.textContent.trim()==='寻根进度'); if(prog)prog.textContent='Progress'; const steps=[...pv.querySelectorAll('div')].filter(x=>['基础信息录入','AI亲缘地初步推理','补充详细线索','匹配中间人','建立宗亲联系','规划回乡行程'].includes(x.textContent.trim())); const stepLabels=['Basic information added','Initial AI origin estimate','Add detailed clues','Match with an intermediary','Connect with relatives / clan network','Plan a return visit']; steps.forEach((x,i)=>{if(stepLabels[i]){const icon=x.firstElementChild; x.textContent=''; if(icon)x.appendChild(icon); x.append(document.createTextNode(' '+stepLabels[i]));}}); const menuLabels=['My Family Archive','Conversation History','Privacy & Security','App Settings','Log Out']; const menuDivs=[...pv.querySelectorAll('.group-card > div[style*="flex:1"]')]; menuDivs.forEach((x,i)=>{if(menuLabels[i])x.textContent=menuLabels[i];}); }
+  }
+
+  const countText=document.querySelector('.stories-count');
+  if(countText) countText.innerHTML='Showing <span id="storyCount">'+(document.getElementById('storyCount')?.textContent||'20')+'</span> stories';
+
+  const currentSurname=document.getElementById('surname-input')?.value.trim() || '陈';
+  setSurname(currentSurname);
+
+  const footer=document.querySelector('.footer p'); if(footer) footer.textContent='© 2026 RootLink · Connecting Overseas Chinese with Their Ancestral Roots';
+}
+function showSection(name){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+name).classList.add('active');
+  document.querySelectorAll('.nav-links a[data-section]').forEach(a=>a.classList.toggle('active',a.dataset.section===name));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Login/Logout
+// Supabase 初始化
+const _sb = window.supabase.createClient(
+  'https://zjxtyukdvuvhoxldpakk.supabase.co',
+  'sb_publishable_prGtV9CcT8uchDMPF643vg_K8FkKy2m'
+);
+
+// 页面加载时检查登录状态
+_sb.auth.getSession().then(({ data: { session } }) => {
+  if (session) _showProfile(session.user.email);
+});
+
+// 发送验证码
+async function sendOtp() {
+  const email = document.getElementById('email-input').value.trim();
+  if (!email || !email.includes('@')) { alert(currentLang==='en'?'Please enter a valid email address.':'请输入有效的邮箱地址'); return; }
+  const btn = event.target;
+  btn.textContent = currentLang==='en'?'Sending…':'发送中…'; btn.disabled = true;
+  const { error } = await _sb.auth.signInWithOtp({ 
+  email,
+  options: {
+    shouldCreateUser: true
+  }
+});
+  if (error) {
+    alert((currentLang==='en'?'Failed to send: ':'发送失败：') + error.message);
+    btn.textContent = currentLang==='en'?'Send code':'发送验证码'; btn.disabled = false;
+  } else {
+    document.getElementById('otp-hint').textContent = currentLang==='en' ? `Email sent to ${email}. First-time users should click the confirmation link in the email; later logins will receive a verification code directly.` : '邮件已发送至 ' + email + '。首次注册请点击邮件中的确认链接，之后登录将直接发送验证码。';
+    document.getElementById('step-email').style.display = 'none';
+    document.getElementById('step-otp').style.display = 'block';
+  }
+}
+
+// 验证验证码
+async function verifyOtp() {
+  const email = document.getElementById('email-input').value.trim();
+  const otp = document.getElementById('otp-input').value.trim();
+  if (!otp) { alert(currentLang==='en'?'Please enter the verification code.':'请输入验证码'); return; }
+  const btn = event.target;
+  btn.textContent = currentLang==='en'?'Verifying…':'验证中…'; btn.disabled = true;
+  const { data, error } = await _sb.auth.verifyOtp({ 
+    email, 
+    token: otp, 
+    type: 'email'
+  });
+if (data?.session) {
+    await _sb.auth.setSession({
+      access_token: data.session.access_token,
+      refresh_token: data.session.refresh_token
+    });
+  }
+  if (error) {
+    alert(currentLang==='en'?'The code is incorrect or expired. Please try again.':'验证码错误或已过期，请重试');
+    btn.textContent = currentLang==='en'?'Sign in':'确认登录'; btn.disabled = false;
+  } else {
+    _showProfile(data.user.email);
+  }
+}
+
+// 重新发送
+async function resendOtp() {
+  const email = document.getElementById('email-input').value.trim();
+  await _sb.auth.signInWithOtp({ email });
+  alert(currentLang==='en'?'The verification code has been resent.':'验证码已重新发送，请查收');
+}
+
+// 返回修改邮箱
+function backToEmail() {
+  document.getElementById('otp-input').value = '';
+  document.getElementById('step-otp').style.display = 'none';
+  document.getElementById('step-email').style.display = 'block';
+}
+
+// 显示档案页
+function _showProfile(email) {
+  document.getElementById('login-view').style.display = 'none';
+  document.getElementById('profile-view').style.display = 'block';
+  const el = document.getElementById('user-email');
+  if (el) el.textContent = email;
+}
+
+// 退出登录
+async function doLogout() {
+  await _sb.auth.signOut();
+  document.getElementById('profile-view').style.display = 'none';
+  document.getElementById('login-view').style.display = 'block';
+  document.getElementById('step-otp').style.display = 'none';
+  document.getElementById('step-email').style.display = 'block';
+  document.getElementById('email-input').value = '';
+}
+
+// Quick Start -> Agent with user data
+function startRootSearch(e){
+  e.preventDefault();
+  var blanks=document.querySelectorAll('.quick-card .fill-blank');
+  var surname=blanks[0]?blanks[0].textContent.trim():'';
+  var region=blanks[1]?blanks[1].textContent.trim():'';
+  var dialect=blanks[2]?blanks[2].textContent.trim():'';
+  var generation=blanks[3]?blanks[3].textContent.trim():'';
+  var extra=blanks[4]?blanks[4].textContent.trim():'';
+
+  // Build message text in the selected language
+  var parts=[];
+  if(currentLang==='en'){
+    if(surname) parts.push('My surname is '+surname);
+    if(region) parts.push('My ancestral roots may be in '+region);
+    if(dialect) parts.push('My family speaks '+dialect);
+    if(generation) parts.push('I am approximately a '+generation+' generation overseas Chinese');
+    if(extra) parts.push('I also know: '+extra);
+  }else{
+    if(surname) parts.push('我姓'+surname);
+    if(region) parts.push('祖籍可能在'+region);
+    if(dialect) parts.push('家里说'+dialect);
+    if(generation) parts.push('大约'+generation+'华人');
+    if(extra) parts.push('我还知道：'+extra);
+  }
+
+  var msg=parts.length>0?parts.join(currentLang==='en'?', ':'，'):'';
+
+  // Open demo with message as URL parameter
+  var url='https://getrootlink.com/agent.html';
+  if(msg) url+='?q='+encodeURIComponent(msg);
+  window.open(url,'_blank');
+}
+
+// Surname data
+const surnameDB={
+  '陈':{title:'「陈」姓分布',detail:'主要集中于福建、广东、浙江 · 全国占比约 4.53% · 约 5,440 万人',dots:[{x:82,y:38,s:24,c:'#b8864a'},{x:72,y:52,s:22,c:'#b8864a'},{x:73,y:38,s:16,c:'#d4a672'},{x:55,y:48,s:12,c:'#d4b86a'},{x:48,y:32,s:10,c:'#c8c1b6'}]},
+  '林':{title:'「林」姓分布',detail:'主要集中于福建、广东 · 典型闽南姓氏 · 全国占比约 1.18%',dots:[{x:82,y:38,s:26,c:'#b8864a'},{x:73,y:52,s:20,c:'#b8864a'},{x:55,y:52,s:10,c:'#c8c1b6'},{x:73,y:35,s:12,c:'#d4a672'}]},
+  '黄':{title:'「黄」姓分布',detail:'主要集中于广东、广西、福建 · 全国占比约 2.23%',dots:[{x:72,y:52,s:24,c:'#b8864a'},{x:55,y:58,s:22,c:'#b8864a'},{x:82,y:38,s:18,c:'#d4a672'},{x:48,y:48,s:12,c:'#d4b86a'},{x:40,y:32,s:10,c:'#c8c1b6'}]},
+  '李':{title:'「李」姓分布',detail:'中国第一大姓 · 全国广泛分布，北方偏多 · 占比约 7.94%',dots:[{x:52,y:18,s:22,c:'#b8864a'},{x:48,y:28,s:20,c:'#b8864a'},{x:60,y:22,s:18,c:'#d4a672'},{x:35,y:28,s:16,c:'#d4a672'},{x:72,y:42,s:12,c:'#d4b86a'},{x:28,y:38,s:12,c:'#c8c1b6'}]},
+  '张':{title:'「张」姓分布',detail:'全国第二大姓 · 北方分布更密集 · 占比约 7.07%',dots:[{x:52,y:18,s:22,c:'#b8864a'},{x:48,y:28,s:20,c:'#b8864a'},{x:62,y:22,s:16,c:'#d4a672'},{x:32,y:32,s:16,c:'#d4a672'},{x:72,y:42,s:10,c:'#c8c1b6'},{x:42,y:42,s:10,c:'#c8c1b6'}]},
+  '王':{title:'「王」姓分布',detail:'分布不集中 · 典型北方大姓 · 占比约 7.25%',dots:[{x:52,y:16,s:22,c:'#b8864a'},{x:62,y:22,s:20,c:'#b8864a'},{x:75,y:16,s:18,c:'#d4a672'},{x:48,y:28,s:14,c:'#d4a672'},{x:32,y:24,s:14,c:'#d4b86a'},{x:80,y:10,s:12,c:'#d4b86a'}]},
+  '洪':{title:'「洪」姓分布',detail:'典型闽南姓氏 · 高度集中于福建、广东沿海地区',dots:[{x:82,y:38,s:28,c:'#b8864a'},{x:73,y:48,s:16,c:'#d4a672'},{x:55,y:48,s:8,c:'#c8c1b6'}]},
+  '郑':{title:'「郑」姓分布',detail:'集中于福建、浙江 · 闽南侨乡常见姓 · 占比约 0.78%',dots:[{x:82,y:38,s:24,c:'#b8864a'},{x:73,y:35,s:20,c:'#b8864a'},{x:60,y:32,s:14,c:'#d4a672'},{x:72,y:50,s:12,c:'#d4b86a'}]},
+  '刘':{title:'「刘」姓分布',detail:'全国第四大姓 · 北方偏多，河南、山东集中 · 占比约 5.38%',dots:[{x:48,y:28,s:22,c:'#b8864a'},{x:62,y:22,s:20,c:'#b8864a'},{x:52,y:18,s:16,c:'#d4a672'},{x:72,y:42,s:12,c:'#d4b86a'},{x:35,y:32,s:10,c:'#c8c1b6'}]},
+  '杨':{title:'「杨」姓分布',detail:'西南地区高频 · 四川、贵州、云南集中 · 占比约 3.08%',dots:[{x:28,y:42,s:24,c:'#b8864a'},{x:35,y:52,s:20,c:'#b8864a'},{x:25,y:58,s:16,c:'#d4a672'},{x:48,y:28,s:10,c:'#c8c1b6'}]},
+  '赵':{title:'「赵」姓分布',detail:'典型北方大姓 · 河北、河南、山东集中 · 占比约 2.29%',dots:[{x:52,y:18,s:24,c:'#b8864a'},{x:48,y:28,s:20,c:'#b8864a'},{x:62,y:22,s:16,c:'#d4a672'},{x:35,y:28,s:12,c:'#d4b86a'}]},
+  '吴':{title:'「吴」姓分布',detail:'东南沿海高频 · 江浙闽粤集中 · 占比约 2.05%',dots:[{x:75,y:35,s:22,c:'#b8864a'},{x:82,y:38,s:20,c:'#b8864a'},{x:72,y:52,s:16,c:'#d4a672'},{x:60,y:32,s:12,c:'#d4b86a'}]},
+  '周':{title:'「周」姓分布',detail:'长江流域集中 · 湖南、江苏、浙江偏多 · 占比约 2.02%',dots:[{x:48,y:48,s:22,c:'#b8864a'},{x:65,y:32,s:18,c:'#b8864a'},{x:75,y:35,s:16,c:'#d4a672'},{x:55,y:38,s:12,c:'#d4b86a'}]},
+  '徐':{title:'「徐」姓分布',detail:'江苏、浙江高频 · 东部沿海集中 · 占比约 1.73%',dots:[{x:68,y:30,s:24,c:'#b8864a'},{x:75,y:35,s:20,c:'#b8864a'},{x:62,y:22,s:14,c:'#d4a672'},{x:55,y:38,s:10,c:'#c8c1b6'}]},
+  '孙':{title:'「孙」姓分布',detail:'山东、东北高频 · 北方为主 · 占比约 1.54%',dots:[{x:62,y:18,s:24,c:'#b8864a'},{x:75,y:12,s:20,c:'#b8864a'},{x:80,y:8,s:16,c:'#d4a672'},{x:52,y:18,s:12,c:'#d4b86a'}]},
+  '马':{title:'「马」姓分布',detail:'西北地区高频 · 甘肃、宁夏、青海集中 · 占比约 1.47%',dots:[{x:22,y:22,s:24,c:'#b8864a'},{x:28,y:28,s:20,c:'#b8864a'},{x:35,y:32,s:14,c:'#d4a672'},{x:48,y:28,s:10,c:'#c8c1b6'}]},
+  '朱':{title:'「朱」姓分布',detail:'江苏、浙江、安徽集中 · 华东为主 · 占比约 1.26%',dots:[{x:68,y:30,s:22,c:'#b8864a'},{x:65,y:35,s:20,c:'#b8864a'},{x:75,y:35,s:16,c:'#d4a672'},{x:55,y:38,s:10,c:'#c8c1b6'}]},
+  '胡':{title:'「胡」姓分布',detail:'安徽、浙江、江西集中 · 长江中下游 · 占比约 1.31%',dots:[{x:65,y:35,s:22,c:'#b8864a'},{x:75,y:35,s:18,c:'#b8864a'},{x:62,y:42,s:16,c:'#d4a672'},{x:55,y:38,s:12,c:'#d4b86a'}]},
+  '郭':{title:'「郭」姓分布',detail:'河南、河北高频 · 北方集中 · 占比约 1.15%',dots:[{x:48,y:28,s:24,c:'#b8864a'},{x:52,y:18,s:20,c:'#b8864a'},{x:62,y:22,s:14,c:'#d4a672'},{x:35,y:28,s:10,c:'#c8c1b6'}]},
+  '何':{title:'「何」姓分布',detail:'四川、广东高频 · 西南和华南 · 占比约 1.17%',dots:[{x:28,y:42,s:22,c:'#b8864a'},{x:72,y:52,s:20,c:'#b8864a'},{x:48,y:48,s:14,c:'#d4a672'},{x:55,y:58,s:10,c:'#c8c1b6'}]},
+  '高':{title:'「高」姓分布',detail:'山东、河北、河南集中 · 北方大姓 · 占比约 1.21%',dots:[{x:62,y:18,s:24,c:'#b8864a'},{x:52,y:18,s:20,c:'#b8864a'},{x:48,y:28,s:16,c:'#d4a672'},{x:75,y:12,s:10,c:'#c8c1b6'}]},
+  '罗':{title:'「罗」姓分布',detail:'广东、四川、湖南集中 · 南方偏多 · 占比约 0.86%',dots:[{x:72,y:52,s:22,c:'#b8864a'},{x:28,y:42,s:18,c:'#b8864a'},{x:48,y:48,s:16,c:'#d4a672'},{x:55,y:58,s:12,c:'#d4b86a'}]},
+  '梁':{title:'「梁」姓分布',detail:'广东、广西高度集中 · 典型岭南姓氏 · 占比约 0.84%',dots:[{x:72,y:52,s:26,c:'#b8864a'},{x:55,y:58,s:22,c:'#b8864a'},{x:48,y:48,s:10,c:'#c8c1b6'}]},
+  '谢':{title:'「谢」姓分布',detail:'广东、福建、湖南集中 · 南方为主 · 占比约 0.79%',dots:[{x:72,y:52,s:22,c:'#b8864a'},{x:82,y:38,s:18,c:'#b8864a'},{x:48,y:48,s:14,c:'#d4a672'},{x:62,y:42,s:10,c:'#c8c1b6'}]},
+  '宋':{title:'「宋」姓分布',detail:'山东、河南高频 · 北方集中 · 占比约 0.81%',dots:[{x:62,y:18,s:22,c:'#b8864a'},{x:48,y:28,s:20,c:'#b8864a'},{x:52,y:18,s:14,c:'#d4a672'},{x:75,y:12,s:10,c:'#c8c1b6'}]},
+  '唐':{title:'「唐」姓分布',detail:'湖南、四川高频 · 中南西南集中 · 占比约 0.65%',dots:[{x:48,y:48,s:24,c:'#b8864a'},{x:28,y:42,s:20,c:'#b8864a'},{x:55,y:58,s:14,c:'#d4a672'},{x:72,y:52,s:10,c:'#c8c1b6'}]},
+  '许':{title:'「许」姓分布',detail:'广东、福建、台湾集中 · 闽粤侨乡常见 · 占比约 0.61%',dots:[{x:72,y:52,s:22,c:'#b8864a'},{x:82,y:38,s:22,c:'#b8864a'},{x:88,y:30,s:14,c:'#d4a672'},{x:68,y:32,s:10,c:'#c8c1b6'}]},
+  '韩':{title:'「韩」姓分布',detail:'河南、河北高频 · 北方为主 · 占比约 0.68%',dots:[{x:48,y:28,s:24,c:'#b8864a'},{x:52,y:18,s:20,c:'#b8864a'},{x:62,y:22,s:14,c:'#d4a672'},{x:75,y:12,s:10,c:'#c8c1b6'}]},
+  '邓':{title:'「邓」姓分布',detail:'广东、湖南、四川集中 · 南方偏多 · 占比约 0.54%',dots:[{x:72,y:52,s:22,c:'#b8864a'},{x:48,y:48,s:18,c:'#b8864a'},{x:28,y:42,s:16,c:'#d4a672'},{x:55,y:58,s:12,c:'#d4b86a'}]},
+  '冯':{title:'「冯」姓分布',detail:'广东、河南、河北集中 · 南北分布 · 占比约 0.64%',dots:[{x:72,y:52,s:22,c:'#b8864a'},{x:48,y:28,s:18,c:'#b8864a'},{x:52,y:18,s:16,c:'#d4a672'},{x:62,y:22,s:10,c:'#c8c1b6'}]},
+
+};
+
+function renderDots(name){
+  var container=document.getElementById('map-dots');
+  container.innerHTML='';
+  var data=surnameDB[name];
+  if(!data)return;
+  data.dots.forEach(function(d,i){
+    var dot=document.createElement('div');
+    dot.className='map-dot-abs';
+    dot.style.cssText='left:'+d.x+'%;top:'+d.y+'%;width:'+d.s+'px;height:'+d.s+'px;background:'+d.c+';animation:mapP 2.5s infinite;animation-delay:'+i*0.3+'s;';
+    container.appendChild(dot);
+  });
+}
+
+function setSurname(name){
+  document.getElementById('surname-input').value=name;
+  document.querySelectorAll('.viz-tag').forEach(function(t){t.classList.toggle('active',t.textContent===name);});
+  var d=surnameDB[name];
+  if(d){
+    document.getElementById('map-surname').textContent=d.title;
+    document.getElementById('map-detail').textContent=d.detail;
+    renderDots(name);
+  }
+}
+
+function searchSurname(){
+  var v=document.getElementById('surname-input').value.trim();
+  if(v)setSurname(v);
+}
+
+// Init
+renderDots('陈');
+applyHomeLanguage();
+</script>
+
+
+<script>
+var _ac='全部';
+var _expanded=false;
+var DEFAULT_TITLES=[
+  '曼谷副市长在澄海圆了寻根梦',
+  '"带爷爷奶奶家人们回祖籍地，是我的心愿" 马来堂哥一家从3国回南安寻亲',
+  '林彦辰：兄妹三人上北大，圆爷爷心愿',
+  '遍寻40多本族谱，"00后"印尼华裔女孩寻根成功',
+  '客从何处来？13位美籍华人回广东集体寻根',
+  '澳大利亚华裔青年返乡："走得再远，根永远在这里"',
+  '新加坡侨胞恩平寻根记：故土的呼唤',
+  '根系浮石，情归故里：加拿大华裔圆"寻根梦"'
+];
+function setFilter(b){document.querySelectorAll('.filter-tab').forEach(function(t){t.classList.remove('active');});b.classList.add('active');_ac=b.getAttribute('data-country');_expanded=false;var btn=document.getElementById('btnShowMore');if(btn){btn.classList.remove('expanded');btn.innerHTML=(currentLang==='en'?'More stories':'更多故事')+' <span class="arrow">▼</span>';}filterStories();}
+function toggleMore(){_expanded=!_expanded;var btn=document.getElementById('btnShowMore');if(_expanded){btn.classList.add('expanded');btn.innerHTML=(currentLang==='en'?'Show less':'收起')+' <span class="arrow">▼</span>';}else{btn.classList.remove('expanded');btn.innerHTML=(currentLang==='en'?'More stories':'更多故事')+' <span class="arrow">▼</span>';}filterStories();}
+function filterStories(){
+  var q=document.getElementById('storySearch').value.trim().toLowerCase();
+  var cards=document.querySelectorAll('.story-card');
+  var isSearching=q.length>0;
+  var isFiltered=_ac!=='全部';
+  var visible=0;
+  cards.forEach(function(c){
+    var country=c.getAttribute('data-country')||'';
+    var title=c.querySelector('.story-title')?c.querySelector('.story-title').textContent:'';
+    var text=title+(c.querySelector('.story-excerpt')?c.querySelector('.story-excerpt').textContent:'');
+    var mc=isFiltered?(country===_ac):true;
+    var ms=!q||text.toLowerCase().includes(q);
+    var originalTitle=c.dataset.originalTitle||title;
+    var isDefault=DEFAULT_TITLES.some(function(t){return originalTitle.trim()===t||originalTitle.trim().indexOf(t)>-1||t.indexOf(originalTitle.trim())>-1;});
+    var show=isFiltered||isSearching||_expanded||isDefault;
+    if(mc&&ms&&show){c.classList.remove('hidden');visible++;}else{c.classList.add('hidden');}
+  });
+  var totalMatch=Array.from(cards).filter(function(c){var country=c.getAttribute('data-country')||'';return(isFiltered?country===_ac:true)&&(!q||(c.querySelector('.story-title')||{textContent:''}).textContent.toLowerCase().includes(q));}).length;
+  var wrap=document.getElementById('showMoreWrap');
+  if(wrap)wrap.style.display=(!isFiltered&&!isSearching&&totalMatch>DEFAULT_TITLES.length)?'block':'none';
+  var ct=document.getElementById('storyCount');if(ct)ct.textContent=visible;
+  var em=document.getElementById('storiesEmpty');if(em)em.classList.toggle('visible',visible===0);
+}
+document.addEventListener('DOMContentLoaded',function(){filterStories();});
+</script>
+</body>
+</html>

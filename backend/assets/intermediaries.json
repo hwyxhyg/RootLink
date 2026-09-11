@@ -1,0 +1,158 @@
+[
+  {
+    "id": "INT001",
+    "name": "王建国",
+    "specialties": ["王姓家族", "河南地区", "移民历史"],
+    "location": "河南省洛阳市",
+    "expertise_areas": ["王姓宗亲会", "河南王氏族谱", "明清移民"],
+    "success_cases": [
+      {
+        "case_id": "CASE001",
+        "description": "帮助王先生找到失散的洛阳支系",
+        "result": "成功对接，确认亲属关系",
+        "year": 2023
+      },
+      {
+        "case_id": "CASE002",
+        "description": "协助王家族谱编纂工作",
+        "result": "完成族谱修订，新增3个支系",
+        "year": 2022
+      }
+    ],
+    "contact_info": "wangjianguo@example.com",
+    "match_score_base": 85,
+    "notes": "专注王姓家族研究30年，熟悉河南地区王氏分布"
+  },
+  {
+    "id": "INT002",
+    "name": "李秀兰",
+    "specialties": ["李姓家族", "湖南地区", "方言识别"],
+    "location": "湖南省长沙市",
+    "expertise_areas": ["李姓宗亲会", "湘方言", "湖南李氏族谱"],
+    "success_cases": [
+      {
+        "case_id": "CASE003",
+        "description": "通过方言线索帮助李女士找到湖南邵阳宗亲",
+        "result": "成功确认血缘关系，完成家族团聚",
+        "year": 2024
+      }
+    ],
+    "contact_info": "lixiulan@example.com",
+    "match_score_base": 90,
+    "notes": "语言学家，熟悉湘语系方言与家族迁移关系"
+  },
+  {
+    "id": "INT003",
+    "name": "张明远",
+    "specialties": ["张姓家族", "四川地区", "客家移民"],
+    "location": "四川省成都市",
+    "expertise_areas": ["张姓宗亲会", "四川客家", "湖广填四川"],
+    "success_cases": [
+      {
+        "case_id": "CASE004",
+        "description": "协助张氏家族追溯湖广填四川路线",
+        "result": "确认祖先迁移路线，找到湖北祖籍地",
+        "year": 2023
+      }
+    ],
+    "contact_info": "zhangmingyuan@example.com",
+    "match_score_base": 82,
+    "notes": "历史学者，专研四川客家移民历史"
+  },
+  {
+    "id": "INT004",
+    "name": "陈美华",
+    "specialties": ["陈姓家族", "福建地区", "闽南文化"],
+    "location": "福建省泉州市",
+    "expertise_areas": ["陈姓宗亲会", "闽南文化", "东南亚移民"],
+    "success_cases": [
+      {
+        "case_id": "CASE005",
+        "description": "帮助陈先生找到迁往马来西亚的家族分支",
+        "result": "成功联系海外宗亲，完成家族史整理",
+        "year": 2023
+      },
+      {
+        "case_id": "CASE006",
+        "description": "协助整理泉州陈氏族谱",
+        "result": "收集整理300年家族历史记录",
+        "year": 2022
+      }
+    ],
+    "contact_info": "chenmeihua@example.com",
+    "match_score_base": 88,
+    "notes": "华侨历史研究者，熟悉闽南与东南亚移民史"
+  },
+  {
+    "id": "INT005",
+    "name": "刘志强",
+    "specialties": ["刘姓家族", "广东地区", "广府文化"],
+    "location": "广东省广州市",
+    "expertise_areas": ["刘姓宗亲会", "广府文化", "珠三角家族"],
+    "success_cases": [
+      {
+        "case_id": "CASE007",
+        "description": "协助刘氏家族寻找佛山祖籍地",
+        "result": "成功找到祖祠，确认家族历史",
+        "year": 2024
+      }
+    ],
+    "contact_info": "liuzhiqiang@example.com",
+    "match_score_base": 80,
+    "notes": "珠三角家族史研究者，熟悉广府文化"
+  },
+  {
+    "id": "INT006",
+    "name": "黄文博",
+    "specialties": ["黄姓家族", "广西地区", "壮族文化"],
+    "location": "广西壮族自治区南宁市",
+    "expertise_areas": ["黄姓宗亲会", "壮族家族", "广西民族史"],
+    "success_cases": [
+      {
+        "case_id": "CASE008",
+        "description": "帮助黄先生确认广西壮族家族渊源",
+        "result": "成功梳理家族迁移历史",
+        "year": 2023
+      }
+    ],
+    "contact_info": "huangwenbo@example.com",
+    "match_score_base": 78,
+    "notes": "民族学研究，熟悉广西壮族家族史"
+  },
+  {
+    "id": "INT007",
+    "name": "赵雅琴",
+    "specialties": ["赵姓家族", "山东地区", "齐鲁文化"],
+    "location": "山东省济南市",
+    "expertise_areas": ["赵姓宗亲会", "齐鲁文化", "山东家族史"],
+    "success_cases": [
+      {
+        "case_id": "CASE009",
+        "description": "协助赵氏家族寻找山东曲阜祖籍",
+        "result": "成功确认与孔府的历史渊源",
+        "year": 2024
+      }
+    ],
+    "contact_info": "zhaoyaqin@example.com",
+    "match_score_base": 86,
+    "notes": "齐鲁文化研究者，专注山东家族史"
+  },
+  {
+    "id": "INT008",
+    "name": "周海涛",
+    "specialties": ["周姓家族", "江苏地区", "江南文化"],
+    "location": "江苏省苏州市",
+    "expertise_areas": ["周姓宗亲会", "江南文化", "苏州周氏族谱"],
+    "success_cases": [
+      {
+        "case_id": "CASE010",
+        "description": "帮助周先生整理苏州家族历史",
+        "result": "完成族谱数字化，找到失联分支",
+        "year": 2023
+      }
+    ],
+    "contact_info": "zhouhaitao@example.com",
+    "match_score_base": 84,
+    "notes": "江南文化学者，熟悉苏州地区家族史"
+  }
+]
