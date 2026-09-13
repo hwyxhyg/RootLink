@@ -672,28 +672,28 @@ function applyHomeLanguage(){
   if(currentLang==='zh') return;
   document.title='RootLink · Find Your Ancestral Roots';
   const nav=document.querySelectorAll('.nav-links a');
-  const navLabels=['Home','Explore','Assistant','Community','Contact','Profile'];
+  const navLabels=['Home','RootLink Explorer','RootLink AI Assistant','RootLink Community','Contact','Profile'];
   for(let i=0;i<6;i++){ if(nav[i]) nav[i].innerHTML=`<span class="n1">${navLabels[i]}</span>`; }
-  if(nav[6]) nav[6].innerHTML='<span class="n1">Start</span><span class="n2">Root Search</span>';
-  const badge=document.querySelector('.hero-badge'); if(badge) badge.innerHTML='<span class="dot"></span> AI Ancestry Assistant · Now Live';
+  if(nav[6]) nav[6].innerHTML='<span class="n1">Start Your Search</span>';
+  const badge=document.querySelector('.hero-badge'); if(badge) badge.innerHTML='<span class="dot"></span> RootLink AI Assistant · Now Live';
   const title=document.querySelector('.hero-title'); if(title) title.innerHTML='Find Your<br><span class="hl">Ancestral Connection</span>';
   const desc=document.querySelector('.hero-desc'); if(desc) desc.textContent='Helping 60M+ overseas Chinese turn fragmented family clues into a path back to their ancestral roots — powered by AI guidance and trusted human connections.';
-  const heroLinks=document.querySelectorAll('.hero-text a'); if(heroLinks[0]) heroLinks[0].childNodes[0].textContent='AI Root Assistant '; if(heroLinks[1]) heroLinks[1].textContent='Explore Root Stories';
+  const heroLinks=document.querySelectorAll('.hero-text a'); if(heroLinks[0]) heroLinks[0].childNodes[0].textContent='RootLink AI Assistant '; if(heroLinks[1]) heroLinks[1].textContent='Explore Family Stories';
   const qc=document.querySelector('.qc-title'); if(qc) qc.textContent='🌱 Start with What You Know';
   const rows=document.querySelectorAll('.fill-row');
   if(rows[0]) rows[0].innerHTML='My surname is <span class="fill-blank" contenteditable="true" data-placeholder="surname"></span>, and my ancestral roots may be in <span class="fill-blank" contenteditable="true" data-placeholder="province / region"></span>';
-  if(rows[1]) rows[1].innerHTML='My family speaks <span class="fill-blank" contenteditable="true" data-placeholder="dialect"></span>, and I am approximately a <span class="fill-blank" contenteditable="true" data-placeholder="generation"></span> generation overseas Chinese';
-  if(rows[2]) rows[2].innerHTML='I also know <span class="fill-blank" contenteditable="true" data-placeholder="village / ancestor / other clue" style="min-width:200px"></span>';
-  const start=document.querySelector('.hero-btn'); if(start) start.childNodes[0].textContent='Start Your Root Search ';
+  if(rows[1]) rows[1].innerHTML='My family speaks <span class="fill-blank" contenteditable="true" data-placeholder="language or dialect"></span>. My generation abroad is <span class="fill-blank" contenteditable="true" data-placeholder="e.g., third generation"></span>';
+  if(rows[2]) rows[2].innerHTML='I also know <span class="fill-blank" contenteditable="true" data-placeholder="village name / ancestor\u0027s name / other clue" style="min-width:200px"></span>';
+  const start=document.querySelector('.hero-btn'); if(start) start.childNodes[0].textContent='Start Your Search ';
   const tag=document.querySelector('#sec-home .section-tag'); if(tag) tag.textContent='CORE FEATURES';
   const head=document.querySelector('#sec-home .section-heading'); if(head) head.textContent='Three Ways to Explore Your Roots';
   const cards=document.querySelectorAll('#sec-home .features-grid > div');
-  if(cards[0]){cards[0].querySelector('h3').textContent='AI Root Assistant';cards[0].querySelector('p').textContent='Guided conversations that turn fragmented clues into a practical research path.';}
-  if(cards[1]){cards[1].querySelector('h3').textContent='Root Explorer';cards[1].querySelector('p').textContent='Explore successful cases, surname distributions, and common ancestry research paths.';}
-  if(cards[2]){cards[2].querySelector('h3').textContent='Root Community';cards[2].querySelector('p').textContent='Connect with hometown communities, verified intermediaries, and overseas Chinese associations.';}
+  if(cards[0]){cards[0].querySelector('h3').textContent='RootLink AI Assistant';cards[0].querySelector('p').textContent='Guided conversations that turn scattered family clues into a practical research plan.';}
+  if(cards[1]){cards[1].querySelector('h3').textContent='RootLink Explorer';cards[1].querySelector('p').textContent='Explore success stories, surname distribution maps, and common approaches to tracing your roots.';}
+  if(cards[2]){cards[2].querySelector('h3').textContent='RootLink Community';cards[2].querySelector('p').textContent='Connect with hometown communities, verified intermediaries, and overseas Chinese associations.';}
   const homePrivacy=document.querySelector('#sec-home .privacy-text'); if(homePrivacy) homePrivacy.innerHTML='<strong>Privacy & Security Commitment</strong> · RootLink follows a privacy-by-design approach with data minimization, purpose limitation, protected storage, and encrypted transmission. Contact information and family clues are stored separately, and connection services are enabled only with user authorization. RootLink does not sell user data to third parties.';
   const explore=document.querySelector('#sec-explore');
-  if(explore){const tg=explore.querySelector('.section-tag'),hd=explore.querySelector('.section-heading'),sub=explore.querySelector('.section-sub');if(tg)tg.textContent='ROOT STORIES';if(hd)hd.textContent='Stories of Finding the Way Home';if(sub)sub.textContent='Every successful search offers clues for the next person looking for their roots.';}
+  if(explore){const tg=explore.querySelector('.section-tag'),hd=explore.querySelector('.section-heading'),sub=explore.querySelector('.section-sub');if(tg)tg.textContent='RootLink Explorer';if(hd)hd.textContent='Stories of Finding the Way Home';if(sub)sub.textContent='Every successful search offers clues for the next person looking for their roots.';}
   const search=document.getElementById('storySearch'); if(search) search.placeholder='Search stories, people, or places…';
   const em=document.getElementById('storiesEmpty'); if(em) em.textContent='No matching stories found.';
 
@@ -718,14 +718,14 @@ function applyHomeLanguage(){
   // English story copy. Proper nouns keep the original Chinese in parentheses.
   const storyTranslations=[
     {
-      title:'Lin Yanchen: Three Siblings Make It to Peking University, Fulfilling Their Grandfather’s Wish',
+      title:'Lin Yanchen: Three Siblings Make It to Peking University, Fulfilling Their Grandfather\u0027s Wish',
       tag:'🏛 Taiwan Federation Assistance',
       excerpt:'While interning in Pingtan (平潭), Fujian, Taiwan youth Lin Yanchen used his family genealogy to trace his roots through the All-China Federation of Taiwan Compatriots, the Fujian Provincial Federation, and the Putian (莆田) City Federation, eventually reconnecting with family in Putian (莆田).',
       route:'Taiwan → Federation assistance → Putian (莆田), Fujian → Success',
       link:'Read more →'
     },
     {
-      title:'Huang Jimi: A Month in Siyang (泗阳) to Fulfill His Grandfather’s Dream',
+      title:'Huang Jimi: A Month in Siyang (泗阳) to Fulfill His Grandfather\u0027s Dream',
       tag:'🎬 Video Diary',
       excerpt:'Huang Jimi traveled alone to Siyang (泗阳), Jiangsu, where he lived for a month and documented his root-seeking journey in eight Douyin videos for his grandfather in his nineties.',
       route:'Taiwan → Douyin diary → Siyang (泗阳), Jiangsu → Success',
@@ -734,8 +734,8 @@ function applyHomeLanguage(){
     {
       title:'The Hong Sisters: Letters Were the Crucial Starting Point',
       tag:'💌 Letters & Family Clues',
-      excerpt:'Two Malaysian Chinese sisters used old letters, photographs, visits by fellow villagers, and local acquaintance networks to return to their ancestral home in Nan’an (南安), Fujian.',
-      route:'Malaysia → Letter clues → Nan’an (南安), Fujian → Success'
+      excerpt:'Two Malaysian Chinese sisters used old letters, photographs, visits by fellow villagers, and local acquaintance networks to return to their ancestral home in Nan\u0027an (南安), Fujian.',
+      route:'Malaysia → Letter clues → Nan\u0027an (南安), Fujian → Success'
     },
     {
       title:'Bangkok Deputy Mayor Fulfills a Root-Seeking Dream in Chenghai (澄海)',
@@ -817,8 +817,8 @@ function applyHomeLanguage(){
     {
       title:'Nine Siblings Trace Their Roots Together and Create a Malaysian Family Genealogy',
       tag:'👨‍👩‍👧 Nine Siblings',
-      excerpt:'Nine Malaysian Chinese siblings returned to their ancestral hometown to fulfill their father’s wish and compiled a Malaysian edition of their family genealogy.',
-      route:'Malaysia → Fulfilling father’s wish → Ancestral hometown → Family genealogy',
+      excerpt:'Nine Malaysian Chinese siblings returned to their ancestral hometown to fulfill their father\u0027s wish and compiled a Malaysian edition of their family genealogy.',
+      route:'Malaysia → Fulfilling father\u0027s wish → Ancestral hometown → Family genealogy',
       link:'Read more →'
     },
     {
@@ -829,9 +829,9 @@ function applyHomeLanguage(){
       link:'Read more →'
     },
     {
-      title:'Australia’s First Female Chinese State MP Returns to Pingshan (坪山), Shenzhen',
+      title:'Australia\u0027s First Female Chinese State MP Returns to Pingshan (坪山), Shenzhen',
       tag:'🏛 MP Root Search',
-      excerpt:'Australia’s first female state parliamentarian of Chinese heritage made a special trip to Pingshan (坪山), Shenzhen to visit her ancestral hometown and trace her family history.',
+      excerpt:'Australia\u0027s first female state parliamentarian of Chinese heritage made a special trip to Pingshan (坪山), Shenzhen to visit her ancestral hometown and trace her family history.',
       route:'Australia → Pingshan (坪山), Shenzhen → Ancestral hometown → Success',
       link:'Read more →'
     },
@@ -859,19 +859,19 @@ function applyHomeLanguage(){
     {
       title:'Across a Century, Finally Home',
       tag:'🕰 A Century of Waiting',
-      excerpt:'A Malaysian Chinese elder’s root-seeking story spans a century before the family finally reconnects with relatives in their ancestral homeland in China.',
+      excerpt:'A Malaysian Chinese elder\u0027s root-seeking story spans a century before the family finally reconnects with relatives in their ancestral homeland in China.',
       route:'Malaysia → China → Successful homecoming',
       link:'Read more →'
     },
     {
-      title:'“Bringing My Grandparents Home Is My Wish”: A Malaysian Family Reunites in Nan’an (南安)',
+      title:'“Bringing My Grandparents Home Is My Wish”: A Malaysian Family Reunites in Nan\u0027an (南安)',
       tag:'🌏 Multi-Country Reunion',
-      excerpt:'Family members living across Malaysia, Singapore, and other countries reunited and returned together to Nan’an (南安), Fujian to reconnect with relatives.',
-      route:'Malaysia + multiple countries → Nan’an (南安), Fujian → Success',
+      excerpt:'Family members living across Malaysia, Singapore, and other countries reunited and returned together to Nan\u0027an (南安), Fujian to reconnect with relatives.',
+      route:'Malaysia + multiple countries → Nan\u0027an (南安), Fujian → Success',
       link:'Read more →'
     },
     {
-      title:'Zheng Liuyue: Following Her Ancestors’ Route Back Home',
+      title:'Zheng Liuyue: Following Her Ancestors\u0027 Route Back Home',
       tag:'🛥 Reverse Migration Route',
       excerpt:'Malaysian Chinese host and entertainer Zheng Liuyue retraced the maritime route once taken by her ancestors to Southeast Asia, traveling it in reverse to seek her roots.',
       route:'Malaysia → Ancestral migration route → Root search',
@@ -903,58 +903,109 @@ function applyHomeLanguage(){
   const placePairs=[
     ['福建','Fujian'],['广东','Guangdong'],['浙江','Zhejiang'],['广西','Guangxi'],['河南','Henan'],['山东','Shandong'],['四川','Sichuan'],['贵州','Guizhou'],['云南','Yunnan'],['河北','Hebei'],['湖南','Hunan'],['江苏','Jiangsu'],['东北','Northeast China (东北)'],['甘肃','Gansu'],['宁夏','Ningxia'],['青海','Qinghai'],['安徽','Anhui'],['江西','Jiangxi'],['台湾','Taiwan'],['华东','East China'],['华南','South China'],['西南','Southwest China'],['西北','Northwest China'],['长江流域','Yangtze River region'],['江浙闽粤','Jiangsu–Zhejiang–Fujian–Guangdong'],['闽南','Southern Fujian / Minnan (闽南)'],['岭南','Lingnan']
   ];
+  const surnameDetailsEn = {
+    "陈": "Most common in Fujian, Guangdong, and Zhejiang · Approximately 4.53% of China\u0027s population · About 54.4 million people",
+    "林": "Most common in Fujian and Guangdong · A characteristic surname of southern Fujian · Approximately 1.18% of China\u0027s population",
+    "黄": "Most common in Guangdong, Guangxi, and Fujian · Approximately 2.23% of China\u0027s population",
+    "李": "China\u0027s most common surname · Widespread across China, especially in the north · Approximately 7.94% of China\u0027s population",
+    "张": "China\u0027s second most common surname · More concentrated in northern China · Approximately 7.07% of China\u0027s population",
+    "王": "Widely distributed · A major surname in northern China · Approximately 7.25% of China\u0027s population",
+    "洪": "A characteristic surname of southern Fujian · Highly concentrated in coastal Fujian and Guangdong",
+    "郑": "Concentrated in Fujian and Zhejiang · Common in southern Fujian communities with ties to overseas Chinese · Approximately 0.78% of China\u0027s population",
+    "刘": "China\u0027s fourth most common surname · More common in northern China, particularly Henan and Shandong · Approximately 5.38% of China\u0027s population",
+    "杨": "Common in southwestern China, particularly Sichuan, Guizhou, and Yunnan · Approximately 3.08% of China\u0027s population",
+    "赵": "A major surname in northern China · Concentrated in Hebei, Henan, and Shandong · Approximately 2.29% of China\u0027s population",
+    "吴": "Common along China\u0027s southeastern coast · Concentrated in Jiangsu, Zhejiang, Fujian, and Guangdong · Approximately 2.05% of China\u0027s population",
+    "周": "Concentrated in the Yangtze River region, particularly Hunan, Jiangsu, and Zhejiang · Approximately 2.02% of China\u0027s population",
+    "徐": "Common in Jiangsu and Zhejiang · Concentrated along China\u0027s eastern coast · Approximately 1.73% of China\u0027s population",
+    "孙": "Common in Shandong and northeastern China · Mainly found in northern China · Approximately 1.54% of China\u0027s population",
+    "马": "Common in northwestern China · Concentrated in Gansu, Ningxia, and Qinghai · Approximately 1.47% of China\u0027s population",
+    "朱": "Concentrated in Jiangsu, Zhejiang, and Anhui · Mainly found in eastern China · Approximately 1.26% of China\u0027s population",
+    "胡": "Concentrated in Anhui, Zhejiang, and Jiangxi · Found along the middle and lower reaches of the Yangtze River · Approximately 1.31% of China\u0027s population",
+    "郭": "Common in Henan and Hebei · Concentrated in northern China · Approximately 1.15% of China\u0027s population",
+    "何": "Common in Sichuan and Guangdong · Found in southwestern and southern China · Approximately 1.17% of China\u0027s population",
+    "高": "Concentrated in Shandong, Hebei, and Henan · A major surname in northern China · Approximately 1.21% of China\u0027s population",
+    "罗": "Concentrated in Guangdong, Sichuan, and Hunan · More common in southern China · Approximately 0.86% of China\u0027s population",
+    "梁": "Highly concentrated in Guangdong and Guangxi · A characteristic surname of the Lingnan region · Approximately 0.84% of China\u0027s population",
+    "谢": "Concentrated in Guangdong, Fujian, and Hunan · Mainly found in southern China · Approximately 0.79% of China\u0027s population",
+    "宋": "Common in Shandong and Henan · Concentrated in northern China · Approximately 0.81% of China\u0027s population",
+    "唐": "Common in Hunan and Sichuan · Concentrated in south-central and southwestern China · Approximately 0.65% of China\u0027s population",
+    "许": "Concentrated in Guangdong, Fujian, and Taiwan · Common in Fujian and Guangdong communities with ties to overseas Chinese · Approximately 0.61% of China\u0027s population",
+    "韩": "Common in Henan and Hebei · Mainly found in northern China · Approximately 0.68% of China\u0027s population",
+    "邓": "Concentrated in Guangdong, Hunan, and Sichuan · More common in southern China · Approximately 0.54% of China\u0027s population",
+    "冯": "Concentrated in Guangdong, Henan, and Hebei · Found in both northern and southern China · Approximately 0.64% of China\u0027s population"
+};
   Object.keys(surnameDB).forEach(ch=>{
     const d=surnameDB[ch];
-    if(!d) return;
     d.title=`${surnameRomanization[ch]||ch} (${ch}) Surname Distribution`;
-    let detail=d.detail;
-    placePairs.forEach(([cn,en])=>{ detail=detail.split(cn).join(en); });
-    detail=detail
-      .replace(/主要集中于/g,'Mainly concentrated in ')
-      .replace(/集中于/g,'Concentrated in ')
-      .replace(/高度集中于/g,'Highly concentrated in ')
-      .replace(/全国第一大姓/g,'China’s most common surname')
-      .replace(/全国第二大姓/g,'China’s second most common surname')
-      .replace(/全国第四大姓/g,'China’s fourth most common surname')
-      .replace(/全国广泛分布/g,'Widely distributed across China')
-      .replace(/北方偏多/g,'more common in northern China')
-      .replace(/北方分布更密集/g,'more densely distributed in northern China')
-      .replace(/分布不集中/g,'Broadly distributed')
-      .replace(/典型北方大姓/g,'a major northern Chinese surname')
-      .replace(/典型闽南姓氏/g,'a typical Southern Fujian / Minnan (闽南) surname')
-      .replace(/闽南侨乡常见姓/g,'common in overseas-Chinese hometowns of Southern Fujian / Minnan (闽南)')
-      .replace(/东南沿海高频/g,'common along China’s southeast coast')
-      .replace(/西南地区高频/g,'common in Southwest China')
-      .replace(/西北地区高频/g,'common in Northwest China')
-      .replace(/南方偏多/g,'more common in southern China')
-      .replace(/北方为主/g,'mainly northern China')
-      .replace(/南方为主/g,'mainly southern China')
-      .replace(/华东为主/g,'mainly East China')
-      .replace(/南北分布/g,'distributed across both northern and southern China')
-      .replace(/全国占比约/g,'Approx. share nationwide: ')
-      .replace(/占比约/g,'Approx. share nationwide: ')
-      .replace(/约 ([0-9,.]+) 万人/g,'about $1 ten-thousand people');
-    d.detail=detail.replace(/ · /g,' · ');
+    d.detail=surnameDetailsEn[ch];
+  });
+
+  // English copy for surname distribution and research steps.
+  const sectionCopy = {
+    "姓氏分布": "Surname Distribution",
+    "输入姓氏，看看你的根在哪": "Explore Your Surname for Clues to Your Roots",
+    "中国87%的人口姓百家姓中的姓氏，大多数姓氏都有明确的地理集中区域。": "An estimated 87% of China\u0027s population has a surname listed in the Hundred Family Surnames. Many surnames have distinct regional concentrations.",
+    "探索你的姓氏分布": "Explore Your Surname\u0027s Distribution",
+    "查看分布": "View Distribution",
+    "姓氏分布反映该姓在各地人口中的比例。不同姓氏的地理集中程度差异很大——有些高度集中于特定区域（如洪姓集中于闽南），有些则广泛分布（如王姓偏北方）。": "Surname distribution shows the proportion of people in each region who share a surname. Some surnames are concentrated in specific areas, such as Hong in southern Fujian. Others are more widespread, such as Wang, which is more common in northern China.",
+    "数据来源：《中国四百大姓》，2013年": "Source: 《中国四百大姓》 (China\u0027s 400 Most Common Surnames), 2013.",
+    "寻根路径": "Tracing Your Roots",
+    "常见寻根路径与案例启发": "Ways to Trace Your Roots and Stories to Inspire You",
+    "了解前人的寻根方式，找到属于你的路径。": "Learn how others traced their roots and find your own path.",
+    "🌱 整理线索": "🌱 Gather Your Clues",
+    "🧭 定位祖籍": "🧭 Trace Your Ancestral Hometown",
+    "🤝 连接中间人": "🤝 Connect with Intermediaries",
+    "📋 核实确认": "📋 Verify Your Findings",
+    "🏠 归乡圆梦": "🏠 Visit Your Ancestral Hometown",
+    "收集姓氏、祖籍地名、方言、老照片、信件、老物件中的文字线索。": "Gather surnames, ancestral place names, dialects, old photos, letters, and inscriptions on family keepsakes.",
+    "通过方言分析、姓氏聚居数据、历史迁徙路线缩小祖籍范围。": "Use dialect clues, surname distribution data, and historical migration routes to narrow down possible ancestral hometowns.",
+    "找到当地宗亲会、族谱研究者、侨联工作者或官方机构协助。": "Seek help from local clan associations, genealogy researchers, overseas Chinese federation staff, or relevant public institutions.",
+    "比对族谱记录、验证家族信息、确认亲属关系。祠堂、坟墓、地方分区信息都是重要线索。": "Cross-check genealogy records, verify family details, and confirm relationships. Ancestral halls, graves, and local administrative boundaries can also provide important clues.",
+    "规划回乡行程、拜访祖籍地、与亲人团聚。": "Plan your journey, visit your ancestral hometown, and reunite with relatives.",
+    "真实案例 × 路径对照": "Real Stories and the Steps They Followed",
+    "洪氏姐妹": "The Hong Sisters (洪氏姐妹)",
+    "林彦辰": "Lin Yanchen (林彦辰)",
+    "黄吉米": "Huang Jimi (黄吉米)",
+    "以家族旧信件和照片为起点，通过书信中的地址与邮戳逐步找回闽南祖籍地与失散亲属。": "Starting with old family letters and photos, the sisters followed addresses and postmarks to trace their ancestral hometown in southern Fujian and reconnect with long-lost relatives.",
+    "凭族谱与身份证籍贯记录，借助台联体系层层协助，精准找到福建莆田家人。": "Using genealogy records and ancestral-place information on an identity document, Lin found relatives in Putian, Fujian, with help from Taiwan compatriot associations at multiple levels.",
+    "为完成90多岁爷爷的心愿，独自赴江苏泗阳生活一个月，以8期视频记录归乡全程。": "To fulfill the wish of his grandfather, who was in his nineties, Huang traveled alone to Siyang, Jiangsu, and stayed for a month, documenting the journey in an eight-part video series."
+};
+  document.querySelectorAll('.viz-section .section-tag, .viz-section .section-heading, .viz-section .section-sub, .viz-controls h3, .viz-btn, .viz-controls p, .path-section .section-tag, .path-section .section-heading, .path-section .section-sub, .p-title, .p-desc, .pi-title, .case-card-name, .case-card-desc, .case-step-pill').forEach(el=>{
+    const translated=sectionCopy[el.textContent.trim()];
+    if(translated) el.textContent=translated;
+  });
+  const surnameInput=document.getElementById('surname-input');
+  if(surnameInput) surnameInput.placeholder='Enter your surname in Chinese';
+  const mapPlaces=Object.fromEntries(placePairs);
+  Object.assign(mapPlaces,{'湖北':'Hubei','辽宁':'Liaoning','陕西':'Shaanxi','吉林':'Jilin'});
+  document.querySelectorAll('.china-svg text').forEach(el=>{
+    if(mapPlaces[el.textContent.trim()]) el.textContent=mapPlaces[el.textContent.trim()];
+  });
+  document.querySelectorAll('.viz-tag').forEach(el=>{
+    const ch=el.textContent.trim();
+    if(surnameRomanization[ch]) { el.dataset.surname=ch; el.textContent=surnameRomanization[ch]+' ('+ch+')'; }
   });
 
   // Agent section
   const agentSec=document.querySelector('#sec-agent');
   if(agentSec){
-    const tg=agentSec.querySelector('.section-tag'); if(tg) tg.textContent='AI ROOT ASSISTANT';
+    const tg=agentSec.querySelector('.section-tag'); if(tg) tg.textContent='RootLink AI Assistant';
     const hd=agentSec.querySelector('.section-heading'); if(hd) hd.textContent='A Guided Path from Family Clues to Ancestral Roots';
-    const infoP=agentSec.querySelector('.agent-info > p'); if(infoP) infoP.textContent='An AI assistant built around a systematic root-seeking methodology, with tools for ancestral-place research, intermediary matching, and official archive discovery.';
+    const productName=agentSec.querySelector('.agent-info h2'); if(productName) productName.textContent='RootLink AI Assistant';
+    const infoP=agentSec.querySelector('.agent-info > p'); if(infoP) infoP.textContent='An AI assistant that guides you through tracing your roots, with tools to research ancestral hometowns, connect with intermediaries, and find relevant official archives.';
     const af=agentSec.querySelectorAll('.af-item > div:last-child');
-    if(af[0]) af[0].innerHTML='<strong>Guided Research Flow</strong> — Understand where you are in the process and what to do next.';
-    if(af[1]) af[1].innerHTML='<strong>Ancestral-Place Reasoning</strong> — Combine dialect, surname, and migration clues with confidence scoring.';
+    if(af[0]) af[0].innerHTML='<strong>Step-by-Step Research Guidance</strong> — Understand where you are in the process and what to do next.';
+    if(af[1]) af[1].innerHTML='<strong>Ancestral Hometown Research</strong> — Combine dialect, surname, and migration clues with confidence scoring.';
     if(af[2]) af[2].innerHTML='<strong>Intermediary Matching</strong> — Connect with genealogy researchers, clan associations, and local guides.';
-    if(af[3]) af[3].innerHTML='<strong>Ongoing Support</strong> — Save progress, surface next steps, and keep the search moving.';
-    const cta=agentSec.querySelector('.agent-cta'); if(cta) cta.childNodes[0].textContent='Start Your Root Search ';
+    if(af[3]) af[3].innerHTML='<strong>Ongoing Support</strong> — Save progress, identify next steps, and keep the search moving.';
+    const cta=agentSec.querySelector('.agent-cta'); if(cta) cta.childNodes[0].textContent='Start Your Search ';
     const chats=agentSec.querySelectorAll('.cbd-c');
-    if(chats[0]) chats[0].textContent='Hi! I’m the RootLink Assistant 🌳 Tell me what you know, and I’ll help you work out the next step.';
-    if(chats[1]) chats[1].textContent='My surname is Chen. My family says our roots are in Fujian, we speak Minnan, and I’m third-generation overseas Chinese.';
-    if(chats[2]) chats[2].innerHTML='Based on these clues:<br><br><strong>Most likely origin:</strong> Nan’an (南安) / Jinjiang (晋江), Quanzhou<br><strong>Reasoning:</strong> Minnan dialect + Chen surname + third-generation Southeast Asian Chinese<div class="conf-bar"><div class="conf-fill" style="width:72%"></div></div><div class="conf-label"><span>Confidence</span><span>72% · medium-high</span></div>';
+    if(chats[0]) chats[0].textContent='Hi! I\u0027m the RootLink AI Assistant 🌳 Tell me what you know, and I\u0027ll help you work out the next step.';
+    if(chats[1]) chats[1].textContent='My surname is Chen. My family says our roots are in Fujian, and we speak Minnan. My family has lived abroad for three generations.';
+    if(chats[2]) chats[2].innerHTML='Based on these clues:<br><br><strong>Most likely origin:</strong> Nan\u0027an (南安) / Jinjiang (晋江), Quanzhou<br><strong>Reasoning:</strong> Minnan dialect + Chen surname + family living abroad for three generations<div class="conf-bar"><div class="conf-fill" style="width:72%"></div></div><div class="conf-label"><span>Confidence</span><span>72% · medium-high</span></div>';
     if(chats[3]) chats[3].textContent='My grandmother once mentioned a place that sounded like “Shishi.”';
-    if(chats[4]) chats[4].innerHTML='That is a strong clue. Shishi (石狮) is a county-level city under Quanzhou and sits in the heart of the Minnan overseas-Chinese region.<div class="conf-bar"><div class="conf-fill" style="width:86%"></div></div><div class="conf-label"><span>Updated confidence</span><span>86% · high</span></div>';
+    if(chats[4]) chats[4].innerHTML='That is a strong clue. Shishi (石狮) is a county-level city under Quanzhou and is in southern Fujian, a region with longstanding ties to Chinese communities overseas.<div class="conf-bar"><div class="conf-fill" style="width:86%"></div></div><div class="conf-label"><span>Updated confidence</span><span>86% · high</span></div>';
   }
 
   // Community section
@@ -962,7 +1013,7 @@ function applyHomeLanguage(){
   if(community){
     const top=community.querySelector(':scope > .container > div:first-child');
     if(top){
-      const tg=top.querySelector('.section-tag'); if(tg) tg.textContent='ROOT COMMUNITY';
+      const tg=top.querySelector('.section-tag'); if(tg) tg.textContent='RootLink Community';
       const hd=top.querySelector('.section-heading'); if(hd) hd.textContent='Find the Right People to Help with Your Search';
       const sub=top.querySelector('.section-sub'); if(sub) sub.textContent='Join peer groups, connect with verified intermediaries, and reach official overseas-Chinese organizations.';
     }
@@ -982,7 +1033,7 @@ function applyHomeLanguage(){
       const h=cols[1].querySelector('h3'); if(h) h.textContent='Verified Intermediaries';
       const meds=cols[1].querySelectorAll('.med-card');
       const medData=[
-        ['Lin Jianhua','Quanzhou Genealogy Research Association · Vice President',['Successful cases','User rating','Years of experience'],['Minnan Chen genealogy','Genealogy verification','Nan’an (南安) / Jinjiang (晋江)']],
+        ['Lin Jianhua','Quanzhou Genealogy Research Association · Vice President',['Successful cases','User rating','Years of experience'],['Minnan Chen genealogy','Genealogy verification','Nan\u0027an (南安) / Jinjiang (晋江)']],
         ['Zhang Meiling','Malaysia Gaozhou Association · Committee Member',['Successful cases','User rating','Years of experience'],['Gaozhou (高州), Guangdong','Association network','Malaysian Chinese']]
       ];
       meds.forEach((c,i)=>{ const d=medData[i]; if(!d)return; const n=c.querySelector('.med-name'); if(n)n.textContent=d[0]; const r=c.querySelector('.med-role'); if(r)r.textContent=d[1]; const badge=c.querySelector('.med-badge'); if(badge) badge.lastChild.textContent=' Verified'; const labels=c.querySelectorAll('.ms-label'); labels.forEach((x,j)=>{if(d[2][j])x.textContent=d[2][j];}); const nums=c.querySelectorAll('.ms-num'); if(nums[2]) nums[2].textContent=(i===0?'8':'12')+' yrs'; const specs=c.querySelectorAll('.m-spec'); specs.forEach((x,j)=>{if(d[3][j])x.textContent=d[3][j];}); const b=c.querySelector('.connect-btn'); if(b)b.textContent='Request Connection'; });
@@ -1036,7 +1087,7 @@ function applyHomeLanguage(){
     const emailStep=profile.querySelector('#step-email');
     if(emailStep){ const h=emailStep.querySelector('h2'); if(h)h.textContent='Start Your Root-Seeking Journey'; const p=emailStep.querySelector('p'); if(p)p.textContent='Enter your email to begin. New users will be registered automatically.'; const label=emailStep.querySelector('label'); if(label)label.textContent='Email address'; const inp=emailStep.querySelector('#email-input'); if(inp)inp.placeholder='Enter your email'; const btn=emailStep.querySelector('button'); if(btn)btn.textContent='Send verification code'; const terms=emailStep.querySelector('p[style*="font-size:11px"]'); if(terms)terms.innerHTML='By signing in, you agree to the <span style="color:var(--jade);cursor:pointer;">Terms of Service</span> and <span style="color:var(--jade);cursor:pointer;">Privacy Policy</span>.'; }
     const otp=profile.querySelector('#step-otp');
-    if(otp){ const h=otp.querySelector('h2'); if(h)h.textContent='Check Your Email'; const hint=otp.querySelector('#otp-hint'); if(hint)hint.textContent='We sent you a verification code.'; const label=otp.querySelector('label'); if(label)label.textContent='6-digit verification code'; const inp=otp.querySelector('#otp-input'); if(inp)inp.placeholder='Enter code'; const btn=otp.querySelector('button'); if(btn)btn.textContent='Sign in'; const p=otp.querySelector('p'); if(p)p.innerHTML='Didn’t receive it? <span onclick="resendOtp()" style="color:var(--accent);cursor:pointer;font-weight:600;">Resend</span> &nbsp;·&nbsp; <span onclick="backToEmail()" style="color:#b0a99e;cursor:pointer;">Change email</span>'; }
+    if(otp){ const h=otp.querySelector('h2'); if(h)h.textContent='Check Your Email'; const hint=otp.querySelector('#otp-hint'); if(hint)hint.textContent='We sent you a verification code.'; const label=otp.querySelector('label'); if(label)label.textContent='6-digit verification code'; const inp=otp.querySelector('#otp-input'); if(inp)inp.placeholder='Enter code'; const btn=otp.querySelector('button'); if(btn)btn.textContent='Sign in'; const p=otp.querySelector('p'); if(p)p.innerHTML='Didn\u0027t receive it? <span onclick="resendOtp()" style="color:var(--accent);cursor:pointer;font-weight:600;">Resend</span> &nbsp;·&nbsp; <span onclick="backToEmail()" style="color:#b0a99e;cursor:pointer;">Change email</span>'; }
     const pv=profile.querySelector('#profile-view');
     if(pv){ const h=pv.querySelector('h2'); if(h)h.textContent='My Root-Seeking Archive'; const desc=h?.nextElementSibling; if(desc)desc.textContent='Chen · Shishi (石狮), Fujian (estimated) · Third generation'; const prog=[...pv.querySelectorAll('span')].find(x=>x.textContent.trim()==='寻根进度'); if(prog)prog.textContent='Progress'; const steps=[...pv.querySelectorAll('div')].filter(x=>['基础信息录入','AI亲缘地初步推理','补充详细线索','匹配中间人','建立宗亲联系','规划回乡行程'].includes(x.textContent.trim())); const stepLabels=['Basic information added','Initial AI origin estimate','Add detailed clues','Match with an intermediary','Connect with relatives / clan network','Plan a return visit']; steps.forEach((x,i)=>{if(stepLabels[i]){const icon=x.firstElementChild; x.textContent=''; if(icon)x.appendChild(icon); x.append(document.createTextNode(' '+stepLabels[i]));}}); const menuLabels=['My Family Archive','Conversation History','Privacy & Security','App Settings','Log Out']; const menuDivs=[...pv.querySelectorAll('.group-card > div[style*="flex:1"]')]; menuDivs.forEach((x,i)=>{if(menuLabels[i])x.textContent=menuLabels[i];}); }
   }
@@ -1164,7 +1215,7 @@ function startRootSearch(e){
     if(surname) parts.push('My surname is '+surname);
     if(region) parts.push('My ancestral roots may be in '+region);
     if(dialect) parts.push('My family speaks '+dialect);
-    if(generation) parts.push('I am approximately a '+generation+' generation overseas Chinese');
+    if(generation) parts.push('My generation abroad is '+generation);
     if(extra) parts.push('I also know: '+extra);
   }else{
     if(surname) parts.push('我姓'+surname);
@@ -1232,7 +1283,7 @@ function renderDots(name){
 
 function setSurname(name){
   document.getElementById('surname-input').value=name;
-  document.querySelectorAll('.viz-tag').forEach(function(t){t.classList.toggle('active',t.textContent===name);});
+  document.querySelectorAll('.viz-tag').forEach(function(t){t.classList.toggle('active',(t.dataset.surname||t.textContent)===name);});
   var d=surnameDB[name];
   if(d){
     document.getElementById('map-surname').textContent=d.title;
